@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -43,7 +44,7 @@ public class QuarterlyAttendanceReportModel {
 	@Column(name="QA_Comments")
 	private String comments;
 	
-	@OneToOne
+	 @ManyToOne
 	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id")
 	private StudentModel studentModel;
 

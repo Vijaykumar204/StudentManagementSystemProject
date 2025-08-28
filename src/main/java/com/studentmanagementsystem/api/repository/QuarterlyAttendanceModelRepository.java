@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
+import com.studentmanagementsystem.api.model.entity.StudentMarks;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 @Repository
@@ -22,6 +23,9 @@ public interface QuarterlyAttendanceModelRepository extends JpaRepository<Quarte
 		QuarterlyAttendanceReportModel findByStudentAndQuarterAndYear(
 		        @Param("studentId") Long studentId,
 		        @Param("quarterAndYear") String quarterAndYear);
+
+//	StudentMarks findByStudentmodel_StudentIdAndQuarterlyAttendanceModel_QuarterAndYear(Long studentId,
+//			String quarterAndYear);
 
 //	QuarterlyAttendanceReportModel findByStudentModel_StudentIdAndQuarterAndYear(Long studentId, String quarterAndYear);
 }

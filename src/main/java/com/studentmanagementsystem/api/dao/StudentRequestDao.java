@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.studentmanagementsystem.api.model.custom.student.StudentListRequestDto;
 import com.studentmanagementsystem.api.model.custom.student.StudentSaveRequestDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 public interface StudentRequestDao {
 
@@ -22,6 +24,14 @@ public interface StudentRequestDao {
 	Object activeOrDeactiveByStudentId(char studentActiveStatus, Long studentId);
 
 	List<StudentListRequestDto> getAllHostelStudents(char studentActiveStatus, char hostel);
+
+	StudentModel getStudentModel(Long studentId);
+
+
+
+	
+
+
 
 //	Object listAllStudent();
 

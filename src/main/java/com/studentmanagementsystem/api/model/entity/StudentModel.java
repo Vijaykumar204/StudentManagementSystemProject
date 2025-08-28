@@ -95,9 +95,13 @@ public class StudentModel {
 	@JsonManagedReference
 	List<DailyAttendanceModel> dailyAttendanceModel;
 	
-	@OneToOne	 
-	private  QuarterlyAttendanceReportModel quarterlyAttendanceReportModel;
+	@OneToMany(mappedBy = "studentModel")
+    private List<StudentMarks> marks;
+
+    @OneToMany(mappedBy = "studentModel")
+    private List<QuarterlyAttendanceReportModel> quarterlyAttendanceReports;
 	
+
 
 
 
@@ -365,16 +369,31 @@ public class StudentModel {
 
 
 
-	public QuarterlyAttendanceReportModel getQuarterlyAttendanceReportModel() {
-		return quarterlyAttendanceReportModel;
+	public List<StudentMarks> getMarks() {
+		return marks;
 	}
 
 
 
-	public void setQuarterlyAttendanceReportModel(QuarterlyAttendanceReportModel quarterlyAttendanceReportModel) {
-		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
+	public void setMarks(List<StudentMarks> marks) {
+		this.marks = marks;
 	}
-	
+
+
+
+	public List<QuarterlyAttendanceReportModel> getQuarterlyAttendanceReports() {
+		return quarterlyAttendanceReports;
+	}
+
+
+
+	public void setQuarterlyAttendanceReports(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReports) {
+		this.quarterlyAttendanceReports = quarterlyAttendanceReports;
+	}
+
+
+
+
 	
 	
 	//Getter and Setter

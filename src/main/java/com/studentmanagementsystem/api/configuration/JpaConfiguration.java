@@ -52,9 +52,9 @@ public class JpaConfiguration {
 	        return txManager;
 	    }
 
-	    @Bean
-	    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
-	        return new PersistenceExceptionTranslationPostProcessor();
-	    }
+//	    @Bean
+//	    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+//	        return new PersistenceExceptionTranslationPostProcessor();
+//	    }
 
 }

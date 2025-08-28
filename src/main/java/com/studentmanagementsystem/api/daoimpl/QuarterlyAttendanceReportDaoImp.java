@@ -101,15 +101,12 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 
 	@Override
 	public QuarterlyAttendanceReportModel getStudentIdUpdateReport(Long studentId, String quarterAndYear) {
-//		StudentModel student = studentModelRepository.getStudentByStudentId(studentId);
+
 	QuarterlyAttendanceReportModel quarterlyAttendanceReportModel=quarterlyAttendanceModelRepository.findByStudentAndQuarterAndYear(studentId,quarterAndYear);
-//		QuarterlyAttendanceReportModel quarterlyAttendanceReportModel=quarterlyAttendanceModelRepository.findByStudentModel_StudentIdAndQuarterAndYear(studentId,quarterAndYear);
 		if(quarterlyAttendanceReportModel == null) {
-//			QuarterlyAttendanceReportModel quarterlyAttendanceReportModel = new QuarterlyAttendanceReportModel();
 			return new QuarterlyAttendanceReportModel();
 		}
 		else {
-//			QuarterlyAttendanceReportModel quarterlyAttendanceReportModel=quarterlyAttendanceModelRepository.findByStudentId(studentId);
 			return quarterlyAttendanceReportModel;
 		}
 		
@@ -139,6 +136,24 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		
 		
 		return entityManager.createQuery(cq).getResultList();
+	}
+	
+	//select attendanceComplianceStatus from QuarterlyAttendanceReportModel where studentId = studentId && quarterAndYear=quarterAndYear;
+
+	@Override
+	public String getComplianceStatus(Long studentId, String quarterAndYear) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<String> cq = cb.createQuery(String.class);
+		Root<QuarterlyAttendanceReportModel> quarterlyReport = cq.from(QuarterlyAttendanceReportModel.class);
+		
+		Predicate stuCondition = cb.equal(quarterlyReport.get("studentModel").get("studentId"),studentId );
+		Predicate quarterandYearCondition = cb.equal(quarterlyReport.get("quarterAndYear"),quarterAndYear);
+		
+		cq.select(
+				quarterlyReport.get("attendanceComplianceStatus")
+				).where(stuCondition,quarterandYearCondition);
+		
+		return entityManager.createQuery(cq).getSingleResult();
 	}
 
 

@@ -176,6 +176,17 @@ public class QuarterlyAttendanceReportDto {
 
 
 
+
+
+	public QuarterlyAttendanceReportDto(String attendanceComplianceStatus) {
+		
+		this.attendanceComplianceStatus = attendanceComplianceStatus;
+	}
+
+	
+	
+
+
 	
 	
 	

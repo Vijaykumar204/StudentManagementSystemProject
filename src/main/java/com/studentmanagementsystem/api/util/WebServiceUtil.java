@@ -37,5 +37,9 @@ public final class WebServiceUtil {
 	public static final String QUART_SEP_AND_YEAR = "09/2025";
 	public static final String QUART_DEC_AND_YEAR  = "12/2025";
 	
+	
+	public static final char PASS = 'P';
+	public static final char FAIL = 'F';
+	
 
 }
