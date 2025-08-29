@@ -21,7 +21,7 @@ public interface QuarterlyAttendanceReportDao {
 	QuarterlyAttendanceReportModel getStudentIdUpdateReport(Long studentId, String quarterAndYear);
 
 	List<ComplianceAndNonComplianceReportDto> getNonComplianceStudents(String quarterAndYear,
-			String nonComplianceComment);
+			String complianceStatus);
 
 	String getComplianceStatus(Long studentId, String quarterAndYear);
 

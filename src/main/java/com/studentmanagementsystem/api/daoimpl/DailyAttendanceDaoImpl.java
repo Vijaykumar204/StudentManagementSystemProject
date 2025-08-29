@@ -372,4 +372,10 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 
 		        return dtoList;
 }
+
+	@Override
+	public DailyAttendanceModel getStudentIdAndAttendanceDate(Long studentId, LocalDate attendanceDate) {
+		
+		return dailyAttendanceRepository.findStudentIdAndAttendanceDate(studentId,attendanceDate) ;
+	}
 }

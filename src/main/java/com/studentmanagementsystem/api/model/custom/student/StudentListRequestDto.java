@@ -2,6 +2,11 @@ package com.studentmanagementsystem.api.model.custom.student;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.studentmanagementsystem.api.util.WebServiceUtil;
+
 
 public class StudentListRequestDto {
 
@@ -13,11 +18,13 @@ public class StudentListRequestDto {
 	
 	private String studentLastName;
 	
-	private String studentGender;
+	private char studentGender;
 	
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate studentDateOfBirth;
 
-	private String studentClassOfStudy;
+	private int studentClassOfStudy;
 
 	private char studentResidingStatus;
 
@@ -25,13 +32,13 @@ public class StudentListRequestDto {
 
 	private String  emergencyContactPersonName;
 
-	private Long emergencyContactPhoneNumber;
+	private String emergencyContactPhoneNumber;
 
 	private String homeStreetName;
 
 	private String homeCityName;
 
-	private Long homePostalCode;
+	private String homePostalCode;
 
 	private char studentActiveStatus;
 	
@@ -69,11 +76,11 @@ public class StudentListRequestDto {
 		this.studentLastName = studentLastName;
 	}
 
-	public String getStudentGender() {
+	public char getStudentGender() {
 		return studentGender;
 	}
 
-	public void setStudentGender(String studentGender) {
+	public void setStudentGender(char studentGender) {
 		this.studentGender = studentGender;
 	}
 
@@ -85,11 +92,11 @@ public class StudentListRequestDto {
 		this.studentDateOfBirth = studentDateOfBirth;
 	}
 
-	public String getStudentClassOfStudy() {
+	public int getStudentClassOfStudy() {
 		return studentClassOfStudy;
 	}
 
-	public void setStudentClassOfStudy(String studentClassOfStudy) {
+	public void setStudentClassOfStudy(int studentClassOfStudy) {
 		this.studentClassOfStudy = studentClassOfStudy;
 	}
 
@@ -117,11 +124,11 @@ public class StudentListRequestDto {
 		this.emergencyContactPersonName = emergencyContactPersonName;
 	}
 
-	public Long getEmergencyContactPhoneNumber() {
+	public String getEmergencyContactPhoneNumber() {
 		return emergencyContactPhoneNumber;
 	}
 
-	public void setEmergencyContactPhoneNumber(Long emergencyContactPhoneNumber) {
+	public void setEmergencyContactPhoneNumber(String emergencyContactPhoneNumber) {
 		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
 	}
 
@@ -141,11 +148,11 @@ public class StudentListRequestDto {
 		this.homeCityName = homeCityName;
 	}
 
-	public Long getHomePostalCode() {
+	public String getHomePostalCode() {
 		return homePostalCode;
 	}
 
-	public void setHomePostalCode(Long homePostalCode) {
+	public void setHomePostalCode(String homePostalCode) {
 		this.homePostalCode = homePostalCode;
 	}
 
@@ -166,9 +173,9 @@ public class StudentListRequestDto {
 	}
 
 	public StudentListRequestDto(Long studentId, String studentFirstName, String studentMiddleName,
-			String studentLastName, String studentGender, LocalDate studentDateOfBirth, String studentClassOfStudy,
+			String studentLastName, char studentGender, LocalDate studentDateOfBirth, int studentClassOfStudy,
 			char studentResidingStatus, String studentPhoneNumber, String emergencyContactPersonName,
-			Long emergencyContactPhoneNumber, String homeStreetName, String homeCityName, Long homePostalCode,
+			String emergencyContactPhoneNumber, String homeStreetName, String homeCityName, String homePostalCode,
 			char studentActiveStatus, String studentEmail) {
 		super();
 		this.studentId = studentId;

@@ -1,6 +1,7 @@
 package com.studentmanagementsystem.api.serviceimpl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +33,22 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		
 	//	unique check
 		// StudentFName,StudentMName,StudentLName,DOB,
+		LocalDateTime today = LocalDateTime.now();
 		
 		DailyAttendanceModel dailyAttendance;
-		if (dailyAttendanceDto.getAttendanceId() == null) {
-			dailyAttendance = dailyAttendanceDao.createNewAttendance(dailyAttendanceDto.getStudentId());
 
-		} else {
-			dailyAttendance = dailyAttendanceDao.findAttendanceById(dailyAttendanceDto.getAttendanceId());
+//    	dailyAttendance = dailyAttendanceDao.findAttendanceById(dailyAttendanceDto.getAttendanceId());
+		dailyAttendance = dailyAttendanceDao.getStudentIdAndAttendanceDate(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate());
+		if(dailyAttendance == null) {
+			dailyAttendance = dailyAttendanceDao.createNewAttendance(dailyAttendanceDto.getStudentId());
+			dailyAttendance.setCreateTeacher(dailyAttendanceDto.getTeacherId());
+			dailyAttendance.setCreateDate(today);
+			dailyAttendance.setAttendanceDate(dailyAttendanceDto.getAttendanceDate());
 		}
-		
-		
-		dailyAttendance.setAttendanceDate(dailyAttendanceDto.getAttendanceDate());
+		else {
+			dailyAttendance.setUpdateTeacher(dailyAttendanceDto.getTeacherId());
+			dailyAttendance.setUpdateTime(today);
+		}
 		dailyAttendance.setAttendanceStatus(dailyAttendanceDto.getAttendanceStatus());
 		if (dailyAttendanceDto.getAttendanceStatus() == WebServiceUtil.ABSENT) {
 			dailyAttendance.setLongApprovedSickLeaveFlag(dailyAttendanceDto.getLongApprovedSickLeaveFlag());
@@ -69,22 +75,25 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	public Object setAttandanceMultiStudents(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
 
 		List<DailyAttendanceModel> attendance = new ArrayList<>();
-		
+		LocalDateTime today = LocalDateTime.now();
 		for (DailyAttendanceDto attend : dailyAttendanceDto) {
 			DailyAttendanceModel dailyAttendance;
-
-			if (attend.getAttendanceId() == null) {
+			dailyAttendance = dailyAttendanceDao.getStudentIdAndAttendanceDate(attend.getStudentId(),attend.getAttendanceDate());
+			if(dailyAttendance == null) {
 				dailyAttendance = dailyAttendanceDao.createNewAttendance(attend.getStudentId());
-			} else {
-				dailyAttendance = dailyAttendanceDao.findAttendanceById(attend.getAttendanceId());
+				dailyAttendance.setCreateTeacher(attend.getTeacherId());
+				dailyAttendance.setCreateDate(today);
+				if (attendanceDate != null) {
+					dailyAttendance.setAttendanceDate(attendanceDate);
+				} else {
+					dailyAttendance.setAttendanceDate(attend.getAttendanceDate());
+				}
 			}
-
-			if (attendanceDate != null) {
-				dailyAttendance.setAttendanceDate(attendanceDate);
-			} else {
-				dailyAttendance.setAttendanceDate(attend.getAttendanceDate());
+			else {
+				dailyAttendance.setUpdateTeacher(attend.getTeacherId());
+				dailyAttendance.setUpdateTime(today);
 			}
-
+			
 			dailyAttendance.setAttendanceStatus(attend.getAttendanceStatus());
 
 			if (attend.getAttendanceStatus() == WebServiceUtil.ABSENT) {

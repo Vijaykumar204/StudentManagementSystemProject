@@ -63,7 +63,11 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 			Long sick = singleQuarterlyAttendance.getTotalApprovedSickdays();
 			Long totalWorking = singleQuarterlyAttendance.getTotalSchoolWorkingDays();
 
-			Long percentageOfPresent = (long) Math.ceil((((present + activities + sick) / totalWorking) * 100));
+	int percentageOfPresent =  (int) Math.ceil((((present + activities + sick) / totalWorking) * 100));
+	
+//			Integer percentageOfPresent = (int) Math.ceil(
+//				    ((double)(present + activities + sick) / totalWorking) * 100
+//				);
 			if (percentageOfPresent < 75) {
 
 				quarterlyAttendanceReportModel.setAttendanceComplianceStatus(WebServiceUtil.NON_COMPLIANCE);

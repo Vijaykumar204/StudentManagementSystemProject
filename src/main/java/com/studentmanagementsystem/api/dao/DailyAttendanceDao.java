@@ -34,4 +34,6 @@ public interface DailyAttendanceDao {
 
 	List<ExceedingDaysLeaveDto> getStudentleaveForExtraActivitiesd(int month, int year, String leaveStatus,int leaveCount);
 
+	DailyAttendanceModel getStudentIdAndAttendanceDate(Long studentId, LocalDate attendanceDate);
+
 }

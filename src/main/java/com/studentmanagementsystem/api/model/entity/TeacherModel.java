@@ -11,7 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "teacher_management")
+@Table(name = "teacher")
 public class TeacherModel {
 	
 	@Id
@@ -20,19 +20,19 @@ public class TeacherModel {
 	@Column(name = "TEACH_Id")
 	private Long  teacherId;
 	
-	@Column(name = "TEACH_Name")
+	@Column(name = "TEACH_Name",nullable = false,length=25)
 	private String teacherName;
 	
-	@Column(name = "TEACH_Phone_Number")
+	@Column(name = "TEACH_Phone_Number",unique = true,nullable = false,length=10)
 	private String teacherPhoneNumber;
 	
-	@Column(name = "TEACH_Role")
+	@Column(name = "TEACH_Role",nullable = false,length=2)
 	private String teacherRole;
 	
-	@Column(name = "TEACH_Department")
+	@Column(name = "TEACH_Department",length=15)
 	private String teacherDepartment;
 	
-	@Column(name = "TEACH_Create_User")
+	@Column(name = "TEACH_Create_User",nullable = false)
 	private Long createUser;
 	
 	@Column(name = "TEACH_Create_Time")
@@ -103,7 +103,7 @@ public class TeacherModel {
 		this.updateTime = updateTime;
 	}
 	public TeacherModel getTeacherById(Long teacherId2) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

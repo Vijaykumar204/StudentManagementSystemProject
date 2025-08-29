@@ -114,7 +114,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 
 	@Override
 	public List<ComplianceAndNonComplianceReportDto> getNonComplianceStudents(String quarterAndYear,
-			String nonComplianceComment) {
+			String complianceStatus) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ComplianceAndNonComplianceReportDto>  cq=cb.createQuery(ComplianceAndNonComplianceReportDto.class);
@@ -122,7 +122,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		Join<QuarterlyAttendanceReportModel,StudentModel> student = quarterly.join("studentModel");
 		
 		Predicate quarterAndYearCondition=cb.equal(quarterly.get("quarterAndYear"), quarterAndYear);
-		Predicate statusCondition=cb.equal(quarterly.get("attendanceComplianceStatus"), WebServiceUtil.NON_COMPLIANCE);
+		Predicate statusCondition=cb.equal(quarterly.get("attendanceComplianceStatus"),complianceStatus);
 		cq.select(cb.construct(ComplianceAndNonComplianceReportDto.class,
 				student.get("studentId"),
 				quarterly.get("quarterAndYear"),

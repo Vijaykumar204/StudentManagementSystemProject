@@ -19,10 +19,10 @@ public class SchoolHolidaysModel {
 	@Column(name = "HOL_ID")
 	private Long holidayId;
 	
-	@Column(name="HOL_Date")
+	@Column(name="HOL_Date",nullable = false)
 	private LocalDate holidayDate;
 	
-	@Column(name = "HOL_Reason")
+	@Column(name = "HOL_Reason",nullable = false,length=50)
 	private String holidayReason;
 	
 	
@@ -30,7 +30,7 @@ public class SchoolHolidaysModel {
 	private Boolean isHolidayCancelled = false;
 	
 	
-	@Column(name = "HOL_Cancel_Reason")
+	@Column(name = "HOL_Cancel_Reason",length = 50)
 	private String holidayCancelledReason;
 
 	public Long getHolidayId() {

@@ -17,35 +17,35 @@ public class QuarterlyAttendanceReportModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-	@Column(name = "QA_Id")
+	@Column(name = "QUARTER_Id")
 	private Long quarterlyAttendanceId;
 	
-	@Column(name ="QA_And_Year")
+	@Column(name ="QUARTER_And_Year",length =7,nullable = false)
 	private String quarterAndYear;
 	
-	@Column(name = "QA_Tot_WorkingDays")
+	@Column(name = "QUARTER_Tot_Working_Days",nullable = false)
 	private Long totalSchoolWorkingDays;
 	
-	@Column(name = "QA_Tot_Present")
+	@Column(name = "QUARTER_Tot_Present",nullable = false)
 	private Long totalDaysOfPresent;
 	
-	@Column(name = "QA_Tot_Absents")
+	@Column(name = "QUARTER_Tot_Absent",nullable = false)
 	private Long totalDaysOfAbsents;
 	
-	@Column(name = "QA_Tot_Ap_Activities")
+	@Column(name = "QUARTER_Tot_Approved_Extra_Cur_Activities",nullable = false)
 	private Long totalApprovedActivitiesPermissionDays;
 	
-	@Column(name = "QA_Tot_SickDays")
+	@Column(name = "QUARTER_Tot_Approved_Sick_Leave",nullable = false)
 	private Long totalApprovedSickdays;
 	
-	@Column(name = "QA_Att_ComplianceStatus")
+	@Column(name = "QUARTER_Attendance_Compliance_Status" ,length=2,nullable = false)
 	private String  attendanceComplianceStatus;
 	
-	@Column(name="QA_Comments")
+	@Column(name="QUARTER_Attendance_Comments",length = 25)
 	private String comments;
 	
 	 @ManyToOne
-	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id")
+	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id",nullable = false)
 	private StudentModel studentModel;
 
 	public Long getQuarterlyAttendanceId() {
@@ -54,6 +54,14 @@ public class QuarterlyAttendanceReportModel {
 
 	public void setQuarterlyAttendanceId(Long quarterlyAttendanceId) {
 		this.quarterlyAttendanceId = quarterlyAttendanceId;
+	}
+
+	public String getQuarterAndYear() {
+		return quarterAndYear;
+	}
+
+	public void setQuarterAndYear(String quarterAndYear) {
+		this.quarterAndYear = quarterAndYear;
 	}
 
 	public Long getTotalSchoolWorkingDays() {
@@ -120,18 +128,7 @@ public class QuarterlyAttendanceReportModel {
 		this.studentModel = studentModel;
 	}
 
-	public String getQuarterAndYear() {
-		return quarterAndYear;
-	}
-
-	public void setQuarterAndYear(String quarterAndYear) {
-		this.quarterAndYear = quarterAndYear;
-	}
 	
-	
-	
-
-
 	
 
 	

@@ -45,29 +45,68 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 		
 	}
 
+//	@Override
+//	public List<ComplianceStudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear) {
+//	 		
+//		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+//		CriteriaQuery<ComplianceStudentWithPassOrFail> cq=cb.createQuery(ComplianceStudentWithPassOrFail.class);
+//		Root<StudentMarks> studentMark = cq.from(StudentMarks.class);
+//		
+//		Join<StudentMarks, StudentModel> student = studentMark.join("studentModel");
+//
+//		Join<StudentModel, QuarterlyAttendanceReportModel> quarterlyReport = student.join("quarterlyAttendanceReports");
+//
+//		
+//      	Predicate studentIdCondition = cb.equal(studentMark.get("studentModel").get("studentId"), quarterlyReport.get("studentModel").get("studentId"));
+//		Predicate quarterCondition = cb.equal(quarterlyReport.get("quarterAndYear"), quarterAndYear);
+//      	Predicate complianceStatus = cb.equal(quarterlyReport.get("attendanceComplianceStatus"), WebServiceUtil.COMPLIANCE);
+//		cq.select(cb.construct(ComplianceStudentWithPassOrFail.class,
+//				
+//				studentMark.get("studentModel").get("studentId"),
+//				studentMark.get("quarterAndYear"),
+//				studentMark.get("result")
+//
+//				)).where(studentIdCondition,quarterCondition,complianceStatus);
+//		
+//		return entityManager.createQuery(cq).getResultList();
+//	}
+	
 	@Override
 	public List<ComplianceStudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear) {
-	 		
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<ComplianceStudentWithPassOrFail> cq=cb.createQuery(ComplianceStudentWithPassOrFail.class);
-		Root<StudentMarks> studentMark = cq.from(StudentMarks.class);
-		
+	    
+	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+	    CriteriaQuery<ComplianceStudentWithPassOrFail> cq = cb.createQuery(ComplianceStudentWithPassOrFail.class);
+
+//	    Root<StudentMarks> sm = cq.from(StudentMarks.class);
+
+	    // Join with QuarterlyAttendanceReport
+//	    Join<StudentMarks, QuarterlyAttendanceReportModel> qar = sm.join("studnetModel"); 
+	    // 👆 field name inside StudentMarks entity (check if it's mapped like @ManyToOne private QuarterlyAttendanceReportModel quarterlyAttendanceReport;)
+	    
+	    Root<StudentMarks> studentMark = cq.from(StudentMarks.class);
+//		
 		Join<StudentMarks, StudentModel> student = studentMark.join("studentModel");
 
-		Join<StudentModel, QuarterlyAttendanceReportModel> quarterlyReport = student.join("quarterlyAttendanceReports");
+		Join<StudentModel, QuarterlyAttendanceReportModel> quarterlyReport = student.join("quarterlyAttendanceReportModel");
 
-		
-//		Predicate studentIdCondition = cb.equal(studentMark.get("studentModel").get("studentId"), quarterlyReport.get("studentModel").get("studentId"));
-		Predicate complianceStatus = cb.equal(quarterlyReport.get("attendanceComplianceStatus"), WebServiceUtil.COMPLIANCE);
-		cq.select(cb.construct(ComplianceStudentWithPassOrFail.class,
-				
-				studentMark.get("studentModel").get("studentId"),
-				studentMark.get("quarterAndYear"),
-				studentMark.get("result")
+	    // Conditions
+	    Predicate qarQuarterCondition = cb.equal(quarterlyReport.get("quarterAndYear"), quarterAndYear);
+	    Predicate smQuarterCondition = cb.equal(studentMark.get("quarterAndYear"), quarterAndYear);
+	    Predicate complianceCondition = cb.equal(quarterlyReport.get("attendanceComplianceStatus"), WebServiceUtil.COMPLIANCE);
 
-				)).where(complianceStatus);
-		
-		return entityManager.createQuery(cq).getResultList();
+	    cq.select(
+	        cb.construct(
+	            ComplianceStudentWithPassOrFail.class,
+	            studentMark.get("studentModel").get("studentId"),
+	            studentMark.get("quarterAndYear"),
+	            studentMark.get("result")
+	        )
+	    ).where(cb.and(qarQuarterCondition, smQuarterCondition, complianceCondition));
+
+	    return entityManager.createQuery(cq).getResultList();
 	}
+
+
+	
 
 }

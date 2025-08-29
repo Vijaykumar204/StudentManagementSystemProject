@@ -119,4 +119,10 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 
 	}
 
+	@Override
+	public TeacherModel getTeacherByTeacherId(Long teacherId) {
+		
+		return teacherRepository.getTeacherByTeacherId(teacherId);
+	}
+
 }

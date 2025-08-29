@@ -1,9 +1,13 @@
 package com.studentmanagementsystem.api.model.custom.studentmarks;
 
 public class ComplianceStudentWithPassOrFail {
+	
     private Long StudentId;
+    
 	private String quarterAndYear;
+	
 	private char result;
+	
 	public Long getStudentId() {
 		return StudentId;
 	}
@@ -28,5 +32,9 @@ public class ComplianceStudentWithPassOrFail {
 		this.quarterAndYear = quarterAndYear;
 		this.result = result;
 	}
+	public ComplianceStudentWithPassOrFail() {
+		
+	}
+	
 	
 }

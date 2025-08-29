@@ -2,6 +2,13 @@ package com.studentmanagementsystem.api.model.custom.dailyattendance;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.studentmanagementsystem.api.util.WebServiceUtil;
+
 
 
 public class DailyAttendanceDto {
@@ -9,6 +16,9 @@ public class DailyAttendanceDto {
 	
 	private Long attendanceId;
 	
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate attendanceDate;
 	
 	private char attendanceStatus;
@@ -19,8 +29,12 @@ public class DailyAttendanceDto {
 	
 	private Long studentId;
 	
+	private Long teacherId;
+	
 	private String studentFirstName;
+	
 	private String studentMiddleName;
+	
 	private String studentLastName;
 
 	public Long getAttendanceId() {
@@ -71,11 +85,6 @@ public class DailyAttendanceDto {
 		this.studentId = studentId;
 	}
 	
-	
-	
-
-
-
 	public String getStudentFirstName() {
 		return studentFirstName;
 	}
@@ -99,6 +108,14 @@ public class DailyAttendanceDto {
 	public void setStudentLastName(String studentLastName) {
 		this.studentLastName = studentLastName;
 	}
+	
+	public Long getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(Long teacherId) {
+		this.teacherId = teacherId;
+	}
 
 //	public DailyAttendanceDto(Long attendanceId, LocalDate attendanceDate, char attendanceStatus,
 //			char longApprovedSickLeaveFlag, char approvedExtraCurricularActivitiesFlag, Long studentId) {
@@ -110,6 +127,8 @@ public class DailyAttendanceDto {
 //		this.approvedExtraCurricularActivitiesFlag = approvedExtraCurricularActivitiesFlag;
 //		this.studentId = studentId;
 //	}
+
+
 
 	public DailyAttendanceDto() {
 		

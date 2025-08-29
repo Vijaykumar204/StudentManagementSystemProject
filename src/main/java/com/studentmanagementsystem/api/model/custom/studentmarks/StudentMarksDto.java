@@ -29,6 +29,8 @@ public class StudentMarksDto {
 	
 	
 	private char result;
+	
+	private Long teacherId;
 
 
 	public Long getStudentId() {
@@ -118,6 +120,18 @@ public class StudentMarksDto {
 
 	public void setResult(char result) {
 		this.result = result;
+	}
+
+	
+
+
+	public Long getTeacherId() {
+		return teacherId;
+	}
+
+
+	public void setTeacherId(Long teacherId) {
+		this.teacherId = teacherId;
 	}
 
 

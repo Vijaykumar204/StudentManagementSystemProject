@@ -1,5 +1,7 @@
 package com.studentmanagementsystem.api.model.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,8 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
+//@Table(name = "student_marks")
 public class StudentMarks {
 	
 	@Id
@@ -41,6 +45,18 @@ public class StudentMarks {
 	
 	@Column(name = "Result_Status")
 	private char result;
+	
+	@Column(name = "Mark_Create_Teacher",nullable = false)
+	private Long createTeacher;
+	
+	@Column(name = "Mark_Create_Date_Time")
+	private LocalDateTime createDate;
+	
+	@Column(name = "Mark_Update_Teacher")
+	private Long updateTeacher;
+	
+	@Column(name = "Mark_Update_Date_Time")
+	private LocalDateTime updateTime;
 	
 	@ManyToOne
 	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id")
@@ -125,4 +141,37 @@ public class StudentMarks {
 	public void setStudentModel(StudentModel studentModel) {
 		this.studentModel = studentModel;
 	}
+
+	public Long getCreateTeacher() {
+		return createTeacher;
+	}
+
+	public void setCreateTeacher(Long createTeacher) {
+		this.createTeacher = createTeacher;
+	}
+
+	public LocalDateTime getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(LocalDateTime createDate) {
+		this.createDate = createDate;
+	}
+
+	public Long getUpdateTeacher() {
+		return updateTeacher;
+	}
+
+	public void setUpdateTeacher(Long updateTeacher) {
+		this.updateTeacher = updateTeacher;
+	}
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(LocalDateTime updateTime) {
+		this.updateTime = updateTime;
+	}
+	
 }

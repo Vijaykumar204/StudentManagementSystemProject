@@ -1,19 +1,22 @@
 package com.studentmanagementsystem.api.model.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,85 +28,85 @@ public class StudentModel {
 	@Column(name = "STU_Id")
 	private Long studentId;
 	
-	@Column(name = "STU_FirstName",nullable=false)
+	@Column(name = "STU_First_Name",nullable=false,length =25)
 	private String studentFirstName;
 	
-	@Column(name = "STU_MiddleName")
+	@Column(name = "STU_Middle_Name",length=25)
 	private String studentMiddleName;
 	
-	@Column(name ="STU_LastName")
+	@Column(name ="STU_Last_Name",nullable = false,length=5)
 	private String studentLastName;
 	
-	@Column(name = "STU_Gender")
-	private String studentGender;
+	@Column(name = "STU_Gender",nullable = false)
+	private char studentGender;
 	
-	@Column(name ="STU_DOB" )
+	@Column(name ="STU_DOB",nullable = false)
 //	@DateTimeFormat(pattern = "dd-MM-yyyy")   // for input (e.g., from HTML form / RequestParam)
 //	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate studentDateOfBirth;
 	
-	@Column(name = "STU_Class")
-	private String studentClassOfStudy;
+	@Column(name = "STU_Class",nullable = false)
+	private int studentClassOfStudy;
 	
-	@Column(name = "STU_ResidingStatus")
+	@Column(name = "STU_Residing_Status",nullable = false)
 	private char studentResidingStatus;
 	
-	@Column(name = "STU_Email",unique = true)
+	@Column(name = "STU_Email",unique = true,length =25,nullable = false)
 	private String studentEmail;
 	
-	@Column(name = "STU_Ph_No", unique = true, nullable = false)
+	@Column(name = "STU_Ph_No", unique = true, nullable = false,length=10)
 	private String studentPhoneNumber;
 	
-	@Column(name = "STU_ContactPersonName")
+	@Column(name = "STU_Contact_Person_Name",length=25)
 	private String  emergencyContactPersonName;
 	
-	@Column(name = "STU_ContactPh_No", unique = true, nullable = false)
-	private Long emergencyContactPhoneNumber;
+	@Column(name = "STU_Contact_Ph_No",length =10)
+	private String emergencyContactPhoneNumber;
 	
-	@Column(name = "STU_StreetName")
+	@Column(name = "STU_Street_Name",length =25)
 	private String homeStreetName;
 	
-	@Column(name = "STU_CityName")
+	@Column(name = "STU_City_Name",length = 25,nullable = false)
 	private String homeCityName;
 	
-	@Column(name = "STU_PostalCode")
-	private Long homePostalCode;
+	@Column(name = "STU_Postal_Code",nullable = false,length=6)
+	private String homePostalCode;
 	
-	@Column(name = "STU_Status", nullable = false)
+	@Column(name = "STU_Status", nullable = false,columnDefinition ="CHAR DEFAULT 'A'")
 	private char studentActiveStatus = 'A';
 	
-	@Column(name = "STU_LastEffectiveate")
-	private LocalDate lasteffectivedate;
+	@Column(name = "STU_Last_Effective_Date")
+	private LocalDateTime lasteffectivedate;
 	
-	@Column(name = "STU_CreateDate")
-	private LocalDate studentCreateDate;
+	@Column(name = "STU_Create_Date_Time",nullable = false)
+	private LocalDateTime studentCreateDate;
 	
-	@Column(name = "STU_UpdateTeacher")
+	@Column(name = "STU_Update_Teacher")
 	private Long updateTeacher;
 	
-	@Column(name = "STU_UpdateDate")
-	private LocalDate updateDate;
+	@Column(name = "STU_Update_Date_Time")
+	private LocalDateTime updateDate;
 	
 
 	
 	@ManyToOne
-	@JoinColumn(name ="STU_CreateTeacher" ,referencedColumnName = "TEACH_Id")
+	@JoinColumn(name ="STU_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
 	private TeacherModel teacherModel;
 	
 	
-	@OneToMany(mappedBy = "studentModel")
-	@JsonManagedReference
+	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
+	@JsonIgnore
+//	@JsonManagedReference
 	List<DailyAttendanceModel> dailyAttendanceModel;
 	
-	@OneToMany(mappedBy = "studentModel")
+	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
+	@JsonIgnore
     private List<StudentMarks> marks;
 
-    @OneToMany(mappedBy = "studentModel")
-    private List<QuarterlyAttendanceReportModel> quarterlyAttendanceReports;
+    @OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel;
 	
-
-
-
 
 	public Long getStudentId() {
 		return studentId;
@@ -153,13 +156,13 @@ public class StudentModel {
 
 
 
-	public String getStudentGender() {
+	public char getStudentGender() {
 		return studentGender;
 	}
 
 
 
-	public void setStudentGender(String studentGender) {
+	public void setStudentGender(char studentGender) {
 		this.studentGender = studentGender;
 	}
 
@@ -177,13 +180,13 @@ public class StudentModel {
 
 
 
-	public String getStudentClassOfStudy() {
+	public int getStudentClassOfStudy() {
 		return studentClassOfStudy;
 	}
 
 
 
-	public void setStudentClassOfStudy(String studentClassOfStudy) {
+	public void setStudentClassOfStudy(int studentClassOfStudy) {
 		this.studentClassOfStudy = studentClassOfStudy;
 	}
 
@@ -237,13 +240,13 @@ public class StudentModel {
 
 
 
-	public Long getEmergencyContactPhoneNumber() {
+	public String getEmergencyContactPhoneNumber() {
 		return emergencyContactPhoneNumber;
 	}
 
 
 
-	public void setEmergencyContactPhoneNumber(Long emergencyContactPhoneNumber) {
+	public void setEmergencyContactPhoneNumber(String emergencyContactPhoneNumber) {
 		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
 	}
 
@@ -273,13 +276,13 @@ public class StudentModel {
 
 
 
-	public Long getHomePostalCode() {
+	public String getHomePostalCode() {
 		return homePostalCode;
 	}
 
 
 
-	public void setHomePostalCode(Long homePostalCode) {
+	public void setHomePostalCode(String homePostalCode) {
 		this.homePostalCode = homePostalCode;
 	}
 
@@ -297,25 +300,25 @@ public class StudentModel {
 
 
 
-	public LocalDate getLasteffectivedate() {
+	public LocalDateTime getLasteffectivedate() {
 		return lasteffectivedate;
 	}
 
 
 
-	public void setLasteffectivedate(LocalDate lasteffectivedate) {
+	public void setLasteffectivedate(LocalDateTime lasteffectivedate) {
 		this.lasteffectivedate = lasteffectivedate;
 	}
 
 
 
-	public LocalDate getStudentCreateDate() {
+	public LocalDateTime getStudentCreateDate() {
 		return studentCreateDate;
 	}
 
 
 
-	public void setStudentCreateDate(LocalDate studentCreateDate) {
+	public void setStudentCreateDate(LocalDateTime studentCreateDate) {
 		this.studentCreateDate = studentCreateDate;
 	}
 
@@ -333,13 +336,13 @@ public class StudentModel {
 
 
 
-	public LocalDate getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
 
 
-	public void setUpdateDate(LocalDate updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
@@ -382,13 +385,13 @@ public class StudentModel {
 
 
 	public List<QuarterlyAttendanceReportModel> getQuarterlyAttendanceReports() {
-		return quarterlyAttendanceReports;
+		return quarterlyAttendanceReportModel;
 	}
 
 
 
 	public void setQuarterlyAttendanceReports(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReports) {
-		this.quarterlyAttendanceReports = quarterlyAttendanceReports;
+		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
 	}
 
 
