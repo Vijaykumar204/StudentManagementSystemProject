@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -56,5 +58,23 @@ public class JpaConfiguration {
 //	    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 //	        return new PersistenceExceptionTranslationPostProcessor();
 //	    }
+	    
+	    @Bean
+	    public JavaMailSender mailSender() {
+	        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+	        mailSender.setHost("smtp.gmail.com");
+	        mailSender.setPort(587);
+
+	        mailSender.setUsername("vijayakumar2042003@gmail.com"); // change
+	        mailSender.setPassword("turscqnfhmjdaary");   // app password
+
+	        Properties props = mailSender.getJavaMailProperties();
+	        props.put("mail.transport.protocol", "smtp");
+	        props.put("mail.smtp.auth", "true");
+	        props.put("mail.smtp.starttls.enable", "true");
+	        props.put("mail.debug", "true");
+
+	        return mailSender;
+	    }
 
 }

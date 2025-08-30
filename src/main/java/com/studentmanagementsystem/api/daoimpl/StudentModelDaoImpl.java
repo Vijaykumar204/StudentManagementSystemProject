@@ -43,7 +43,7 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 		CriteriaQuery<StudentListRequestDto> cq= cb.createQuery(StudentListRequestDto.class);
 		Root<StudentModel> student = cq.from(StudentModel.class);
 
-		Predicate lastEfetiveDatecondition = cb.equal(student.get("lasteffectivedate"),null);
+//		Predicate lastEfetiveDatecondition = cb.equal(student.get("lasteffectivedate"),null);
 		
 		
 		cq.multiselect(
@@ -64,7 +64,7 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 				student.get("studentActiveStatus"),
 				student.get("studentEmail")
 			
-				).where(lastEfetiveDatecondition);
+				);
 		
 	
 		

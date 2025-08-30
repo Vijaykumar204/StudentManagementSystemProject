@@ -148,7 +148,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		
 		Predicate stuCondition = cb.equal(quarterlyReport.get("studentModel").get("studentId"),studentId );
 		Predicate quarterandYearCondition = cb.equal(quarterlyReport.get("quarterAndYear"),quarterAndYear);
-		
+			
 		cq.select(
 				quarterlyReport.get("attendanceComplianceStatus")
 				).where(stuCondition,quarterandYearCondition);

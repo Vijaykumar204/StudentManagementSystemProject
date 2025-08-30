@@ -10,8 +10,10 @@ import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
 import com.studentmanagementsystem.api.dao.StudentMarksDao;
 import com.studentmanagementsystem.api.dao.StudentModelDao;
 import com.studentmanagementsystem.api.model.custom.student.StudentListRequestDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
 import com.studentmanagementsystem.api.model.entity.StudentMarks;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.service.StudentMarksService;
@@ -56,7 +58,6 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 			int science = studentMark.setScience(mark.getScience());
 			int socialscience = studentMark.setSocialScience(mark.getSocialScience());
 
-			System.out.println("tamil" + tamil);
 
 			int totalMark = tamil + english + maths + science + socialscience;
 			studentMark.setTotalMarks(totalMark);
@@ -73,16 +74,19 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 			String compliance = quarterlyAttendanceReportDao.getComplianceStatus(mark.getStudentId(),
 					mark.getQuarterAndYear());
 
-			System.out.println(compliance);
+			
 			boolean allSubjectsPassed = tamil >= 35 && english >= 35 && maths >= 35 && science >= 35
 					&& socialscience >= 35;
 
-			System.out.println(allSubjectsPassed);
+			
 
 			if (allSubjectsPassed && WebServiceUtil.COMPLIANCE.equals(compliance)) {
 				studentMark.setResult(WebServiceUtil.PASS);
 			} else {
-				System.out.println("else class");
+				if(allSubjectsPassed!=true) {
+					studentMark.setFailedForMark(true);
+				}
+				
 				studentMark.setResult(WebServiceUtil.FAIL);
 			}
 
@@ -97,6 +101,24 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	public List<ComplianceStudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear) {
 
 		return studentMarksDao.getAllComplianceStudentPassOrFail(quarterAndYear);
+	}
+
+	@Override
+	public List<StudentMarksDto> getAllStudentMarks(String quarterAndYear) {
+		
+		return studentMarksDao.getAllStudentMarks(quarterAndYear);
+	}
+
+	@Override
+	public List<TotalResultCountdto> getToatalResultCount(String quarterAndYear) {
+		
+		return studentMarksDao.getToatalResultCount(quarterAndYear);
+	}
+
+	@Override
+	public ClassTopperDto getClassTopper(String quarterAndYear) {
+	
+		return studentMarksDao.getClassTopper(quarterAndYear);
 	}
 
 }

@@ -46,6 +46,17 @@ public final class WebServiceUtil {
 	
 	public static final String APP_DATE_FORMAT = "yyyy-MM-dd";
 	
+	public static final String DEAR = "Dear ";
+	public static final String ABSENT_ALERT_SUBJECT = " Attendance alert";
 	
+	public static final String 	SICK_LEVAE_SUBJECT  = "Sick leave alert";
+	
+	public static final String 	EXTRA_CUR_ACTIVITIES_LEAVE_SUBJECT  = "Extra curricular activity leave alert";
+	
+	public static final String ABSENT_ALERT_MESSAGE = "Attendance marked Absent on";
+	
+	public static final String SICK_LEVAE_MESSAGE = "Sick leave request accepted,Attendance marked Absent on ";
+	
+	public static final String 	EXTRA_CUR_ACTIVITIES_LEAVE_MESSAGE = " Extra curricular activity leave request accepted,Attendance marked Absent on ";
 
 }

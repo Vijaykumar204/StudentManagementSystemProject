@@ -24,6 +24,9 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	
 	@Autowired
 	private QuarterlyAttendanceReportService quartlyAttendanceReportService;
+	
+	@Autowired
+	private EmailSentService emailSentService;
 
 	@Override
 	public Object setAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto) {
@@ -60,10 +63,22 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		}
 		    dailyAttendanceDao.setAttendanceToSingleStudent(dailyAttendance);
 		    quartlyAttendanceReportService.monthEndCheck(dailyAttendanceDto.getAttendanceDate());
+		    
+		    if(dailyAttendanceDto.getAttendanceStatus() == WebServiceUtil.ABSENT && dailyAttendanceDto.getLongApprovedSickLeaveFlag() == WebServiceUtil.NO && dailyAttendanceDto.getApprovedExtraCurricularActivitiesFlag() == WebServiceUtil.NO) {
+		    	emailSentService.sendEmailAlert(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate(),WebServiceUtil.ABSENT_ALERT_SUBJECT,WebServiceUtil.ABSENT_ALERT_MESSAGE);
+		    }
+		    else if(dailyAttendanceDto.getAttendanceStatus() == WebServiceUtil.ABSENT && dailyAttendanceDto.getLongApprovedSickLeaveFlag() == WebServiceUtil.YES) {
+		    	emailSentService.sendEmailAlert(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate(),WebServiceUtil.SICK_LEVAE_SUBJECT,WebServiceUtil.SICK_LEVAE_MESSAGE);
+		    }
+		    else if (dailyAttendanceDto.getAttendanceStatus() == WebServiceUtil.ABSENT && dailyAttendanceDto.getApprovedExtraCurricularActivitiesFlag() == WebServiceUtil.YES) {
+		    	emailSentService.sendEmailAlert(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate(),WebServiceUtil.EXTRA_CUR_ACTIVITIES_LEAVE_SUBJECT,WebServiceUtil.EXTRA_CUR_ACTIVITIES_LEAVE_MESSAGE);
+		    }
 		
 
 		return "Attendance Marked";
 	}
+
+    
 
 //	@Override
 //	public Object setAttandanceMultiSameDate(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
@@ -110,14 +125,14 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		}
 			
 		dailyAttendanceDao.setAttandanceMultiStudents(attendance);
-//		   dailyAttendanceRepository.save(dailyAttendance);
+
 		
-//		if(attendanceDate == null) {
-//	    quartlyAttendanceReportService.monthEndCheck(dailyAttendance.getAttendanceDate());
-//		}
-//		else {
-//			 quartlyAttendanceReportService.monthEndCheck(attendanceDate);
-//		}
+		if(attendanceDate == null) {
+	    quartlyAttendanceReportService.monthEndCheck(dailyAttendanceDto.get(0).getAttendanceDate());
+		}
+		else {
+			 quartlyAttendanceReportService.monthEndCheck(attendanceDate);
+		}
 
 		return "Attendance Marked" ;
 	}

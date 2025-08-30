@@ -13,7 +13,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-//@Table(name = "student_marks")
+@Table(name = "student_marks")
 public class StudentMarks {
 	
 	@Id
@@ -57,6 +57,9 @@ public class StudentMarks {
 	
 	@Column(name = "Mark_Update_Date_Time")
 	private LocalDateTime updateTime;
+	
+	@Column(name = "Failed_for_Mark", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+	private Boolean failedForMark = false;
 	
 	@ManyToOne
 	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id")
@@ -173,5 +176,14 @@ public class StudentMarks {
 	public void setUpdateTime(LocalDateTime updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public Boolean getFailedForMark() {
+		return failedForMark;
+	}
+
+	public void setFailedForMark(Boolean failedForMark) {
+		this.failedForMark = failedForMark;
+	}
+	
 	
 }

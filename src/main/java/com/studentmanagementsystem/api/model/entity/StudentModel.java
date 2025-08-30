@@ -383,14 +383,14 @@ public class StudentModel {
 	}
 
 
-
+	@JsonIgnore
 	public List<QuarterlyAttendanceReportModel> getQuarterlyAttendanceReports() {
 		return quarterlyAttendanceReportModel;
 	}
 
 
 
-	public void setQuarterlyAttendanceReports(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReports) {
+	public void setQuarterlyAttendanceReports(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel) {
 		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
 	}
 

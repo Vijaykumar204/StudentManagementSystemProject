@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
 import com.studentmanagementsystem.api.service.StudentMarksService;
 
 @RestController
@@ -33,6 +35,22 @@ public class StudentMarksController {
 	ResponseEntity<List<ComplianceStudentWithPassOrFail>> getAllComplianceStudentPassOrFail(@RequestParam String quarterAndYear){
 		return new ResponseEntity<List<ComplianceStudentWithPassOrFail>>(studentMarksService.getAllComplianceStudentPassOrFail(quarterAndYear),HttpStatus.OK);
 	}
+	
+	@GetMapping("/list")
+	ResponseEntity<List<StudentMarksDto>> getAllStudentMarks(@RequestParam String quarterAndYear){
+		return new ResponseEntity<List<StudentMarksDto>>(studentMarksService.getAllStudentMarks(quarterAndYear),HttpStatus.OK);
+	}
+	
+	@GetMapping("/totalList")
+	ResponseEntity<List<TotalResultCountdto>> getToatalResultCount(@RequestParam String quarterAndYear){
+		return new ResponseEntity<List<TotalResultCountdto>>(studentMarksService.getToatalResultCount(quarterAndYear),HttpStatus.OK);
+	}
+	
+	@GetMapping("/classTopper")
+	ResponseEntity<ClassTopperDto> getClassTopper(@RequestParam String quarterAndYear){
+		return new ResponseEntity<ClassTopperDto>(studentMarksService.getClassTopper(quarterAndYear),HttpStatus.OK);
+	}
+	
 	
 	
 

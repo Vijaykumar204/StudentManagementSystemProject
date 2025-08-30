@@ -135,9 +135,11 @@ public class StudentMarksDto {
 	}
 
 
+
+
 	public StudentMarksDto(Long studentId, String quarterAndYear, int tamil, int english, int maths, int science,
 			int socialScience, int totalMarks, char result) {
-		super();
+	
 		StudentId = studentId;
 		this.quarterAndYear = quarterAndYear;
 		this.tamil = tamil;
@@ -147,6 +149,7 @@ public class StudentMarksDto {
 		this.socialScience = socialScience;
 		this.totalMarks = totalMarks;
 		this.result = result;
+		
 	}
 
 
