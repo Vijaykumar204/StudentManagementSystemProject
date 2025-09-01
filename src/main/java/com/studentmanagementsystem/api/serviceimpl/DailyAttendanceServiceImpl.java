@@ -7,10 +7,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
+import com.studentmanagementsystem.api.dao.SchoolHolidaysDao;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.ExceedingDaysLeaveDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
+import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
 import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 
@@ -27,6 +29,9 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	
 	@Autowired
 	private EmailSentService emailSentService;
+	
+	@Autowired
+	private SchoolHolidaysDao schoolHolidaysDao;
 
 	@Override
 	public Object setAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto) {
@@ -36,10 +41,36 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		
 	//	unique check
 		// StudentFName,StudentMName,StudentLName,DOB,
+		
+		List<String> requestMissedField = new ArrayList<>();
+		
+		if(dailyAttendanceDto.getAttendanceDate() == null) {
+			requestMissedField.add(WebServiceUtil.ATTENDANCE_DATE_ERROR);			
+		}
+		if(dailyAttendanceDto.getAttendanceStatus() == '\u0000' || dailyAttendanceDto.getAttendanceStatus()!='P' && dailyAttendanceDto.getAttendanceStatus()!='A' ) {
+			requestMissedField.add(WebServiceUtil.ATTENDANCE_STATUS_ERROR);
+		}
+		if(dailyAttendanceDto.getStudentId() == null) {
+			requestMissedField.add(WebServiceUtil.STUDENT_ID_ERROR);
+		}
+		if(dailyAttendanceDto.getTeacherId() == null) {
+			requestMissedField.add(WebServiceUtil.TEACHER_ID_ERROR);
+		}
+		
+		if(!requestMissedField.isEmpty()) {
+			return requestMissedField;
+		}
+		
+	
 		LocalDateTime today = LocalDateTime.now();
+
+		SchoolHolidaysModel schoolHoliday = schoolHolidaysDao.getHolidayByHolidayDate(dailyAttendanceDto.getAttendanceDate());
+	
+		if(schoolHoliday != null && Boolean.FALSE.equals(schoolHoliday.getIsHolidayCancelled())) {
+			return dailyAttendanceDto.getAttendanceDate() + WebServiceUtil.DO_NOT_MARK_ATTENDANCE;
+		}
 		
 		DailyAttendanceModel dailyAttendance;
-
 //    	dailyAttendance = dailyAttendanceDao.findAttendanceById(dailyAttendanceDto.getAttendanceId());
 		dailyAttendance = dailyAttendanceDao.getStudentIdAndAttendanceDate(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate());
 		if(dailyAttendance == null) {
@@ -80,51 +111,69 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 
     
 
-//	@Override
-//	public Object setAttandanceMultiSameDate(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
-//		
-//		return dailyAttendanceDao.setAttandanceMultiSameDate(dailyAttendanceDto,attendanceDate);
-//	}
-
 	@Override
 	public Object setAttandanceMultiStudents(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
-
-		List<DailyAttendanceModel> attendance = new ArrayList<>();
+		List<String> requestMissedField = new ArrayList<>();
+		List<DailyAttendanceModel> attendanceList = new ArrayList<>();
 		LocalDateTime today = LocalDateTime.now();
-		for (DailyAttendanceDto attend : dailyAttendanceDto) {
+		for (DailyAttendanceDto attendance : dailyAttendanceDto) {
+			
+			if(attendance.getAttendanceDate() == null) {
+				requestMissedField.add(WebServiceUtil.ATTENDANCE_DATE_ERROR);			
+			}
+			if(attendance.getAttendanceStatus() == '\u0000' || attendance.getAttendanceStatus()!='P' && attendance.getAttendanceStatus()!='A' ) {
+				requestMissedField.add(WebServiceUtil.ATTENDANCE_STATUS_ERROR);
+			}
+			if(attendance.getStudentId() == null) {
+				requestMissedField.add(WebServiceUtil.STUDENT_ID_ERROR);
+			}
+			if(attendance.getTeacherId() == null) {
+				requestMissedField.add(WebServiceUtil.TEACHER_ID_ERROR);
+			}
+			
+			if(!requestMissedField.isEmpty()) {
+				return requestMissedField;
+			}
+			
+			SchoolHolidaysModel schoolHoliday = schoolHolidaysDao.getHolidayByHolidayDate(attendance.getAttendanceDate());
+			
+			if(schoolHoliday != null && Boolean.FALSE.equals(schoolHoliday.getIsHolidayCancelled())) {
+				return attendance.getAttendanceDate() + WebServiceUtil.DO_NOT_MARK_ATTENDANCE;
+			}
+			
 			DailyAttendanceModel dailyAttendance;
-			dailyAttendance = dailyAttendanceDao.getStudentIdAndAttendanceDate(attend.getStudentId(),attend.getAttendanceDate());
+			dailyAttendance = dailyAttendanceDao.getStudentIdAndAttendanceDate(attendance.getStudentId(),attendance.getAttendanceDate());
 			if(dailyAttendance == null) {
-				dailyAttendance = dailyAttendanceDao.createNewAttendance(attend.getStudentId());
-				dailyAttendance.setCreateTeacher(attend.getTeacherId());
+				dailyAttendance = dailyAttendanceDao.createNewAttendance(attendance.getStudentId());
+				dailyAttendance.setCreateTeacher(attendance.getTeacherId());
 				dailyAttendance.setCreateDate(today);
 				if (attendanceDate != null) {
 					dailyAttendance.setAttendanceDate(attendanceDate);
 				} else {
-					dailyAttendance.setAttendanceDate(attend.getAttendanceDate());
+					dailyAttendance.setAttendanceDate(attendance.getAttendanceDate());
 				}
 			}
 			else {
-				dailyAttendance.setUpdateTeacher(attend.getTeacherId());
+				dailyAttendance.setUpdateTeacher(attendance.getTeacherId());
 				dailyAttendance.setUpdateTime(today);
 			}
 			
-			dailyAttendance.setAttendanceStatus(attend.getAttendanceStatus());
+			dailyAttendance.setAttendanceStatus(attendance.getAttendanceStatus());
 
-			if (attend.getAttendanceStatus() == WebServiceUtil.ABSENT) {
-				dailyAttendance.setLongApprovedSickLeaveFlag(attend.getLongApprovedSickLeaveFlag());
+			if (attendance.getAttendanceStatus() == WebServiceUtil.ABSENT) {
+				dailyAttendance.setLongApprovedSickLeaveFlag(attendance.getLongApprovedSickLeaveFlag());
 				dailyAttendance
-						.setApprovedExtraCurricularActivitiesFlag(attend.getApprovedExtraCurricularActivitiesFlag());
+						.setApprovedExtraCurricularActivitiesFlag(attendance.getApprovedExtraCurricularActivitiesFlag());
 			} else {
 				dailyAttendance.setLongApprovedSickLeaveFlag(WebServiceUtil.NO);
 				dailyAttendance.setApprovedExtraCurricularActivitiesFlag(WebServiceUtil.NO);
 			}
 
-			attendance.add(dailyAttendance);
+			attendanceList.add(dailyAttendance);
 			
 		}
 			
-		dailyAttendanceDao.setAttandanceMultiStudents(attendance);
+		dailyAttendanceDao.setAttandanceMultiStudents(attendanceList);
 
 		
 		if(attendanceDate == null) {

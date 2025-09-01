@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.SchoolHolidaysDao;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
+
 import com.studentmanagementsystem.api.service.SchoolHolidaysService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 @Service
@@ -17,12 +18,6 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 	
 	@Autowired
 	private SchoolHolidaysDao schoolHolidaysDao;
-
-
-
-
-
-
 
 
 	
@@ -33,76 +28,98 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 
 	@Override
 	public List<SchoolHolidaysDto> getCancelHolidays() {
-		// TODO Auto-generated method stub
+		
 		return schoolHolidaysDao.getAllHolidays(WebServiceUtil.CANCEL_HOLIDAY);
 	}
 	
-//	@Override
-//	public Object declareHolidays(SchoolHolidaysDto schoolHolidaysDto) {
-//		return schoolHolidaysDao.declareHolidays(schoolHolidaysDto);
-//	}
-	
+
 	
 	@Override
 	public Object declareHoliday(SchoolHolidaysDto schoolHolidaysDto) {
+		
+		List<String> requestMissedField = new ArrayList<>();
+		
+		if(schoolHolidaysDto.getHolidayDate() == null) {
+			requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
+		}
+		if(schoolHolidaysDto.getHolidayReason() == null) {
+			requestMissedField.add(WebServiceUtil.HOL_REASON_ERROR);
+		}
+		if (!requestMissedField.isEmpty()) {
+			return requestMissedField;
+		}
+		
 		LocalDate date = schoolHolidaysDto.getHolidayDate();
 		if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-			throw new RuntimeException("the Day is Sunday,so no need to declsre");
+			throw new RuntimeException(date + WebServiceUtil.SUNDAY);
 		}
-		SchoolHolidaysModel holiday;
+		SchoolHolidaysModel holiday = schoolHolidaysDao.getHolidayByHolidayDate(schoolHolidaysDto.getHolidayDate()) ;
 
-		if (schoolHolidaysDto.getHolidayId() == null) {
-
+		if (holiday == null) {
 			holiday = new SchoolHolidaysModel();
-		} else {
-		  holiday = schoolHolidaysDao.findHolidayId(schoolHolidaysDto.getHolidayId());
-		}
+		} 
 		holiday.setHolidayDate(schoolHolidaysDto.getHolidayDate());
 		holiday.setHolidayReason(schoolHolidaysDto.getHolidayReason());
 		return schoolHolidaysDao.declareHoliday(holiday);
 	}
 	
-//	@Override
-//	public Object declareMultipleHolidays(List<SchoolHolidaysDto> schoolHolidaysDto) {	
-//		return schoolHolidaysDao.declareMultipleHolidays(schoolHolidaysDto);
-//	}
+
 	
 	@Override
 	public Object declareMultipleHolidays(List<SchoolHolidaysDto> schoolHolidaysDto) {
 		
 		List<SchoolHolidaysModel> holidays = new ArrayList<>();
-		for (SchoolHolidaysDto schooldto : schoolHolidaysDto) {
-			LocalDate date = schooldto.getHolidayDate();
+		List<String> requestMissedField = new ArrayList<>();
+		
+		for (SchoolHolidaysDto holidaydeclare : schoolHolidaysDto) {
+			
+			
+			if(holidaydeclare.getHolidayDate() == null) {
+				requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
+			}
+			if(holidaydeclare.getHolidayReason() == null) {
+				requestMissedField.add(WebServiceUtil.HOL_REASON_ERROR + holidaydeclare.getHolidayDate());
+			}
+			if (!requestMissedField.isEmpty()) {
+				return requestMissedField;
+			}		
+			LocalDate date = holidaydeclare.getHolidayDate();
 			if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-				throw new RuntimeException("the Day is Sunday,so no need to declsre");
+				throw new RuntimeException(date + WebServiceUtil.SUNDAY);
 			}
-			SchoolHolidaysModel holiday;
+			SchoolHolidaysModel holiday = schoolHolidaysDao.getHolidayByHolidayDate(holidaydeclare.getHolidayDate()) ;
 
-			if (schooldto.getHolidayId() == null) {
-
+			if (holiday == null) {
 				holiday = new SchoolHolidaysModel();
-			} else {
-				  holiday = schoolHolidaysDao.findHolidayId(schooldto.getHolidayId());
-
 			}
-			holiday.setHolidayDate(schooldto.getHolidayDate());
-			holiday.setHolidayReason(schooldto.getHolidayReason());
+			holiday.setHolidayDate(holidaydeclare.getHolidayDate());
+			holiday.setHolidayReason(holidaydeclare.getHolidayReason());
 			holidays.add(holiday);
 		}
 		return schoolHolidaysDao.declareMultipleHolidays(holidays);	
 	}
 	
-//	@Override
-//	public Object cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto) {
-//		return schoolHolidaysDao.cancelHolidayByDate(schoolHolidaysDto) ;
-//	}
+
 	
 	@Override
 	public Object cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto) {
 		
-		SchoolHolidaysModel holiday = schoolHolidaysDao.findHolidayId(schoolHolidaysDto.getHolidayDate());
+		List<String> requestMissedField = new ArrayList<>();
+		
+		if(schoolHolidaysDto.getHolidayDate() == null) {
+			requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
+		}
+		
+		if(schoolHolidaysDto.getHolidayCancelledReason()==null) {
+			return WebServiceUtil.HOL_CANCALLED_REASON_ERROR + schoolHolidaysDto.getHolidayDate();
+		}
+		if (!requestMissedField.isEmpty()) {
+			return requestMissedField;
+		}
+		
+		SchoolHolidaysModel holiday = schoolHolidaysDao.getHolidayByHolidayDate(schoolHolidaysDto.getHolidayDate());
 		if (Boolean.TRUE.equals(holiday.getIsHolidayCancelled())) {
-			throw new RuntimeException("This holiday is already cancelled");
+			throw new RuntimeException(WebServiceUtil.ALREADY_HOLIDAY_CANCELLED+schoolHolidaysDto.getHolidayDate());
 		}
 
 		holiday.setIsHolidayCancelled(true);
@@ -112,25 +129,33 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 		
 	}
 	
-//	@Override
-//	public Object cancelMultipleHoliday(List<SchoolHolidaysDto> schoolHolidaysDto) {
-//		
-//		return schoolHolidaysDao.cancelMultipleHoliday(schoolHolidaysDto);
-//	}
+
 	
 	@Override
 	public Object cancelMultipleHoliday(List<SchoolHolidaysDto> schoolHolidaysDto) {
 	
 		List<SchoolHolidaysModel> holidays = new ArrayList<>();
-		for (SchoolHolidaysDto schooldto : schoolHolidaysDto) {
+		List<String> requestMissedField = new ArrayList<>();
+		
+		for (SchoolHolidaysDto holidayDeclare : schoolHolidaysDto) {
 			
-			SchoolHolidaysModel holiday = schoolHolidaysDao.findHolidayId(schooldto.getHolidayDate());
+			if(holidayDeclare.getHolidayDate() == null) {
+				requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
+			}
+			
+			if(holidayDeclare.getHolidayCancelledReason()==null) {
+				return WebServiceUtil.HOL_CANCALLED_REASON_ERROR + holidayDeclare.getHolidayDate();
+			}
+			if (!requestMissedField.isEmpty()) {
+				return requestMissedField;
+			}
+			SchoolHolidaysModel holiday = schoolHolidaysDao.getHolidayByHolidayDate(holidayDeclare.getHolidayDate());
 			if (Boolean.TRUE.equals(holiday.getIsHolidayCancelled())) {
-				throw new RuntimeException("This holiday is already cancelled");
+				throw new RuntimeException(WebServiceUtil.ALREADY_HOLIDAY_CANCELLED+holidayDeclare.getHolidayDate());
 			}
 
 			holiday.setIsHolidayCancelled(true);
-			holiday.setHolidayCancelledReason(schooldto.getHolidayCancelledReason());
+			holiday.setHolidayCancelledReason(holidayDeclare.getHolidayCancelledReason());
 
 			holidays.add(holiday);
 		}

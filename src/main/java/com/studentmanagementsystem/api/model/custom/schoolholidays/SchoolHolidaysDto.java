@@ -10,7 +10,7 @@ public class SchoolHolidaysDto {
 		
 	private String holidayReason;
 	
-	private Boolean isHolidayCancelled = false;;
+	private Boolean isHolidayCancelled = false;
 	
 	private String holidayCancelledReason;
 

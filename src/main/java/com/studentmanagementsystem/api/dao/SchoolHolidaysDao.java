@@ -29,11 +29,15 @@ public interface SchoolHolidaysDao {
 
 	Object declareMultipleHolidays(List<SchoolHolidaysModel> holidays);
 
-	SchoolHolidaysModel findHolidayId(LocalDate holidayDate);
+//	SchoolHolidaysModel findHolidayId(LocalDate holidayDate);
 
 	Object cancelHolidayByDate(SchoolHolidaysModel holiday);
 
 	Object cancelMultipleHoliday(List<SchoolHolidaysModel> holidays);
+
+	SchoolHolidaysModel getHolidayByHolidayDate(LocalDate holidayDate);
+
+//	SchoolHolidaysModel findByHolidayDate(LocalDate attendanceDate);
 
 
 }

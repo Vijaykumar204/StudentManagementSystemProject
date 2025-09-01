@@ -1,6 +1,8 @@
 package com.studentmanagementsystem.api.daoimpl;
 
 import java.util.List;
+
+import org.hibernate.annotations.Where;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
@@ -154,6 +156,29 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 				).where(stuCondition,quarterandYearCondition);
 		
 		return entityManager.createQuery(cq).getSingleResult();
+	}
+
+	@Override
+	public List<QuarterlyAttendanceReportDto> getQuarterlyAttendanceReport(String quarterAndYear) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<QuarterlyAttendanceReportDto>  cq=cb.createQuery(QuarterlyAttendanceReportDto.class);
+		Root<QuarterlyAttendanceReportModel> quarterly = cq.from(QuarterlyAttendanceReportModel.class);
+		Predicate quarterandYearCondition = cb.equal(quarterly.get("quarterAndYear"),quarterAndYear);
+		cq.select(cb.construct(QuarterlyAttendanceReportDto.class,
+				 
+				quarterly.get("studentModel").get("studentId"),
+				quarterly.get("totalSchoolWorkingDays"),
+				quarterly.get("totalDaysOfPresent"),
+				quarterly.get("totalDaysOfAbsents"),				
+				quarterly.get("totalApprovedActivitiesPermissionDays"),
+				quarterly.get("totalApprovedSickdays"),
+				quarterly.get("attendanceComplianceStatus")
+				
+				)).where(quarterandYearCondition)	;	
+		
+
+		
+		return entityManager.createQuery(cq).getResultList();
 	}
 
 

@@ -1,5 +1,6 @@
 package com.studentmanagementsystem.api.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,11 @@ public interface StudentModelDao {
 
 
 	Object activeOrDeactiveByStudentId(StudentModel student);
+
+
+
+	StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
+			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth);
 
 
 

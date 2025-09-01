@@ -1,5 +1,6 @@
 package com.studentmanagementsystem.api.daoimpl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -215,6 +216,15 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	public Object activeOrDeactiveByStudentId(StudentModel student) {
 		
 		return studentModelRepository.save(student);
+	}
+
+
+
+	@Override
+	public StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
+			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth) {
+		// TODO Auto-generated method stub
+		return studentModelRepository.findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(studentFirstName,studentMiddleName,studentLastName,studentDateOfBirth);
 	}
 
 

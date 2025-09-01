@@ -49,38 +49,9 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 	}
 
 	@Override
-	public Object saveTeacher(TeacherSaveRequestDto teacherSaveRequestDto, Long teacherId) {
+	public Object saveTeacher(TeacherModel teacher) {
 		
-		   LocalDateTime today = LocalDateTime.now();
-		   TeacherModel teacher;
-		   if(teacherSaveRequestDto.getTeacherId() == null) {
-				 teacher = new TeacherModel();
-//				teacher.setTeacherName(teacherSaveRequestDto.getTeacherName());
-//				teacher.setTeacherRole(teacherSaveRequestDto.getTeacherRole());
-//				teacher.setTeacherDepartment(teacherSaveRequestDto.getTeacherDepartment());
-//				teacher.setTeacherPhoneNumber(teacherSaveRequestDto.getTeacherPhoneNumber());
-				teacher.setCreateUser(teacherId);
-				teacher.setCreateTime(today);	
-//				teacherRepository.save(teacher) ;
-//				 return "saved.....";
-		   }	   
-		   else {
-			   
-			   Optional<TeacherModel> teacher1 = teacherRepository.findById(teacherSaveRequestDto.getTeacherId());
-		        teacher = teacher1.get();
-//			    teacher.get().setTeacherName(teacherSaveRequestDto.getTeacherName());
-//				teacher.get().setTeacherRole(teacherSaveRequestDto.getTeacherRole());
-//				teacher.get().setTeacherDepartment(teacherSaveRequestDto.getTeacherDepartment());
-//				teacher.get().setTeacherPhoneNumber(teacherSaveRequestDto.getTeacherPhoneNumber());
-			    teacher.setUpdateUser(teacherId);
-				teacher.setUpdateTime(today);
-		
-				
-			}
-			teacher.setTeacherName(teacherSaveRequestDto.getTeacherName());
-			teacher.setTeacherRole(teacherSaveRequestDto.getTeacherRole());
-			teacher.setTeacherDepartment(teacherSaveRequestDto.getTeacherDepartment());
-			teacher.setTeacherPhoneNumber(teacherSaveRequestDto.getTeacherPhoneNumber());
+
 		   return teacherRepository.save(teacher);
 	}
 	
@@ -124,5 +95,7 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 		
 		return teacherRepository.getTeacherByTeacherId(teacherId);
 	}
+
+
 
 }

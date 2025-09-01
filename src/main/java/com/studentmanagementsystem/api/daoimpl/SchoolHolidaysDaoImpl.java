@@ -122,13 +122,13 @@ public class SchoolHolidaysDaoImpl implements SchoolHolidaysDao {
 		return schoolHolidaysRepository.saveAll(holidays);
 	}
 
-	@Override
-	public SchoolHolidaysModel findHolidayId(LocalDate holidayDate) {
-		Optional<SchoolHolidaysModel> holidayOpt = schoolHolidaysRepository
-			.getHolidayByHolidayDate(holidayDate);
-		SchoolHolidaysModel holiday = holidayOpt.get();
-		return holiday;
-	}
+//	@Override
+//	public SchoolHolidaysModel findHolidayId(LocalDate holidayDate) {
+//		Optional<SchoolHolidaysModel> holidayOpt = schoolHolidaysRepository
+//			.getHolidayByHolidayDate(holidayDate);
+//		SchoolHolidaysModel holiday = holidayOpt.get();
+//		return holiday;
+//	}
 
 	@Override
 	public Object cancelHolidayByDate(SchoolHolidaysModel holiday) {
@@ -140,6 +140,12 @@ public class SchoolHolidaysDaoImpl implements SchoolHolidaysDao {
 	public Object cancelMultipleHoliday(List<SchoolHolidaysModel> holidays) {
 
 		return schoolHolidaysRepository.saveAll(holidays);
+	}
+
+	@Override
+	public SchoolHolidaysModel getHolidayByHolidayDate(LocalDate holidayDate) {
+		
+		return schoolHolidaysRepository.getHolidayByHolidayDate(holidayDate) ;
 	}
 
 

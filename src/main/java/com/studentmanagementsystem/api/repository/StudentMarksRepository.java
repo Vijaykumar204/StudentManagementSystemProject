@@ -1,5 +1,7 @@
 package com.studentmanagementsystem.api.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +19,8 @@ public interface StudentMarksRepository extends JpaRepository<StudentMarks, Long
 	@Query("SELECT sm FROM StudentMarks sm WHERE sm.studentModel.studentId = :studentId AND sm.quarterAndYear = :quarterAndYear")
 	StudentMarks findByStudentIdAndQuarterAndYear(@Param("studentId") Long studentId, 
 	                                              @Param("quarterAndYear") String quarterAndYear);
+
+
 
 	
 }

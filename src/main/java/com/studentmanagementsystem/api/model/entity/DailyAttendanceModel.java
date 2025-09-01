@@ -20,8 +20,6 @@ public class DailyAttendanceModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
-	
 	@Column(name = "AT_Id")
 	private Long attendanceId;
 	

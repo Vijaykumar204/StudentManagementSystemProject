@@ -10,9 +10,13 @@ public interface TeacherRequestDao {
 
 	List<TeacherModelListDto> listAllTeachers();
 
-	Object saveTeacher(TeacherSaveRequestDto teacherSaveRequestDto, Long teacherId);
+
 
 	List<TeacherModelListDto> filterTeacher(Long teacherId, String teacherName, String teacherPhoneNumber);
 
 	TeacherModel getTeacherByTeacherId(Long teacherId);
+
+	Object saveTeacher(TeacherModel teacher);
+
+
 }

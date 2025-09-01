@@ -35,8 +35,7 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 	@Autowired
 	private StudentMarksRepository studentMarksRepository;
 
-	@Autowired
-	private QuarterlyAttendanceModelRepository quarterlyAttendanceModelRepository;
+
 
 	@Override
 	public StudentMarks getStudentModelandquarterAndYear(Long studentId, String quarterAndYear) {

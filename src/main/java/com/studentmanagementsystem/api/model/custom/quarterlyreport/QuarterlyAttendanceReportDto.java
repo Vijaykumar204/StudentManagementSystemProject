@@ -92,16 +92,34 @@ public class QuarterlyAttendanceReportDto {
 		this.studentId = studentId;
 	}
 
-	public QuarterlyAttendanceReportDto(Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents,
-			Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays, Long studentId) {
-		super();
+	public QuarterlyAttendanceReportDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents, Long totalApprovedSickdays,
+			Long totalApprovedActivitiesPermissionDays ) {
+		
+		this.studentId = studentId;
+		this.totalSchoolWorkingDays = totalSchoolWorkingDays;
+		this.totalDaysOfPresent = totalDaysOfPresent;
+		this.totalDaysOfAbsents = totalDaysOfAbsents;
+		this.totalApprovedSickdays = totalApprovedSickdays;
+		this.totalApprovedActivitiesPermissionDays = totalApprovedActivitiesPermissionDays;
+		
+		
+	}
+
+	public QuarterlyAttendanceReportDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents,
+			Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays, String attendanceComplianceStatus
+			) {
+		this.studentId = studentId;
 		this.totalSchoolWorkingDays = totalSchoolWorkingDays;
 		this.totalDaysOfPresent = totalDaysOfPresent;
 		this.totalDaysOfAbsents = totalDaysOfAbsents;
 		this.totalApprovedActivitiesPermissionDays = totalApprovedActivitiesPermissionDays;
 		this.totalApprovedSickdays = totalApprovedSickdays;
-		this.studentId = studentId;
+		this.attendanceComplianceStatus = attendanceComplianceStatus;
+		
 	}
+	
+	
+	
 
 	
 

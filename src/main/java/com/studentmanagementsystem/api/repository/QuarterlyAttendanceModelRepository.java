@@ -1,5 +1,7 @@
 package com.studentmanagementsystem.api.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +30,9 @@ public interface QuarterlyAttendanceModelRepository extends JpaRepository<Quarte
 //			String quarterAndYear);
 
 //	QuarterlyAttendanceReportModel findByStudentModel_StudentIdAndQuarterAndYear(Long studentId, String quarterAndYear);
+	
+	
+	
+//	@Query("SELECT q FROM QuarterlyAttendanceReportModel q WHERE q.quarterAndYear = :quarterAndYear")
+//	List<QuarterlyAttendanceReportModel> findByQuarterAndYear(@Param("quarterAndYear") String quarterAndYear);
 }

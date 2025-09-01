@@ -11,6 +11,8 @@ import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
 @Repository
 public interface SchoolHolidaysRepository extends JpaRepository<SchoolHolidaysModel, Long> {
 
-	Optional<SchoolHolidaysModel> getHolidayByHolidayDate(LocalDate holidayDate);
+	SchoolHolidaysModel getHolidayByHolidayDate(LocalDate holidayDate);
+
+//	SchoolHolidaysModel findByHolidayDate(LocalDate holidayDate);
 
 }

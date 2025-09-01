@@ -27,9 +27,9 @@ public class TeacherModel {
 	private String teacherPhoneNumber;
 	
 	@Column(name = "TEACH_Role",nullable = false,length=2)
-	private String teacherRole;
+	private String teacherRole = "T";
 	
-	@Column(name = "TEACH_Department",length=15)
+	@Column(name = "TEACH_Department",length=15,nullable = false)
 	private String teacherDepartment;
 	
 	@Column(name = "TEACH_Create_User",nullable = false)
