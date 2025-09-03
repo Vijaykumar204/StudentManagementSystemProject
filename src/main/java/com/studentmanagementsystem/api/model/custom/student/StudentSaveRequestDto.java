@@ -4,13 +4,8 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.studentmanagementsystem.api.util.DateDeserializeUtil;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
-
-
 
 public class StudentSaveRequestDto {
 	
@@ -22,16 +17,14 @@ public class StudentSaveRequestDto {
 	
 	private String studentLastName;
 	
-	private char studentGender;
-
-//	@JsonDeserialize(using = DateDeserializeUtil.class)
+	private Character studentGender;
 	@JsonDeserialize(using =DateDeserializeUtil.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate studentDateOfBirth;
 	
-	private int studentClassOfStudy;
+	private Integer studentClassOfStudy;
 
-	private char studentResidingStatus;
+	private Character studentResidingStatus;
 
 	private String studentPhoneNumber;
 
@@ -45,7 +38,7 @@ public class StudentSaveRequestDto {
 
 	private String homePostalCode;
 
-	private char studentActiveStatus;
+	private Character studentActiveStatus;
 	
 	private String studentEmail;
 	
@@ -83,11 +76,11 @@ public class StudentSaveRequestDto {
 		this.studentLastName = studentLastName;
 	}
 
-	public char getStudentGender() {
+	public Character getStudentGender() {
 		return studentGender;
 	}
 
-	public void setStudentGender(char studentGender) {
+	public void setStudentGender(Character studentGender) {
 		this.studentGender = studentGender;
 	}
 
@@ -99,19 +92,20 @@ public class StudentSaveRequestDto {
 		this.studentDateOfBirth = studentDateOfBirth;
 	}
 
-	public int getStudentClassOfStudy() {
+
+	public Integer getStudentClassOfStudy() {
 		return studentClassOfStudy;
 	}
 
-	public void setStudentClassOfStudy(int studentClassOfStudy) {
+	public void setStudentClassOfStudy(Integer studentClassOfStudy) {
 		this.studentClassOfStudy = studentClassOfStudy;
 	}
 
-	public char getStudentResidingStatus() {
+	public Character getStudentResidingStatus() {
 		return studentResidingStatus;
 	}
 
-	public void setStudentResidingStatus(char studentResidingStatus) {
+	public void setStudentResidingStatus(Character studentResidingStatus) {
 		this.studentResidingStatus = studentResidingStatus;
 	}
 
@@ -163,11 +157,11 @@ public class StudentSaveRequestDto {
 		this.homePostalCode = homePostalCode;
 	}
 
-	public char getStudentActiveStatus() {
+	public Character getStudentActiveStatus() {
 		return studentActiveStatus;
 	}
 
-	public void setStudentActiveStatus(char studentActiveStatus) {
+	public void setStudentActiveStatus(Character studentActiveStatus) {
 		this.studentActiveStatus = studentActiveStatus;
 	}
 

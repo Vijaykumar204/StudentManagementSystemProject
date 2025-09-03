@@ -38,7 +38,7 @@ public class StudentModel {
 	private String studentLastName;
 	
 	@Column(name = "STU_Gender",nullable = false)
-	private char studentGender;
+	private Character studentGender;
 	
 	@Column(name ="STU_DOB",nullable = false)
 //	@DateTimeFormat(pattern = "dd-MM-yyyy")   // for input (e.g., from HTML form / RequestParam)
@@ -46,10 +46,10 @@ public class StudentModel {
 	private LocalDate studentDateOfBirth;
 	
 	@Column(name = "STU_Class",nullable = false)
-	private int studentClassOfStudy;
+	private Integer studentClassOfStudy;
 	
 	@Column(name = "STU_Residing_Status",nullable = false)
-	private char studentResidingStatus;
+	private Character studentResidingStatus;
 	
 	@Column(name = "STU_Email",unique = true,length =25,nullable = false)
 	private String studentEmail;
@@ -73,7 +73,7 @@ public class StudentModel {
 	private String homePostalCode;
 	
 	@Column(name = "STU_Status", nullable = false,columnDefinition ="CHAR DEFAULT 'A'")
-	private char studentActiveStatus = 'A';
+	private Character studentActiveStatus = 'A';
 	
 	@Column(name = "STU_Last_Effective_Date")
 	private LocalDateTime lasteffectivedate;
@@ -101,304 +101,205 @@ public class StudentModel {
 	
 	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
 	@JsonIgnore
-    private List<StudentMarks> marks;
+    private List<MarkModel> marks;
 
     @OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel;
-	
 
 	public Long getStudentId() {
 		return studentId;
 	}
 
-
-
 	public void setStudentId(Long studentId) {
 		this.studentId = studentId;
 	}
-
-
 
 	public String getStudentFirstName() {
 		return studentFirstName;
 	}
 
-
-
 	public void setStudentFirstName(String studentFirstName) {
 		this.studentFirstName = studentFirstName;
 	}
-
-
 
 	public String getStudentMiddleName() {
 		return studentMiddleName;
 	}
 
-
-
 	public void setStudentMiddleName(String studentMiddleName) {
 		this.studentMiddleName = studentMiddleName;
 	}
-
-
 
 	public String getStudentLastName() {
 		return studentLastName;
 	}
 
-
-
 	public void setStudentLastName(String studentLastName) {
 		this.studentLastName = studentLastName;
 	}
 
-
-
-	public char getStudentGender() {
+	public Character getStudentGender() {
 		return studentGender;
 	}
 
-
-
-	public void setStudentGender(char studentGender) {
+	public void setStudentGender(Character studentGender) {
 		this.studentGender = studentGender;
 	}
-
-
 
 	public LocalDate getStudentDateOfBirth() {
 		return studentDateOfBirth;
 	}
 
-
-
 	public void setStudentDateOfBirth(LocalDate studentDateOfBirth) {
 		this.studentDateOfBirth = studentDateOfBirth;
 	}
 
-
-
-	public int getStudentClassOfStudy() {
+	public Integer getStudentClassOfStudy() {
 		return studentClassOfStudy;
 	}
 
-
-
-	public void setStudentClassOfStudy(int studentClassOfStudy) {
+	public void setStudentClassOfStudy(Integer studentClassOfStudy) {
 		this.studentClassOfStudy = studentClassOfStudy;
 	}
 
-
-
-	public char getStudentResidingStatus() {
+	public Character getStudentResidingStatus() {
 		return studentResidingStatus;
 	}
 
-
-
-	public void setStudentResidingStatus(char studentResidingStatus) {
+	public void setStudentResidingStatus(Character studentResidingStatus) {
 		this.studentResidingStatus = studentResidingStatus;
 	}
-
-
 
 	public String getStudentEmail() {
 		return studentEmail;
 	}
 
-
-
 	public void setStudentEmail(String studentEmail) {
 		this.studentEmail = studentEmail;
 	}
-
-
 
 	public String getStudentPhoneNumber() {
 		return studentPhoneNumber;
 	}
 
-
-
 	public void setStudentPhoneNumber(String studentPhoneNumber) {
 		this.studentPhoneNumber = studentPhoneNumber;
 	}
-
-
 
 	public String getEmergencyContactPersonName() {
 		return emergencyContactPersonName;
 	}
 
-
-
 	public void setEmergencyContactPersonName(String emergencyContactPersonName) {
 		this.emergencyContactPersonName = emergencyContactPersonName;
 	}
-
-
 
 	public String getEmergencyContactPhoneNumber() {
 		return emergencyContactPhoneNumber;
 	}
 
-
-
 	public void setEmergencyContactPhoneNumber(String emergencyContactPhoneNumber) {
 		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
 	}
-
-
 
 	public String getHomeStreetName() {
 		return homeStreetName;
 	}
 
-
-
 	public void setHomeStreetName(String homeStreetName) {
 		this.homeStreetName = homeStreetName;
 	}
-
-
 
 	public String getHomeCityName() {
 		return homeCityName;
 	}
 
-
-
 	public void setHomeCityName(String homeCityName) {
 		this.homeCityName = homeCityName;
 	}
-
-
 
 	public String getHomePostalCode() {
 		return homePostalCode;
 	}
 
-
-
 	public void setHomePostalCode(String homePostalCode) {
 		this.homePostalCode = homePostalCode;
 	}
 
-
-
-	public char getStudentActiveStatus() {
+	public Character getStudentActiveStatus() {
 		return studentActiveStatus;
 	}
 
-
-
-	public void setStudentActiveStatus(char studentActiveStatus) {
+	public void setStudentActiveStatus(Character studentActiveStatus) {
 		this.studentActiveStatus = studentActiveStatus;
 	}
-
-
 
 	public LocalDateTime getLasteffectivedate() {
 		return lasteffectivedate;
 	}
 
-
-
 	public void setLasteffectivedate(LocalDateTime lasteffectivedate) {
 		this.lasteffectivedate = lasteffectivedate;
 	}
-
-
 
 	public LocalDateTime getStudentCreateDate() {
 		return studentCreateDate;
 	}
 
-
-
 	public void setStudentCreateDate(LocalDateTime studentCreateDate) {
 		this.studentCreateDate = studentCreateDate;
 	}
-
-
 
 	public Long getUpdateTeacher() {
 		return updateTeacher;
 	}
 
-
-
 	public void setUpdateTeacher(Long updateTeacher) {
 		this.updateTeacher = updateTeacher;
 	}
-
-
 
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-
-
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
-
-
 
 	public TeacherModel getTeacherModel() {
 		return teacherModel;
 	}
 
-
-
 	public void setTeacherModel(TeacherModel teacherModel) {
 		this.teacherModel = teacherModel;
 	}
-
-
 
 	public List<DailyAttendanceModel> getDailyAttendanceModel() {
 		return dailyAttendanceModel;
 	}
 
-
-
 	public void setDailyAttendanceModel(List<DailyAttendanceModel> dailyAttendanceModel) {
 		this.dailyAttendanceModel = dailyAttendanceModel;
 	}
 
-
-
-	public List<StudentMarks> getMarks() {
+	public List<MarkModel> getMarks() {
 		return marks;
 	}
 
-
-
-	public void setMarks(List<StudentMarks> marks) {
+	public void setMarks(List<MarkModel> marks) {
 		this.marks = marks;
 	}
 
-
-	@JsonIgnore
-	public List<QuarterlyAttendanceReportModel> getQuarterlyAttendanceReports() {
+	public List<QuarterlyAttendanceReportModel> getQuarterlyAttendanceReportModel() {
 		return quarterlyAttendanceReportModel;
 	}
 
-
-
-	public void setQuarterlyAttendanceReports(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel) {
+	public void setQuarterlyAttendanceReportModel(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel) {
 		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
 	}
-
-
-
+	
 
 	
-	
-	//Getter and Setter
 	
 }

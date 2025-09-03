@@ -12,7 +12,7 @@ public class ClassTopperDto {
 	
 	private String StudentLastName;
 	
-	private int totalMark;
+	private Integer totalMark;
 
 	public Long getStudentId() {
 		return studentId;
@@ -54,16 +54,16 @@ public class ClassTopperDto {
 		StudentLastName = studentLastName;
 	}
 
-	public int getTotalMark() {
+	public Integer getTotalMark() {
 		return totalMark;
 	}
 
-	public void setTotalMark(int totalMark) {
+	public void setTotalMark(Integer totalMark) {
 		this.totalMark = totalMark;
 	}
 
 	public ClassTopperDto(Long studentId, String quarterAndYear, String studentFirstName, String studentMiddleName,
-			String studentLastName, int totalMark) {
+			String studentLastName, Integer totalMark) {
 		
 		this.studentId = studentId;
 		this.quarterAndYear = quarterAndYear;

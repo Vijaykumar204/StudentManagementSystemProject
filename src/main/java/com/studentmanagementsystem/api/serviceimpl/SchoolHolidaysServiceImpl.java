@@ -8,45 +8,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studentmanagementsystem.api.dao.SchoolHolidaysDao;
+import com.studentmanagementsystem.api.model.custom.Response;
+import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidayListResponse;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
 
 import com.studentmanagementsystem.api.service.SchoolHolidaysService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
+import com.studentmanagementsystem.api.validation.FieldValidation;
 @Service
 public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 	
 	@Autowired
 	private SchoolHolidaysDao schoolHolidaysDao;
+	
+	@Autowired
+	private FieldValidation fieldValidation;
 
 
 	
 	@Override
-	public List<SchoolHolidaysDto> getHolidays() {
-		return schoolHolidaysDao.getAllHolidays(WebServiceUtil.HOLIDAY);
-	}
-
-	@Override
-	public List<SchoolHolidaysDto> getCancelHolidays() {
+	public SchoolHolidayListResponse getHolidays() {
+		SchoolHolidayListResponse response = new SchoolHolidayListResponse();
+		 List<SchoolHolidaysDto> schoolHolidaysDto = schoolHolidaysDao.getAllHolidays(WebServiceUtil.HOLIDAY);
+		 response.setStatus(WebServiceUtil.SUCCESS);	
+			response.setData(schoolHolidaysDto);
+		return response;
 		
-		return schoolHolidaysDao.getAllHolidays(WebServiceUtil.CANCEL_HOLIDAY);
 	}
-	
 
-	
+	@Override
+	public SchoolHolidayListResponse getCancelHolidays() {
+		List<SchoolHolidaysDto> schoolHolidaysDto = schoolHolidaysDao.getAllHolidays(WebServiceUtil.CANCEL_HOLIDAY);
+		SchoolHolidayListResponse response = new SchoolHolidayListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(schoolHolidaysDto);
+		return response;
+	}
+
 	@Override
 	public Object declareHoliday(SchoolHolidaysDto schoolHolidaysDto) {
+		Response response = new Response();
+		List<String> requestMissedFieldList = fieldValidation.checkValidationDeclareHoliday(schoolHolidaysDto);
 		
-		List<String> requestMissedField = new ArrayList<>();
-		
-		if(schoolHolidaysDto.getHolidayDate() == null) {
-			requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
-		}
-		if(schoolHolidaysDto.getHolidayReason() == null) {
-			requestMissedField.add(WebServiceUtil.HOL_REASON_ERROR);
-		}
-		if (!requestMissedField.isEmpty()) {
-			return requestMissedField;
+		if (!requestMissedFieldList.isEmpty()) {
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(requestMissedFieldList);		
+			return response;
 		}
 		
 		LocalDate date = schoolHolidaysDto.getHolidayDate();
@@ -60,29 +68,28 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 		} 
 		holiday.setHolidayDate(schoolHolidaysDto.getHolidayDate());
 		holiday.setHolidayReason(schoolHolidaysDto.getHolidayReason());
-		return schoolHolidaysDao.declareHoliday(holiday);
+		schoolHolidaysDao.declareHoliday(holiday);
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(WebServiceUtil.SUCCESS_HOLIDAY_DECLARE);		
+		return response ;
 	}
-	
 
-	
 	@Override
 	public Object declareMultipleHolidays(List<SchoolHolidaysDto> schoolHolidaysDto) {
+		Response response = new Response();
+		List<SchoolHolidaysModel> holidaysList = new ArrayList<>();
 		
-		List<SchoolHolidaysModel> holidays = new ArrayList<>();
-		List<String> requestMissedField = new ArrayList<>();
 		
 		for (SchoolHolidaysDto holidaydeclare : schoolHolidaysDto) {
 			
 			
-			if(holidaydeclare.getHolidayDate() == null) {
-				requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
-			}
-			if(holidaydeclare.getHolidayReason() == null) {
-				requestMissedField.add(WebServiceUtil.HOL_REASON_ERROR + holidaydeclare.getHolidayDate());
-			}
-			if (!requestMissedField.isEmpty()) {
-				return requestMissedField;
-			}		
+          List<String> requestMissedFieldList = fieldValidation.checkValidationDeclareHoliday(holidaydeclare);
+			
+          if (!requestMissedFieldList.isEmpty()) {
+  			response.setStatus(WebServiceUtil.WARNING);	
+  			response.setData(requestMissedFieldList);		
+  			return response;
+  		}
 			LocalDate date = holidaydeclare.getHolidayDate();
 			if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
 				throw new RuntimeException(date + WebServiceUtil.SUNDAY);
@@ -94,27 +101,26 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 			}
 			holiday.setHolidayDate(holidaydeclare.getHolidayDate());
 			holiday.setHolidayReason(holidaydeclare.getHolidayReason());
-			holidays.add(holiday);
+			holidaysList.add(holiday);
 		}
-		return schoolHolidaysDao.declareMultipleHolidays(holidays);	
+		schoolHolidaysDao.declareMultipleHolidays(holidaysList);
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(WebServiceUtil.SUCCESS_HOLIDAY_DECLARE);
+		
+		return response;	
 	}
 	
 
 	
 	@Override
 	public Object cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto) {
-		
-		List<String> requestMissedField = new ArrayList<>();
-		
-		if(schoolHolidaysDto.getHolidayDate() == null) {
-			requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
-		}
-		
-		if(schoolHolidaysDto.getHolidayCancelledReason()==null) {
-			return WebServiceUtil.HOL_CANCALLED_REASON_ERROR + schoolHolidaysDto.getHolidayDate();
-		}
-		if (!requestMissedField.isEmpty()) {
-			return requestMissedField;
+		Response response = new Response();
+		List<String> requestMissedFieldList = fieldValidation.checkValidationCancelHolidayByDate(schoolHolidaysDto);
+
+		if (!requestMissedFieldList.isEmpty()) {
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(requestMissedFieldList);		
+			return response;
 		}
 		
 		SchoolHolidaysModel holiday = schoolHolidaysDao.getHolidayByHolidayDate(schoolHolidaysDto.getHolidayDate());
@@ -124,8 +130,11 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 
 		holiday.setIsHolidayCancelled(true);
 		holiday.setHolidayCancelledReason(schoolHolidaysDto.getHolidayCancelledReason());
-
-		return schoolHolidaysDao.cancelHolidayByDate(holiday);
+		schoolHolidaysDao.cancelHolidayByDate(holiday);
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(WebServiceUtil.SUCCESS_CANCEL_HOLIDAY);
+		
+		return response;
 		
 	}
 	
@@ -133,22 +142,21 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 	
 	@Override
 	public Object cancelMultipleHoliday(List<SchoolHolidaysDto> schoolHolidaysDto) {
-	
-		List<SchoolHolidaysModel> holidays = new ArrayList<>();
-		List<String> requestMissedField = new ArrayList<>();
+		Response response = new Response();
+		List<SchoolHolidaysModel> holidaysList = new ArrayList<>();
+
 		
 		for (SchoolHolidaysDto holidayDeclare : schoolHolidaysDto) {
 			
-			if(holidayDeclare.getHolidayDate() == null) {
-				requestMissedField.add(WebServiceUtil.HOL_DATE_ERROR);
+			List<String> requestMissedFieldList = fieldValidation.checkValidationCancelHolidayByDate(holidayDeclare);
+			
+			
+			if (!requestMissedFieldList.isEmpty()) {
+				response.setStatus(WebServiceUtil.WARNING);	
+				response.setData(requestMissedFieldList);		
+				return response;
 			}
 			
-			if(holidayDeclare.getHolidayCancelledReason()==null) {
-				return WebServiceUtil.HOL_CANCALLED_REASON_ERROR + holidayDeclare.getHolidayDate();
-			}
-			if (!requestMissedField.isEmpty()) {
-				return requestMissedField;
-			}
 			SchoolHolidaysModel holiday = schoolHolidaysDao.getHolidayByHolidayDate(holidayDeclare.getHolidayDate());
 			if (Boolean.TRUE.equals(holiday.getIsHolidayCancelled())) {
 				throw new RuntimeException(WebServiceUtil.ALREADY_HOLIDAY_CANCELLED+holidayDeclare.getHolidayDate());
@@ -157,10 +165,14 @@ public class SchoolHolidaysServiceImpl implements SchoolHolidaysService {
 			holiday.setIsHolidayCancelled(true);
 			holiday.setHolidayCancelledReason(holidayDeclare.getHolidayCancelledReason());
 
-			holidays.add(holiday);
+			holidaysList.add(holiday);
 		}
-
-		return schoolHolidaysDao.cancelMultipleHoliday(holidays);
+		
+		schoolHolidaysDao.cancelMultipleHoliday(holidaysList);
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(WebServiceUtil.SUCCESS_CANCEL_HOLIDAY);
+		
+		return response;
 		
 		
 		

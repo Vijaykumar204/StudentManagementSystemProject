@@ -1,7 +1,7 @@
 package com.studentmanagementsystem.api.daoimpl;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.studentmanagementsystem.api.dao.StudentModelDao;
-import com.studentmanagementsystem.api.model.custom.student.StudentListRequestDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 import com.studentmanagementsystem.api.repository.StudentModelRepository;
-import com.studentmanagementsystem.api.repository.TeacherRepository;
+
 
 
 import jakarta.persistence.EntityManager;
@@ -31,160 +31,154 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	@Autowired
 	private EntityManager entityManager;
 	
-	@Autowired
-	private TeacherRepository teacherRepo;
+
 	
 	@Autowired
 	private StudentModelRepository studentModelRepository;
+	
+	/**
+	 * Retrieve the list of all student details.
+	 */
 
 	@Override
-	public List<StudentListRequestDto> listAllDetailsStudent() {
+	public List<StudentDto> listAllDetailsStudent() {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<StudentListRequestDto> cq= cb.createQuery(StudentListRequestDto.class);
-		Root<StudentModel> student = cq.from(StudentModel.class);
-
-//		Predicate lastEfetiveDatecondition = cb.equal(student.get("lasteffectivedate"),null);
-		
-		
-		cq.multiselect(
-				student.get("studentId"),
-				student.get("studentFirstName"),
-				student.get("studentMiddleName"),
-				student.get("studentLastName"),
-				student.get("studentGender"),
-				student.get("studentDateOfBirth"),
-				student.get("studentClassOfStudy"),
-				student.get("studentResidingStatus"),
-				student.get("studentPhoneNumber"),
-				student.get("emergencyContactPersonName"),
-				student.get("emergencyContactPhoneNumber"),
-				student.get("homeStreetName"),
-				student.get("homeCityName"),
-				student.get("homePostalCode"),
-				student.get("studentActiveStatus"),
-				student.get("studentEmail")
+		CriteriaQuery<StudentDto> studentListQuery= cb.createQuery(StudentDto.class);
+		Root<StudentModel> studentListRoot = studentListQuery.from(StudentModel.class);
+				
+		studentListQuery.multiselect(
+				studentListRoot.get("studentId"),
+				studentListRoot.get("studentFirstName"),
+				studentListRoot.get("studentMiddleName"),
+				studentListRoot.get("studentLastName"),
+				studentListRoot.get("studentGender"),
+				studentListRoot.get("studentDateOfBirth"),
+				studentListRoot.get("studentClassOfStudy"),
+				studentListRoot.get("studentResidingStatus"),
+				studentListRoot.get("studentPhoneNumber"),
+				studentListRoot.get("emergencyContactPersonName"),
+				studentListRoot.get("emergencyContactPhoneNumber"),
+				studentListRoot.get("homeStreetName"),
+				studentListRoot.get("homeCityName"),
+				studentListRoot.get("homePostalCode"),
+				studentListRoot.get("studentActiveStatus"),
+				studentListRoot.get("studentEmail")
 			
 				);
 		
-	
-		
-		
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(studentListQuery).getResultList();
 	}
 
-	
-
 	@Override
-	public List<StudentListRequestDto> getAllHostelStudents(char studentActiveStatus, char hostel) {
+	public List<StudentDto> getAllHostelStudents(char studentActiveStatus, char hostel) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<StudentListRequestDto> cq= cb.createQuery(StudentListRequestDto.class);
-		Root<StudentModel> student = cq.from(StudentModel.class);
+		CriteriaQuery<StudentDto> studentListQuery= cb.createQuery(StudentDto.class);
+		Root<StudentModel> studentListRoot = studentListQuery.from(StudentModel.class);
 		
-	       Predicate residingStatus = cb.equal(student.get("studentResidingStatus"), hostel);
-	       Predicate activeStatus = cb.equal(student.get("studentActiveStatus"),studentActiveStatus );
-	       Predicate lastEffectiveDateCondition = cb.isNull(student.get("lasteffectivedate"));
+	       Predicate residingStatus = cb.equal(studentListRoot.get("studentResidingStatus"), hostel);
+	       Predicate activeStatus = cb.equal(studentListRoot.get("studentActiveStatus"),studentActiveStatus );
+	       Predicate lastEffectiveDateCondition = cb.isNull(studentListRoot.get("lasteffectivedate"));
 
-
-	        cq.multiselect(
-	        		student.get("studentId"),
-	        		student.get("studentFirstName"),
-	        		student.get("studentMiddleName"),
-	        		student.get("studentLastName"),
-	        		student.get("studentGender"),
-	        		student.get("studentDateOfBirth"),
-	        		student.get("studentClassOfStudy"),
-	        		student.get("studentResidingStatus"),
-	        		student.get("studentPhoneNumber"),
-	        		student.get("emergencyContactPersonName"),
-	        		student.get("emergencyContactPhoneNumber"),
-	        		student.get("homeStreetName"),
-	        		student.get("homeCityName"),
-	        		student.get("homePostalCode"),
-	        		student.get("studentActiveStatus"),
-	        		student.get("studentEmail")
+	       studentListQuery.multiselect(
+	    		   studentListRoot.get("studentId"),
+	    		   studentListRoot.get("studentFirstName"),
+	    		   studentListRoot.get("studentMiddleName"),
+	    		   studentListRoot.get("studentLastName"),
+	    		   studentListRoot.get("studentGender"),
+	    		   studentListRoot.get("studentDateOfBirth"),
+	    		   studentListRoot.get("studentClassOfStudy"),
+	    		   studentListRoot.get("studentResidingStatus"),
+	    		   studentListRoot.get("studentPhoneNumber"),
+	    		   studentListRoot.get("emergencyContactPersonName"),
+	    		   studentListRoot.get("emergencyContactPhoneNumber"),
+	    		   studentListRoot.get("homeStreetName"),
+	    		   studentListRoot.get("homeCityName"),
+	    		   studentListRoot.get("homePostalCode"),
+	    		   studentListRoot.get("studentActiveStatus"),
+	    		   studentListRoot.get("studentEmail")
 				
 					).where(cb.and(residingStatus, activeStatus,lastEffectiveDateCondition));
 		
 		
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(studentListQuery).getResultList();
 	}
 
 	@Override
-	public List<StudentListRequestDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber) {
+	public List<StudentDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<StudentListRequestDto> cq= cb.createQuery(StudentListRequestDto.class);
-		Root<StudentModel> student = cq.from(StudentModel.class);
-		 Predicate lastEffectiveDateCondition = cb.isNull(student.get("lasteffectivedate"));
-		cq.multiselect(
-				student.get("studentId"),
-				student.get("studentFirstName"),
-				student.get("studentMiddleName"),
-				student.get("studentLastName"),
-				student.get("studentGender"),
-				student.get("studentDateOfBirth"),
-				student.get("studentClassOfStudy"),
-				student.get("studentResidingStatus"),
-				student.get("studentPhoneNumber"),
-				student.get("emergencyContactPersonName"),
-				student.get("emergencyContactPhoneNumber"),
-				student.get("homeStreetName"),
-				student.get("homeCityName"),
-				student.get("homePostalCode"),
-				student.get("studentActiveStatus"),
-				student.get("studentEmail")
+		CriteriaQuery<StudentDto> studentListQuery= cb.createQuery(StudentDto.class);
+		Root<StudentModel> studentListRoot = studentListQuery.from(StudentModel.class);
+		 Predicate lastEffectiveDateCondition = cb.isNull(studentListRoot.get("lasteffectivedate"));
+		 studentListQuery.multiselect(
+				 studentListRoot.get("studentId"),
+				 studentListRoot.get("studentFirstName"),
+				 studentListRoot.get("studentMiddleName"),
+				 studentListRoot.get("studentLastName"),
+				 studentListRoot.get("studentGender"),
+				 studentListRoot.get("studentDateOfBirth"),
+				 studentListRoot.get("studentClassOfStudy"),
+				 studentListRoot.get("studentResidingStatus"),
+				 studentListRoot.get("studentPhoneNumber"),
+				 studentListRoot.get("emergencyContactPersonName"),
+				 studentListRoot.get("emergencyContactPhoneNumber"),
+				 studentListRoot.get("homeStreetName"),
+				 studentListRoot.get("homeCityName"),
+				 studentListRoot.get("homePostalCode"),
+				 studentListRoot.get("studentActiveStatus"),
+				 studentListRoot.get("studentEmail")
 			
 				).where(lastEffectiveDateCondition);
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if(studentId!= null) {
-			predicates.add(cb.equal(student.get("studentId"), studentId));
+			predicates.add(cb.equal(studentListRoot.get("studentId"), studentId));
 		}
 		if(studentEmail!=null) {
-			predicates.add(cb.equal(student.get("studentEmail"), studentEmail));
+			predicates.add(cb.equal(studentListRoot.get("studentEmail"), studentEmail));
 		}
 		if(studentPhoneNumber!=null) {
-			predicates.add(cb.equal(student.get("studentPhoneNumber"), studentPhoneNumber));
+			predicates.add(cb.equal(studentListRoot.get("studentPhoneNumber"), studentPhoneNumber));
 		}
 		
 		if(!predicates.isEmpty()) {
-			cq.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+			studentListQuery.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		}
 		
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(studentListQuery).getResultList();
 	}
 
 	@Override
-	public List<StudentListRequestDto> getBystudentStatus(char studentActiveStatus) {
+	public List<StudentDto> getBystudentStatus(char studentActiveStatus) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<StudentListRequestDto> cq= cb.createQuery(StudentListRequestDto.class);
-		Root<StudentModel> student = cq.from(StudentModel.class);
+		CriteriaQuery<StudentDto> studentListQuery= cb.createQuery(StudentDto.class);
+		Root<StudentModel> studentListRoot = studentListQuery.from(StudentModel.class);
 		
-		Predicate studentActiveCondition = cb.equal(student.get("studentActiveStatus"),studentActiveStatus);
-//		 Predicate lastEffectiveDateCondition = cb.isNull(student.get("lasteffectivedate"));
-		cq.multiselect(
-				student.get("studentId"),
-				student.get("studentFirstName"),
-				student.get("studentMiddleName"),
-				student.get("studentLastName"),
-				student.get("studentGender"),
-				student.get("studentDateOfBirth"),
-				student.get("studentClassOfStudy"),
-				student.get("studentResidingStatus"),
-				student.get("studentPhoneNumber"),
-				student.get("emergencyContactPersonName"),
-				student.get("emergencyContactPhoneNumber"),
-				student.get("homeStreetName"),
-				student.get("homeCityName"),
-				student.get("homePostalCode"),
-				student.get("studentActiveStatus"),
-				student.get("studentEmail")
+		Predicate studentActiveCondition = cb.equal(studentListRoot.get("studentActiveStatus"),studentActiveStatus);
+//		 Predicate lastEffectiveDateCondition = cb.isNull(studentListRoot.get("lasteffectivedate"));
+		studentListQuery.multiselect(
+				studentListRoot.get("studentId"),
+				studentListRoot.get("studentFirstName"),
+				studentListRoot.get("studentMiddleName"),
+				studentListRoot.get("studentLastName"),
+				studentListRoot.get("studentGender"),
+				studentListRoot.get("studentDateOfBirth"),
+				studentListRoot.get("studentClassOfStudy"),
+				studentListRoot.get("studentResidingStatus"),
+				studentListRoot.get("studentPhoneNumber"),
+				studentListRoot.get("emergencyContactPersonName"),
+				studentListRoot.get("emergencyContactPhoneNumber"),
+				studentListRoot.get("homeStreetName"),
+				studentListRoot.get("homeCityName"),
+				studentListRoot.get("homePostalCode"),
+				studentListRoot.get("studentActiveStatus"),
+				studentListRoot.get("studentEmail")
 			
 				).where(studentActiveCondition);
 		
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(studentListQuery).getResultList();
 	}
 
 
@@ -204,11 +198,11 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 
 
 
-	@Override
-	public Object saveStudent(StudentModel student) {
-		
-		return studentModelRepository.save(student);
-	}
+//	@Override
+//	public Object saveStudent(StudentModel student) {
+//		
+//		return studentModelRepository.save(student);
+//	}
 
 
 

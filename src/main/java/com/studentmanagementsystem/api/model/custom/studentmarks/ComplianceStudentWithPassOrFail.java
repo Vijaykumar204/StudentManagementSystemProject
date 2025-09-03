@@ -6,7 +6,7 @@ public class ComplianceStudentWithPassOrFail {
     
 	private String quarterAndYear;
 	
-	private char result;
+	private Character result;
 	
 	public Long getStudentId() {
 		return StudentId;
@@ -20,12 +20,17 @@ public class ComplianceStudentWithPassOrFail {
 	public void setQuarterAndYear(String quarterAndYear) {
 		this.quarterAndYear = quarterAndYear;
 	}
-	public char getResult() {
+	
+	
+	public Character getResult() {
 		return result;
 	}
-	public void setResult(char result) {
+	public void setResult(Character result) {
 		this.result = result;
 	}
+
+
+	
 	public ComplianceStudentWithPassOrFail(Long studentId, String quarterAndYear, char result) {
 		
 		StudentId = studentId;

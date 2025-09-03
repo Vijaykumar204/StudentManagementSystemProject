@@ -6,13 +6,13 @@ import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
-import com.studentmanagementsystem.api.model.entity.StudentMarks;
+import com.studentmanagementsystem.api.model.entity.MarkModel;
 
 public interface StudentMarksDao {
 
-	StudentMarks getStudentModelandquarterAndYear(Long studentId, String quarterAndYear);
+	MarkModel getStudentModelandquarterAndYear(Long studentId, String quarterAndYear);
 
-	void saveStudentMarks(StudentMarks studentMark);
+	void saveStudentMarks(MarkModel studentMark);
 
 	List<ComplianceStudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear);
 

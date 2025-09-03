@@ -9,16 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studentmanagementsystem.api.dao.TeacherRequestDao;
+import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherSaveRequestDto;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.service.TeacherService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
+import com.studentmanagementsystem.api.validation.FieldValidation;
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
 	@Autowired
 	private TeacherRequestDao teacherRequestDao;
+	
+	@Autowired
+	private FieldValidation fieldValidation;
 
 	@Override
 	public List<TeacherModelListDto> listAllTeachers() {
@@ -29,34 +34,18 @@ public class TeacherServiceImpl implements TeacherService {
 	@Override
 	public Object saveTeacher(TeacherSaveRequestDto teacherSaveRequestDto,Long teacherId) {
 		
-		final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z ]+$");
-		final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
-		
-		List<String> validateRequestfield = new ArrayList<>();
+
+		Response response = new Response();
+		List<String> requestMissedFieldList = fieldValidation.checkValidationTeacherSave(teacherSaveRequestDto,teacherId);
 		
 		   LocalDateTime today = LocalDateTime.now();
 		   
-		   if(teacherSaveRequestDto.getTeacherId() == null) {
-			   validateRequestfield.add(WebServiceUtil.TEACHER_ID_ERROR);
-		   }
-		   
-		   if(teacherSaveRequestDto.getTeacherName()==null) {
-			   
-			   validateRequestfield.add(WebServiceUtil.NAME_ERROR);
-		   }
-		   else if(!NAME_PATTERN.matcher(teacherSaveRequestDto.getTeacherName()).matches()) {
-			   validateRequestfield.add(WebServiceUtil.NAME_REGEX_ERROR);
-		   }
-		   
-		   if(teacherSaveRequestDto.getTeacherPhoneNumber() == null) {
-			   validateRequestfield.add(WebServiceUtil.PH_NO_ERROR);
-		   }
-		   else if(!PHONE_PATTERN.matcher(teacherSaveRequestDto.getTeacherPhoneNumber()).matches()) {
-			   validateRequestfield.add(WebServiceUtil.PH_NO_REGEX_ERROR);
-		   }
-		   if(teacherSaveRequestDto.getTeacherDepartment() == null) {
-			   validateRequestfield.add(WebServiceUtil.TEACHER_DEPARTMENT);
-		   }
+
+		   if (!requestMissedFieldList.isEmpty()) {
+				response.setStatus(WebServiceUtil.WARNING);	
+				response.setData(requestMissedFieldList);		
+				return response;
+			}
 		   
 		   TeacherModel teacher;
 		   if(teacherSaveRequestDto.getTeacherId() == null) {

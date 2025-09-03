@@ -10,25 +10,25 @@ public class StudentMarksDto {
 	private String quarterAndYear;
 	
 	
-	private int tamil;
+	private Integer tamil;
 	
 	
-	private int english;
+	private Integer english;
 	
 	
-	private int maths;
+	private Integer maths;
 	
 	
-	private int science;
+	private Integer science;
 	
 	
-	private int socialScience;
+	private Integer socialScience;
 	
 	
-	private int totalMarks;
+	private Integer totalMarks;
 	
 	
-	private char result;
+	private Character result;
 	
 	private Long teacherId;
 
@@ -52,77 +52,74 @@ public class StudentMarksDto {
 		this.quarterAndYear = quarterAndYear;
 	}
 
-
-	public int getTamil() {
+	public Integer getTamil() {
 		return tamil;
 	}
 
 
-	public void setTamil(int tamil) {
+	public void setTamil(Integer tamil) {
 		this.tamil = tamil;
 	}
 
 
-	public int getEnglish() {
+	public Integer getEnglish() {
 		return english;
 	}
 
 
-	public void setEnglish(int english) {
+	public void setEnglish(Integer english) {
 		this.english = english;
 	}
 
 
-	public int getMaths() {
+	public Integer getMaths() {
 		return maths;
 	}
 
 
-	public void setMaths(int maths) {
+	public void setMaths(Integer maths) {
 		this.maths = maths;
 	}
 
 
-	public int getScience() {
+	public Integer getScience() {
 		return science;
 	}
 
 
-	public void setScience(int science) {
+	public void setScience(Integer science) {
 		this.science = science;
 	}
 
 
-	public int getSocialScience() {
+	public Integer getSocialScience() {
 		return socialScience;
 	}
 
 
-	public void setSocialScience(int socialScience) {
+	public void setSocialScience(Integer socialScience) {
 		this.socialScience = socialScience;
 	}
 
 
-	public int getTotalMarks() {
+	public Integer getTotalMarks() {
 		return totalMarks;
 	}
 
 
-	public void setTotalMarks(int totalMarks) {
+	public void setTotalMarks(Integer totalMarks) {
 		this.totalMarks = totalMarks;
 	}
 
 
-	public char getResult() {
+	public Character getResult() {
 		return result;
 	}
 
 
-	public void setResult(char result) {
+	public void setResult(Character result) {
 		this.result = result;
 	}
-
-	
 
 
 	public Long getTeacherId() {
@@ -135,10 +132,8 @@ public class StudentMarksDto {
 	}
 
 
-
-
-	public StudentMarksDto(Long studentId, String quarterAndYear, int tamil, int english, int maths, int science,
-			int socialScience, int totalMarks, char result) {
+	public StudentMarksDto(Long studentId, String quarterAndYear, Integer tamil, Integer english, Integer maths, int science,
+			Integer socialScience, Integer totalMarks, Character result) {
 	
 		StudentId = studentId;
 		this.quarterAndYear = quarterAndYear;

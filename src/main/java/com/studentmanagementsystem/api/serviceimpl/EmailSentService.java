@@ -16,7 +16,7 @@ import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAtt
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.entity.EmailSentHistory;
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
-import com.studentmanagementsystem.api.model.entity.StudentMarks;
+import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.repository.EmailSentHistoryRepository;
 import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;

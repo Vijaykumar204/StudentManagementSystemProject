@@ -5,7 +5,7 @@ public class TotalResultCountdto {
 	
 	private String quarter;
 	
-	private int totalCount;
+	private Integer totalCount;
 	
 	private Long totalPass;
 	
@@ -23,11 +23,12 @@ public class TotalResultCountdto {
 		this.quarter = quarter;
 	}
 
-	public int getTotalCount() {
+	
+	public Integer getTotalCount() {
 		return totalCount;
 	}
 
-	public void setTotalCount(int totalCount) {
+	public void setTotalCount(Integer totalCount) {
 		this.totalCount = totalCount;
 	}
 
@@ -63,7 +64,7 @@ public class TotalResultCountdto {
 		this.failDueToAttendance = failDueToAttendance;
 	}
 
-	public TotalResultCountdto(String quarter, int totalCount, Long totalPass, Long totalFail, Long failDueToMark,
+	public TotalResultCountdto(String quarter, Integer totalCount, Long totalPass, Long totalFail, Long failDueToMark,
 			Long failDueToAttendance) {
 	
 		this.quarter = quarter;

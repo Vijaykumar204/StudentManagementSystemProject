@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
 import com.studentmanagementsystem.api.dao.SchoolHolidaysDao;
+import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.ExceedingDaysLeaveDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
@@ -17,6 +18,7 @@ import com.studentmanagementsystem.api.service.DailyAttendanceService;
 import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 
 import com.studentmanagementsystem.api.util.WebServiceUtil;
+import com.studentmanagementsystem.api.validation.FieldValidation;
 
 @Service
 public class DailyAttendanceServiceImpl implements DailyAttendanceService {
@@ -31,34 +33,21 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	private EmailSentService emailSentService;
 	
 	@Autowired
-	private SchoolHolidaysDao schoolHolidaysDao;
+	private SchoolHolidaysDao schoolHolidaysDao; 
+	
+	@Autowired
+	private FieldValidation fieldValidation;
 
 	@Override
 	public Object setAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto) {
-		//validation
-		//Attendance
-		//fieldName,msg 
 		
-	//	unique check
-		// StudentFName,StudentMName,StudentLName,DOB,
-		
-		List<String> requestMissedField = new ArrayList<>();
-		
-		if(dailyAttendanceDto.getAttendanceDate() == null) {
-			requestMissedField.add(WebServiceUtil.ATTENDANCE_DATE_ERROR);			
-		}
-		if(dailyAttendanceDto.getAttendanceStatus() == '\u0000' || dailyAttendanceDto.getAttendanceStatus()!='P' && dailyAttendanceDto.getAttendanceStatus()!='A' ) {
-			requestMissedField.add(WebServiceUtil.ATTENDANCE_STATUS_ERROR);
-		}
-		if(dailyAttendanceDto.getStudentId() == null) {
-			requestMissedField.add(WebServiceUtil.STUDENT_ID_ERROR);
-		}
-		if(dailyAttendanceDto.getTeacherId() == null) {
-			requestMissedField.add(WebServiceUtil.TEACHER_ID_ERROR);
-		}
-		
-		if(!requestMissedField.isEmpty()) {
-			return requestMissedField;
+		Response response = new Response();
+		List<String> requestMissedFieldList = fieldValidation.checkValidationSetAttendanceToSingleStudent(dailyAttendanceDto);
+
+		if (!requestMissedFieldList.isEmpty()) {
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(requestMissedFieldList);		
+			return response;
 		}
 		
 	
@@ -113,26 +102,19 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 
 	@Override
 	public Object setAttandanceMultiStudents(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
-		List<String> requestMissedField = new ArrayList<>();
+		
+		Response response = new Response();
+		
 		List<DailyAttendanceModel> attendanceList = new ArrayList<>();
 		LocalDateTime today = LocalDateTime.now();
 		for (DailyAttendanceDto attendance : dailyAttendanceDto) {
 			
-			if(attendance.getAttendanceDate() == null) {
-				requestMissedField.add(WebServiceUtil.ATTENDANCE_DATE_ERROR);			
-			}
-			if(attendance.getAttendanceStatus() == '\u0000' || attendance.getAttendanceStatus()!='P' && attendance.getAttendanceStatus()!='A' ) {
-				requestMissedField.add(WebServiceUtil.ATTENDANCE_STATUS_ERROR);
-			}
-			if(attendance.getStudentId() == null) {
-				requestMissedField.add(WebServiceUtil.STUDENT_ID_ERROR);
-			}
-			if(attendance.getTeacherId() == null) {
-				requestMissedField.add(WebServiceUtil.TEACHER_ID_ERROR);
-			}
-			
-			if(!requestMissedField.isEmpty()) {
-				return requestMissedField;
+			List<String> requestMissedFieldList = fieldValidation.checkValidationSetAttendanceToSingleStudent(attendance);
+
+			if (!requestMissedFieldList.isEmpty()) {
+				response.setStatus(WebServiceUtil.WARNING);	
+				response.setData(requestMissedFieldList);		
+				return response;
 			}
 			
 			SchoolHolidaysModel schoolHoliday = schoolHolidaysDao.getHolidayByHolidayDate(attendance.getAttendanceDate());

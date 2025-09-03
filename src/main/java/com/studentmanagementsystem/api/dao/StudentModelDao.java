@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import com.studentmanagementsystem.api.model.custom.student.StudentListRequestDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 import com.studentmanagementsystem.api.model.custom.student.StudentSaveRequestDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 public interface StudentModelDao {
 
-	List<StudentListRequestDto> listAllDetailsStudent();
+	List<StudentDto> listAllDetailsStudent();
 
 	
 
@@ -19,12 +19,12 @@ public interface StudentModelDao {
 
 //	List<StudentListRequestDto> getAllDaysStudents(String studentActiveStatus,String dayscholar);
 
-	List<StudentListRequestDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber);
+	List<StudentDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber);
 
-	List<StudentListRequestDto> getBystudentStatus(char studentActiveStatus);
+	List<StudentDto> getBystudentStatus(char studentActiveStatus);
 
 	
-	List<StudentListRequestDto> getAllHostelStudents(char studentActiveStatus, char hostel);
+	List<StudentDto> getAllHostelStudents(char studentActiveStatus, char hostel);
 
 	StudentModel getStudentModel(Long studentId);
 
@@ -34,7 +34,7 @@ public interface StudentModelDao {
 
 
 
-	Object saveStudent(StudentModel student);
+//	Object saveStudent(StudentModel student);
 
 
 

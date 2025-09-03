@@ -1,6 +1,6 @@
 package com.studentmanagementsystem.api.repository;
 
-import java.util.List;
+
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,8 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
-import com.studentmanagementsystem.api.model.entity.StudentMarks;
-import com.studentmanagementsystem.api.model.entity.StudentModel;
+
 
 @Repository
 public interface QuarterlyAttendanceModelRepository extends JpaRepository<QuarterlyAttendanceReportModel, Long> {

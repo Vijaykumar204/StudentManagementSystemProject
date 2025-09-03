@@ -1,22 +1,22 @@
 package com.studentmanagementsystem.api.serviceimpl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.studentmanagementsystem.api.dao.StudentModelDao;
 import com.studentmanagementsystem.api.dao.TeacherRequestDao;
-import com.studentmanagementsystem.api.model.custom.student.StudentListRequestDto;
+import com.studentmanagementsystem.api.model.custom.Response;
+import com.studentmanagementsystem.api.model.custom.student.StudentDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentModelListResponse;
 import com.studentmanagementsystem.api.model.custom.student.StudentSaveRequestDto;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
+import com.studentmanagementsystem.api.repository.StudentModelRepository;
 import com.studentmanagementsystem.api.service.StudentService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
+import com.studentmanagementsystem.api.validation.FieldValidation;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -27,124 +27,55 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private TeacherRequestDao teacherRequestDao;
 	
+	@Autowired
+	private FieldValidation fieldValidation;
 	
+	@Autowired
+	private StudentModelRepository studentModelRepository;
 	
+	/**
+	 * Retrieve the list of all student details.
+	 */
 
 	@Override
-	public List<StudentListRequestDto> listAllDetailsStudent() {
+	public StudentModelListResponse listAllDetailsStudent() {
+		
+		List<StudentDto> studentListRequestDto = studentRequestDao.listAllDetailsStudent();
+		StudentModelListResponse response = new StudentModelListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentListRequestDto);
 
-		return studentRequestDao.listAllDetailsStudent();
+		return response;
 	}
 
+	/**
+	 * Save or update student details.
+	 */
+	
 	@Override
-	public Object saveStudent(StudentSaveRequestDto studentSaveRequestDto) {
-
-		final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z ]+$");
-		final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
-		final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@gmail\\.com$");
-
-		List<String> requestMissedField = new ArrayList<>();
+	public Response saveStudent(StudentSaveRequestDto studentSaveRequestDto) {
+		
+		Response response = new Response();
 
 		LocalDateTime today = LocalDateTime.now();
 		StudentModel student;
 
-		if (studentSaveRequestDto.getStudentFirstName() == null) {
-			requestMissedField.add(WebServiceUtil.NAME_ERROR);
-			
-		 }
-		else if (!NAME_PATTERN.matcher(studentSaveRequestDto.getStudentFirstName()).matches()) {
-			requestMissedField.add(WebServiceUtil.NAME_REGEX_ERROR);
-		}
+		List<String> requestMissedFieldList= fieldValidation.checkValidationStudentSaveMethod(studentSaveRequestDto);
 
-		if (studentSaveRequestDto.getStudentMiddleName() != null
-				&& !NAME_PATTERN.matcher(studentSaveRequestDto.getStudentMiddleName()).matches())
-
-		{
-			requestMissedField.add(WebServiceUtil.NAME_REGEX_ERROR);
-		}
-		
-
-		if (studentSaveRequestDto.getStudentLastName() == null)
-				{
-			requestMissedField.add(WebServiceUtil.NAME_ERROR);
-
-		} 
-		else if( !NAME_PATTERN.matcher(studentSaveRequestDto.getStudentLastName()).matches() ) {
-			requestMissedField.add(WebServiceUtil.NAME_REGEX_ERROR);
-		}
-		
-		if(studentSaveRequestDto.getStudentDateOfBirth() == null) {
-			requestMissedField.add(WebServiceUtil.DOB_ERROR);
-		}
-		
-		
-		if (studentSaveRequestDto.getStudentGender() == '\u0000')
-				 {
-			requestMissedField.add(WebServiceUtil.GENDER_ERROR);
-		}
-		else if( studentSaveRequestDto.getStudentGender() != WebServiceUtil.MALE
-				&& studentSaveRequestDto.getStudentGender() != WebServiceUtil.FEMALE
-				&& studentSaveRequestDto.getStudentGender() != WebServiceUtil.UNKNOWN) {
-			requestMissedField.add(WebServiceUtil.GENDER_VALIDATION_ERROR);
-		}
-		
-
-		if (studentSaveRequestDto.getStudentClassOfStudy() <= 6
-				|| studentSaveRequestDto.getStudentClassOfStudy() >= 10) {
-			requestMissedField.add(WebServiceUtil.STUDENT_CLASS_OF_STUDY_ERROR);
-
-		}
-		
-		
-		if (studentSaveRequestDto.getStudentResidingStatus() == '\u0000')
-				 {
-			requestMissedField.add(WebServiceUtil.RESIDING_STATUS_ERROR);
-		}
-		else if(studentSaveRequestDto.getStudentResidingStatus() != WebServiceUtil.HOSTEL
-				&& studentSaveRequestDto.getStudentResidingStatus() != WebServiceUtil.DAYSCHOLAR) {
-			requestMissedField.add(WebServiceUtil.RESIDING_STATUS_VALIDATION_ERROR);
-		}
-		
-		
-		if (studentSaveRequestDto.getStudentPhoneNumber() == null) {
-			requestMissedField.add(WebServiceUtil.PH_NO_ERROR);
-		}
-		else if(!PHONE_PATTERN.matcher(studentSaveRequestDto.getStudentPhoneNumber()).matches()) {
-			requestMissedField.add(WebServiceUtil.PH_NO_REGEX_ERROR);
-		}
-		
-		
-		if (studentSaveRequestDto.getStudentEmail() == null) {
-			requestMissedField.add(WebServiceUtil.EMAIL_ERROR);
-			
-		}
-		else if(!EMAIL_PATTERN.matcher(studentSaveRequestDto.getStudentEmail()).matches()) {
-			requestMissedField.add(WebServiceUtil.EMAIL_REGEX_ERROR);
-		}
-		
-		if (studentSaveRequestDto.getHomeStreetName() == null) {
-			requestMissedField.add(WebServiceUtil.STREET_NAME_ERROR);
-		}
-		
-		
-		if (studentSaveRequestDto.getHomeCityName() == null) {
-			requestMissedField.add(WebServiceUtil.CITY_NAME_ERROR);
-		}
-		if (studentSaveRequestDto.getHomePostalCode() == null) {
-			requestMissedField.add(WebServiceUtil.POSTAL_CODE_ERROR);
-		}
-		if (studentSaveRequestDto.getTeacherId() == null) {
-			requestMissedField.add(WebServiceUtil.TEACHER_ID_ERROR);
-		}
-
-		if (!requestMissedField.isEmpty()) {
-			return requestMissedField;
+		if (!requestMissedFieldList.isEmpty()) {
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(requestMissedFieldList);		
+			return response;
 		}
 		
 		StudentModel studentModel = studentRequestDao.findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(studentSaveRequestDto.getStudentFirstName(),studentSaveRequestDto.getStudentMiddleName(),studentSaveRequestDto.getStudentLastName(),studentSaveRequestDto.getStudentDateOfBirth());
 		
 		if(studentModel!=null) {
-			return "Student name and DOB alresy exists";
+			
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(WebServiceUtil.STUDENT_EXISTS);
+			
+			return response;
 		}
 
 		if (studentSaveRequestDto.getStudentId() == null) {
@@ -176,62 +107,80 @@ public class StudentServiceImpl implements StudentService {
 		student.setHomeCityName(studentSaveRequestDto.getHomeCityName());
 		student.setHomePostalCode(studentSaveRequestDto.getHomePostalCode());
 		student.setStudentEmail(studentSaveRequestDto.getStudentEmail());
-
-		return studentRequestDao.saveStudent(student);
+		
+		studentModelRepository.save(student);
+		
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(WebServiceUtil.SAVE);
+		
+		return response;
 	}
 
 	@Override
-	public List<StudentListRequestDto> getAllHostelStudents(char studentActiveStatus) {
-
-		return studentRequestDao.getAllHostelStudents(studentActiveStatus, WebServiceUtil.HOSTEL);
+	public StudentModelListResponse getAllHostelStudents(char studentActiveStatus) {
+		 List<StudentDto> studentListRequestDto =studentRequestDao.getAllHostelStudents(studentActiveStatus, WebServiceUtil.HOSTEL);
+		 StudentModelListResponse response = new StudentModelListResponse();
+		 response.setStatus(WebServiceUtil.SUCCESS);	
+		 response.setData(studentListRequestDto);
+		return response;
 	}
 
 	@Override
-	public List<StudentListRequestDto> getAllDaysStudents(char studentActiveStatus) {
-		// TODO Auto-generated method stub
-		return studentRequestDao.getAllHostelStudents(studentActiveStatus, WebServiceUtil.DAYSCHOLAR);
+	public StudentModelListResponse getAllDaysStudents(char studentActiveStatus) {
+		
+	List<StudentDto> studentListRequestDto = studentRequestDao.getAllHostelStudents(studentActiveStatus, WebServiceUtil.DAYSCHOLAR);
+		StudentModelListResponse response = new StudentModelListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentListRequestDto);		
+		return response;
 	}
 
 	@Override
-	public List<StudentListRequestDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber) {
-
-		return studentRequestDao.getStudentsBy(studentId, studentEmail, studentPhoneNumber);
+	public StudentModelListResponse getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber) {
+		List<StudentDto> studentListRequestDto = studentRequestDao.getStudentsBy(studentId, studentEmail, studentPhoneNumber);
+		StudentModelListResponse response = new StudentModelListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentListRequestDto);		
+		return response;
 	}
 
 	@Override
-	public List<StudentListRequestDto> getBystudentStatus(char studentActiveStatus) {
-		return studentRequestDao.getBystudentStatus(studentActiveStatus);
+	public StudentModelListResponse getBystudentStatus(char studentActiveStatus) {
+		List<StudentDto> studentListRequestDto = studentRequestDao.getBystudentStatus(studentActiveStatus);
+		StudentModelListResponse response = new StudentModelListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentListRequestDto);	
+		
+		return response;
 	}
 
 	@Override
-	public Object activeOrDeactiveByStudentId(char studentActiveStatus, Long studentId) {
+	public Object activeOrDeactiveByStudentId(Character studentActiveStatus, Long studentId) {
 		
 		
+		Response response = new Response();
 		
-		List<String> requestMissedField = new ArrayList<>();
-		
-		
-		if(studentActiveStatus!=WebServiceUtil.ACTIVE && studentActiveStatus!=WebServiceUtil.DEACTIVE ) {
-			requestMissedField.add("StudentActiveAndDeactiveStatus");
-		}
-		
-		if(studentId!=null) {
-			requestMissedField.add("StudentId");
-		}
-		
-		
-		if (!requestMissedField.isEmpty()) {
-			return requestMissedField;
+		List<String> requestMissedFieldList = fieldValidation.checkValidationActiveOrDeactiveByStudentId(studentActiveStatus,studentId);
+
+		if (!requestMissedFieldList.isEmpty()) {
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(requestMissedFieldList);
+					
+			return response;
 		}
 
 		LocalDateTime today = LocalDateTime.now();
-		Optional<StudentModel> student1 = studentRequestDao.getByStudentId(studentId);
+		Optional<StudentModel> studentOptional = studentRequestDao.getByStudentId(studentId);
 
-		if (student1.isEmpty()) {
-			throw new RuntimeException("Student not found with ID: " + studentId);
+		if (studentOptional.isEmpty()) {
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(WebServiceUtil.STUDENT_NOT_FOUND + studentId );
+			
+			return response;
+			
 		}
 
-		StudentModel student = student1.get();
+		StudentModel student = studentOptional.get();
 
 		if (studentActiveStatus == WebServiceUtil.ACTIVE && studentActiveStatus != student.getStudentActiveStatus()) {
 
@@ -243,10 +192,17 @@ public class StudentServiceImpl implements StudentService {
 			student.setStudentActiveStatus(studentActiveStatus);
 			student.setLasteffectivedate(today);
 		} else {
-			throw new RuntimeException("No need to change");
+			response.setStatus(WebServiceUtil.WARNING);	
+			response.setData(String.format(WebServiceUtil.NO_CHANGES , studentActiveStatus ));			
+			return response;
+			
+			
 		}
+		studentRequestDao.activeOrDeactiveByStudentId(student);
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(String.format(WebServiceUtil.A_OR_D_STATUS,studentActiveStatus));
 
-		return studentRequestDao.activeOrDeactiveByStudentId(student);
+		return response;
 	}
 
 }

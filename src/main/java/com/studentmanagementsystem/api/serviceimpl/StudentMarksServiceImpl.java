@@ -1,7 +1,7 @@
 package com.studentmanagementsystem.api.serviceimpl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +10,16 @@ import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
 import com.studentmanagementsystem.api.dao.StudentMarksDao;
 import com.studentmanagementsystem.api.dao.StudentModelDao;
-
+import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
-import com.studentmanagementsystem.api.model.entity.StudentMarks;
+import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.service.StudentMarksService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
+import com.studentmanagementsystem.api.validation.FieldValidation;
 
 @Service
 public class StudentMarksServiceImpl implements StudentMarksService {
@@ -30,36 +31,32 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 
 	@Autowired
 	private QuarterlyAttendanceReportDao quarterlyAttendanceReportDao;
-
+	
 	@Autowired
-	private EmailSentService emailSentService;
+	private FieldValidation fieldValidation;
+
 
 	@Override
 	public Object saveStudentMarks(List<StudentMarksDto> studentMarksDto) {
 
-		List<String> requestMissedField = new ArrayList<>();
-
+	
+		Response response = new Response();
 		LocalDateTime today = LocalDateTime.now();
-		StudentMarks studentMark;
+		MarkModel studentMark;
 		for (StudentMarksDto mark : studentMarksDto) {
 
-			if (mark.getStudentId() == null) {
-				requestMissedField.add(WebServiceUtil.STUDENT_ID_ERROR);
-			}
-			if (mark.getTeacherId() == null) {
-				requestMissedField.add(WebServiceUtil.TEACHER_ID_ERROR);
-			}
-			if (mark.getQuarterAndYear() == null) {
-				requestMissedField.add(WebServiceUtil.QUARTER_AND_YEAR_ERROR);
-			}
-			if (!requestMissedField.isEmpty()) {
-				return requestMissedField;
+		
+			List<String> requestMissedFieldList = fieldValidation.checkValidationStudentMarkSave(mark);
+			if (!requestMissedFieldList.isEmpty()) {
+				response.setStatus(WebServiceUtil.WARNING);	
+				response.setData(requestMissedFieldList);		
+				return response;
 			}
 
 			studentMark = studentMarksDao.getStudentModelandquarterAndYear(mark.getStudentId(),
 					mark.getQuarterAndYear());
 			if (studentMark == null) {
-				studentMark = new StudentMarks();
+				studentMark = new MarkModel();
 				StudentModel student = studentRequestDao.getStudentModel(mark.getStudentId());
 				studentMark.setStudentModel(student);
 				studentMark.setQuarterAndYear(mark.getQuarterAndYear());
@@ -71,23 +68,15 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 				studentMark.setUpdateTime(today);
 			}
 
-			int tamil = studentMark.setTamil(mark.getTamil());
-			int english = studentMark.setEnglish(mark.getEnglish());
-			int maths = studentMark.setMaths(mark.getMaths());
-			int science = studentMark.setScience(mark.getScience());
-			int socialscience = studentMark.setSocialScience(mark.getSocialScience());
+			Integer tamil = studentMark.setTamil(mark.getTamil());
+			Integer english = studentMark.setEnglish(mark.getEnglish());
+			Integer maths = studentMark.setMaths(mark.getMaths());
+			Integer science = studentMark.setScience(mark.getScience());
+			Integer socialscience = studentMark.setSocialScience(mark.getSocialScience());
 
-			int totalMark = tamil + english + maths + science + socialscience;
+			Integer totalMark = tamil + english + maths + science + socialscience;
 			studentMark.setTotalMarks(totalMark);
 
-//			
-//			int tamilPercentage = tamil/100 * 100;
-//			
-//			
-//			int englishPercentage = english/100 *100;
-//			int mathsPercentage = maths/100 *100;
-//			int sciencePercentage = science/100 *100;
-//			int socialsciencePercentage = socialscience/100 *100;
 
 			String compliance = quarterlyAttendanceReportDao.getComplianceStatus(mark.getStudentId(),
 					mark.getQuarterAndYear());

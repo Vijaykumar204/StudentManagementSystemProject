@@ -7,17 +7,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.studentmanagementsystem.api.model.entity.StudentMarks;
+import com.studentmanagementsystem.api.model.entity.MarkModel;
 
 @Repository
-public interface StudentMarksRepository extends JpaRepository<StudentMarks, Long> {
+public interface StudentMarksRepository extends JpaRepository<MarkModel, Long> {
 
 
 //	StudentMarks findByStudentModel_StudentIdAndQuarterAndYear(Long studentId, String quarterAndYear);
 
 	
-	@Query("SELECT sm FROM StudentMarks sm WHERE sm.studentModel.studentId = :studentId AND sm.quarterAndYear = :quarterAndYear")
-	StudentMarks findByStudentIdAndQuarterAndYear(@Param("studentId") Long studentId, 
+	@Query("SELECT sm FROM MarkModel sm WHERE sm.studentModel.studentId = :studentId AND sm.quarterAndYear = :quarterAndYear")
+	MarkModel findByStudentIdAndQuarterAndYear(@Param("studentId") Long studentId, 
 	                                              @Param("quarterAndYear") String quarterAndYear);
 
 

@@ -27,13 +27,13 @@ public class DailyAttendanceModel {
 	private LocalDate attendanceDate;
 	
 	@Column(name = "AT_Status",nullable = false)
-	private char attendanceStatus;
+	private Character attendanceStatus;
 	
 	@Column(name = "AT_Approved_SickLeave",columnDefinition ="CHAR DEFAULT 'N'" )
-	private char longApprovedSickLeaveFlag='N';
+	private Character longApprovedSickLeaveFlag='N';
 	
 	@Column(name = "AT_Approved_Extra_Cur_Activities",columnDefinition ="CHAR DEFAULT 'N'")
-	private char approvedExtraCurricularActivitiesFlag = 'N';
+	private Character approvedExtraCurricularActivitiesFlag = 'N';
 	
 	@Column(name = "AT_Create_Teacher",nullable = false)
 	private Long createTeacher;
@@ -68,27 +68,27 @@ public class DailyAttendanceModel {
 		this.attendanceDate = attendanceDate;
 	}
 
-	public char getAttendanceStatus() {
+	public Character getAttendanceStatus() {
 		return attendanceStatus;
 	}
 
-	public void setAttendanceStatus(char attendanceStatus) {
+	public void setAttendanceStatus(Character attendanceStatus) {
 		this.attendanceStatus = attendanceStatus;
 	}
 
-	public char getLongApprovedSickLeaveFlag() {
+	public Character getLongApprovedSickLeaveFlag() {
 		return longApprovedSickLeaveFlag;
 	}
 
-	public void setLongApprovedSickLeaveFlag(char longApprovedSickLeaveFlag) {
+	public void setLongApprovedSickLeaveFlag(Character longApprovedSickLeaveFlag) {
 		this.longApprovedSickLeaveFlag = longApprovedSickLeaveFlag;
 	}
 
-	public char getApprovedExtraCurricularActivitiesFlag() {
+	public Character getApprovedExtraCurricularActivitiesFlag() {
 		return approvedExtraCurricularActivitiesFlag;
 	}
 
-	public void setApprovedExtraCurricularActivitiesFlag(char approvedExtraCurricularActivitiesFlag) {
+	public void setApprovedExtraCurricularActivitiesFlag(Character approvedExtraCurricularActivitiesFlag) {
 		this.approvedExtraCurricularActivitiesFlag = approvedExtraCurricularActivitiesFlag;
 	}
 

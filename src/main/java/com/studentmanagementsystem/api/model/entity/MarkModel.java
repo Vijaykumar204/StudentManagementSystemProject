@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "student_marks")
-public class StudentMarks {
+public class MarkModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,25 +26,25 @@ public class StudentMarks {
 	private String quarterAndYear;
 	
 	@Column(name = "Tamil_Mark",nullable = false)
-	private int tamil;
+	private Integer tamil;
 	
 	@Column(name = "English_Mark",nullable = false)
-	private int english;
+	private Integer english;
 	
 	@Column(name = "Maths_Mark",nullable = false)
-	private int maths;
+	private Integer maths;
 	
 	@Column(name = "Science_Mark",nullable = false)
-	private int science;
+	private Integer science;
 	
 	@Column(name = "Social_science_Mark",nullable = false)
-	private int socialScience;
+	private Integer socialScience;
 	
 	@Column(name = "Toatal_Mark")
-	private int totalMarks;
+	private Integer totalMarks;
 	
 	@Column(name = "Result_Status")
-	private char result;
+	private Character result;
 	
 	@Column(name = "Mark_Create_Teacher",nullable = false)
 	private Long createTeacher;
@@ -81,68 +81,60 @@ public class StudentMarks {
 		this.quarterAndYear = quarterAndYear;
 	}
 
-	public int getTamil() {
+	public Integer getTamil() {
 		return tamil;
 	}
 
-	public int setTamil(int tamil) {
+	public Integer setTamil(Integer tamil) {
 		return this.tamil = tamil;
 	}
 
-	public int getEnglish() {
+	public Integer getEnglish() {
 		return english;
 	}
 
-	public int setEnglish(int english) {
+	public Integer setEnglish(Integer english) {
 		return this.english = english;
 	}
 
-	public int getMaths() {
+	public Integer getMaths() {
 		return maths;
 	}
 
-	public int setMaths(int maths) {
+	public Integer setMaths(Integer maths) {
 		return this.maths = maths;
 	}
 
-	public int getScience() {
+	public Integer getScience() {
 		return science;
 	}
 
-	public int setScience(int science) {
+	public Integer setScience(Integer science) {
 		return this.science = science;
 	}
 
-	public int getSocialScience() {
+	public Integer getSocialScience() {
 		return socialScience;
 	}
 
-	public int setSocialScience(int socialScience) {
+	public Integer setSocialScience(Integer socialScience) {
 		return this.socialScience = socialScience;
 	}
 
-	public int getTotalMarks() {
+	public Integer getTotalMarks() {
 		return totalMarks;
 	}
 
-	public void setTotalMarks(int totalMarks) {
+	public void setTotalMarks(Integer totalMarks) {
 		this.totalMarks = totalMarks;
 	}
 
-	public char getResult() {
+	public Character getResult() {
 		return result;
 	}
 
-	public void setResult(char result) {
+	public void setResult(Character result) {
 		this.result = result;
-	}
-
-	public StudentModel getStudentModel() {
-		return studentModel;
-	}
-
-	public void setStudentModel(StudentModel studentModel) {
-		this.studentModel = studentModel;
 	}
 
 	public Long getCreateTeacher() {
@@ -184,6 +176,16 @@ public class StudentMarks {
 	public void setFailedForMark(Boolean failedForMark) {
 		this.failedForMark = failedForMark;
 	}
+
+	public StudentModel getStudentModel() {
+		return studentModel;
+	}
+
+	public void setStudentModel(StudentModel studentModel) {
+		this.studentModel = studentModel;
+	}
+
+
 	
 	
 }

@@ -1,8 +1,6 @@
 package com.studentmanagementsystem.api.daoimpl;
 
 import java.util.List;
-
-import org.hibernate.annotations.Where;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
@@ -52,41 +50,41 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	public List<QuarterlyAttendanceReportDto> getAttendanceSummary(List<Integer> quarterMonth) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-		CriteriaQuery<Long> working = cb.createQuery(Long.class);
-		Root<DailyAttendanceModel> root = working.from(DailyAttendanceModel.class);
+		CriteriaQuery<Long> totakWorkingDaysQuery = cb.createQuery(Long.class);
+		Root<DailyAttendanceModel> dailyAttendanceRoot = totakWorkingDaysQuery.from(DailyAttendanceModel.class);
 
-		Predicate monthPredicate = cb.function("MONTH", Integer.class, root.get("attendanceDate")).in(quarterMonth);
-		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, root.get("attendanceDate")), 2025);
+		Predicate monthPredicate = cb.function("MONTH", Integer.class, dailyAttendanceRoot.get("attendanceDate")).in(quarterMonth);
+		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceRoot.get("attendanceDate")), 2025);
 
-		working.select(cb.countDistinct(root.get("attendanceDate"))).where(cb.and(monthPredicate, yearPredicate));
+		totakWorkingDaysQuery.select(cb.countDistinct(dailyAttendanceRoot.get("attendanceDate"))).where(cb.and(monthPredicate, yearPredicate));
 
-		Long toatalWorkingdays = entityManager.createQuery(working).getSingleResult();
+		Long toatalWorkingdays = entityManager.createQuery(totakWorkingDaysQuery).getSingleResult();
 
-		CriteriaQuery<QuarterlyAttendanceReportDto> cq = cb.createQuery(QuarterlyAttendanceReportDto.class);
-		Root<DailyAttendanceModel> d = cq.from(DailyAttendanceModel.class);
-		Join<DailyAttendanceModel, StudentModel> s = d.join("studentModel");
+		CriteriaQuery<QuarterlyAttendanceReportDto> quarterlyAttendanceReportQuery = cb.createQuery(QuarterlyAttendanceReportDto.class);
+		Root<DailyAttendanceModel> quarterlyDailyAttendanceRoot = quarterlyAttendanceReportQuery.from(DailyAttendanceModel.class);
+		Join<DailyAttendanceModel, StudentModel> dailyAttendanceAndStudentJoin = quarterlyDailyAttendanceRoot.join("studentModel");
 
 		Expression<Integer> totalPresent = cb.sum(cb.<Integer>selectCase()
-				.when(cb.equal(d.get("attendanceStatus"), WebServiceUtil.PRESENT), 1).otherwise(0));
+				.when(cb.equal(quarterlyDailyAttendanceRoot.get("attendanceStatus"), WebServiceUtil.PRESENT), 1).otherwise(0));
 
 		Expression<Integer> totalAbsent = cb.sum(cb.<Integer>selectCase()
-				.when(cb.equal(d.get("attendanceStatus"), WebServiceUtil.ABSENT), 1).otherwise(0));
+				.when(cb.equal(quarterlyDailyAttendanceRoot.get("attendanceStatus"), WebServiceUtil.ABSENT), 1).otherwise(0));
 
 		Expression<Integer> totalSick = cb
-				.sum(cb.<Integer>selectCase().when(cb.and(cb.equal(d.get("attendanceStatus"), WebServiceUtil.ABSENT),
-						cb.equal(d.get("longApprovedSickLeaveFlag"), WebServiceUtil.YES)), 1).otherwise(0));
+				.sum(cb.<Integer>selectCase().when(cb.and(cb.equal(quarterlyDailyAttendanceRoot.get("attendanceStatus"), WebServiceUtil.ABSENT),
+						cb.equal(quarterlyDailyAttendanceRoot.get("longApprovedSickLeaveFlag"), WebServiceUtil.YES)), 1).otherwise(0));
 
 		Expression<Integer> totalExtra = cb
 				.sum(cb.<Integer>selectCase()
-						.when(cb.and(cb.equal(d.get("attendanceStatus"), WebServiceUtil.ABSENT),
-								cb.equal(d.get("approvedExtraCurricularActivitiesFlag"), WebServiceUtil.YES)), 1)
+						.when(cb.and(cb.equal(quarterlyDailyAttendanceRoot.get("attendanceStatus"), WebServiceUtil.ABSENT),
+								cb.equal(quarterlyDailyAttendanceRoot.get("approvedExtraCurricularActivitiesFlag"), WebServiceUtil.YES)), 1)
 						.otherwise(0));
 
-		cq.select(cb.construct(QuarterlyAttendanceReportDto.class, cb.literal(toatalWorkingdays), totalPresent,
-				totalAbsent, totalExtra, totalSick, s.get("studentId"))).where(cb.and(monthPredicate, yearPredicate))
-				.groupBy(s.get("studentId"));
+		quarterlyAttendanceReportQuery.select(cb.construct(QuarterlyAttendanceReportDto.class, cb.literal(toatalWorkingdays), totalPresent,
+				totalAbsent, totalExtra, totalSick, dailyAttendanceAndStudentJoin.get("studentId"))).where(cb.and(monthPredicate, yearPredicate))
+				.groupBy(dailyAttendanceAndStudentJoin.get("studentId"));
 
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(quarterlyAttendanceReportQuery).getResultList();
 	}
 
 	@Override
@@ -119,25 +117,25 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 			String complianceStatus) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<ComplianceAndNonComplianceReportDto>  cq=cb.createQuery(ComplianceAndNonComplianceReportDto.class);
-		Root<QuarterlyAttendanceReportModel> quarterly = cq.from(QuarterlyAttendanceReportModel.class);
-		Join<QuarterlyAttendanceReportModel,StudentModel> student = quarterly.join("studentModel");
+		CriteriaQuery<ComplianceAndNonComplianceReportDto> complianceAndNonComplianceQuery  =cb.createQuery(ComplianceAndNonComplianceReportDto.class);
+		Root<QuarterlyAttendanceReportModel> QuarterlyAttendanceReportRoot = complianceAndNonComplianceQuery.from(QuarterlyAttendanceReportModel.class);
+		Join<QuarterlyAttendanceReportModel,StudentModel> quarterlyAttendanceReporAndStudentJoin = QuarterlyAttendanceReportRoot.join("studentModel");
 		
-		Predicate quarterAndYearCondition=cb.equal(quarterly.get("quarterAndYear"), quarterAndYear);
-		Predicate statusCondition=cb.equal(quarterly.get("attendanceComplianceStatus"),complianceStatus);
-		cq.select(cb.construct(ComplianceAndNonComplianceReportDto.class,
-				student.get("studentId"),
-				quarterly.get("quarterAndYear"),
-				student.get("studentFirstName"),
-				student.get("studentMiddleName"),
-				student.get("studentLastName"),
-				quarterly.get("attendanceComplianceStatus")		
+		Predicate quarterAndYearCondition=cb.equal(QuarterlyAttendanceReportRoot.get("quarterAndYear"), quarterAndYear);
+		Predicate statusCondition=cb.equal(QuarterlyAttendanceReportRoot.get("attendanceComplianceStatus"),complianceStatus);
+		complianceAndNonComplianceQuery.select(cb.construct(ComplianceAndNonComplianceReportDto.class,
+				quarterlyAttendanceReporAndStudentJoin.get("studentId"),
+				QuarterlyAttendanceReportRoot.get("quarterAndYear"),
+				quarterlyAttendanceReporAndStudentJoin.get("studentFirstName"),
+				quarterlyAttendanceReporAndStudentJoin.get("studentMiddleName"),
+				quarterlyAttendanceReporAndStudentJoin.get("studentLastName"),
+				QuarterlyAttendanceReportRoot.get("attendanceComplianceStatus")		
 				
 				)).where(quarterAndYearCondition,statusCondition);
 		
 		
 		
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(complianceAndNonComplianceQuery).getResultList();
 	}
 	
 	//select attendanceComplianceStatus from QuarterlyAttendanceReportModel where studentId = studentId && quarterAndYear=quarterAndYear;
@@ -145,40 +143,40 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	@Override
 	public String getComplianceStatus(Long studentId, String quarterAndYear) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<String> cq = cb.createQuery(String.class);
-		Root<QuarterlyAttendanceReportModel> quarterlyReport = cq.from(QuarterlyAttendanceReportModel.class);
+		CriteriaQuery<String> complianceStatusQuery = cb.createQuery(String.class);
+		Root<QuarterlyAttendanceReportModel> quarterlyAttendancReportRoot = complianceStatusQuery.from(QuarterlyAttendanceReportModel.class);
 		
-		Predicate stuCondition = cb.equal(quarterlyReport.get("studentModel").get("studentId"),studentId );
-		Predicate quarterandYearCondition = cb.equal(quarterlyReport.get("quarterAndYear"),quarterAndYear);
+		Predicate stuCondition = cb.equal(quarterlyAttendancReportRoot.get("studentModel").get("studentId"),studentId );
+		Predicate quarterandYearCondition = cb.equal(quarterlyAttendancReportRoot.get("quarterAndYear"),quarterAndYear);
 			
-		cq.select(
-				quarterlyReport.get("attendanceComplianceStatus")
+		complianceStatusQuery.select(
+				quarterlyAttendancReportRoot.get("attendanceComplianceStatus")
 				).where(stuCondition,quarterandYearCondition);
 		
-		return entityManager.createQuery(cq).getSingleResult();
+		return entityManager.createQuery(complianceStatusQuery).getSingleResult();
 	}
 
 	@Override
 	public List<QuarterlyAttendanceReportDto> getQuarterlyAttendanceReport(String quarterAndYear) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<QuarterlyAttendanceReportDto>  cq=cb.createQuery(QuarterlyAttendanceReportDto.class);
-		Root<QuarterlyAttendanceReportModel> quarterly = cq.from(QuarterlyAttendanceReportModel.class);
-		Predicate quarterandYearCondition = cb.equal(quarterly.get("quarterAndYear"),quarterAndYear);
-		cq.select(cb.construct(QuarterlyAttendanceReportDto.class,
+		CriteriaQuery<QuarterlyAttendanceReportDto> quarterlyAttendanceReportQuery  =cb.createQuery(QuarterlyAttendanceReportDto.class);
+		Root<QuarterlyAttendanceReportModel> quarterlyAttendanceReportRoot = quarterlyAttendanceReportQuery.from(QuarterlyAttendanceReportModel.class);
+		Predicate quarterandYearCondition = cb.equal(quarterlyAttendanceReportRoot.get("quarterAndYear"),quarterAndYear);
+		quarterlyAttendanceReportQuery.select(cb.construct(QuarterlyAttendanceReportDto.class,
 				 
-				quarterly.get("studentModel").get("studentId"),
-				quarterly.get("totalSchoolWorkingDays"),
-				quarterly.get("totalDaysOfPresent"),
-				quarterly.get("totalDaysOfAbsents"),				
-				quarterly.get("totalApprovedActivitiesPermissionDays"),
-				quarterly.get("totalApprovedSickdays"),
-				quarterly.get("attendanceComplianceStatus")
+				quarterlyAttendanceReportRoot.get("studentModel").get("studentId"),
+				quarterlyAttendanceReportRoot.get("totalSchoolWorkingDays"),
+				quarterlyAttendanceReportRoot.get("totalDaysOfPresent"),
+				quarterlyAttendanceReportRoot.get("totalDaysOfAbsents"),				
+				quarterlyAttendanceReportRoot.get("totalApprovedActivitiesPermissionDays"),
+				quarterlyAttendanceReportRoot.get("totalApprovedSickdays"),
+				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus")
 				
 				)).where(quarterandYearCondition)	;	
 		
 
 		
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(quarterlyAttendanceReportQuery).getResultList();
 	}
 
 

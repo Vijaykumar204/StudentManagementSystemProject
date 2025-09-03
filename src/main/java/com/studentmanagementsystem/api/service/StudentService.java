@@ -2,28 +2,30 @@ package com.studentmanagementsystem.api.service;
 
 import java.util.List;
 
-import com.studentmanagementsystem.api.model.custom.student.StudentListRequestDto;
+import com.studentmanagementsystem.api.model.custom.Response;
+import com.studentmanagementsystem.api.model.custom.student.StudentDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentModelListResponse;
 import com.studentmanagementsystem.api.model.custom.student.StudentSaveRequestDto;
 
 
 
 public interface StudentService {
 
-	List<StudentListRequestDto> listAllDetailsStudent();
+	StudentModelListResponse listAllDetailsStudent();
 
-	Object saveStudent(StudentSaveRequestDto studentSaveRequestDto);
+	Response saveStudent(StudentSaveRequestDto studentSaveRequestDto);
 
-	List<StudentListRequestDto> getAllHostelStudents(char studentActiveStatus);
+	StudentModelListResponse getAllHostelStudents(char studentActiveStatus);
 
-	 List<StudentListRequestDto> getAllDaysStudents(char studentActiveStatus);
+	 StudentModelListResponse getAllDaysStudents(char studentActiveStatus);
 
-	 List<StudentListRequestDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber);
+	 StudentModelListResponse getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber);
 
 	
 
-	 List<StudentListRequestDto> getBystudentStatus(char studentActiveStatus);
+	 StudentModelListResponse getBystudentStatus(char studentActiveStatus);
 
-	Object activeOrDeactiveByStudentId(char studentActiveStatus, Long studentId);
+	Object activeOrDeactiveByStudentId(Character studentActiveStatus, Long studentId);
 
 	
 

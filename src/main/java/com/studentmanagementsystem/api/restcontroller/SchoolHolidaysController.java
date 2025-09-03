@@ -43,13 +43,13 @@ public class SchoolHolidaysController {
 		return new ResponseEntity<>(schoolHolidaysService.cancelMultipleHoliday(schoolHolidaysDto),HttpStatus.OK);
 	}
 	@GetMapping
-	ResponseEntity<List<SchoolHolidaysDto>> getHolidays(){
-		return new ResponseEntity<List<SchoolHolidaysDto>>(schoolHolidaysService.getHolidays(),HttpStatus.OK);
+	ResponseEntity<?> getHolidays(){
+		return new ResponseEntity<>(schoolHolidaysService.getHolidays(),HttpStatus.OK);
 	}
 	
 	@GetMapping("/cancelHolidays")
-	ResponseEntity<List<SchoolHolidaysDto>> getCancelHolidays(){
-		return new ResponseEntity<List<SchoolHolidaysDto>>(schoolHolidaysService.getCancelHolidays(),HttpStatus.OK);
+	ResponseEntity<?> getCancelHolidays(){
+		return new ResponseEntity<>(schoolHolidaysService.getCancelHolidays(),HttpStatus.OK);
 	}
 
 	

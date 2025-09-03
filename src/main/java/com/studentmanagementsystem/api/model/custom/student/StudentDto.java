@@ -8,7 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 
-public class StudentListRequestDto {
+public class StudentDto {
 
 	private Long studentId;
 	
@@ -18,15 +18,15 @@ public class StudentListRequestDto {
 	
 	private String studentLastName;
 	
-	private char studentGender;
+	private Character studentGender;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate studentDateOfBirth;
 
-	private int studentClassOfStudy;
+	private Integer studentClassOfStudy;
 
-	private char studentResidingStatus;
+	private Character studentResidingStatus;
 
 	private String studentPhoneNumber;
 
@@ -40,7 +40,7 @@ public class StudentListRequestDto {
 
 	private String homePostalCode;
 
-	private char studentActiveStatus;
+	private Character studentActiveStatus;
 	
 	private String studentEmail;
 
@@ -76,11 +76,11 @@ public class StudentListRequestDto {
 		this.studentLastName = studentLastName;
 	}
 
-	public char getStudentGender() {
+	public Character getStudentGender() {
 		return studentGender;
 	}
 
-	public void setStudentGender(char studentGender) {
+	public void setStudentGender(Character studentGender) {
 		this.studentGender = studentGender;
 	}
 
@@ -92,19 +92,19 @@ public class StudentListRequestDto {
 		this.studentDateOfBirth = studentDateOfBirth;
 	}
 
-	public int getStudentClassOfStudy() {
+	public Integer getStudentClassOfStudy() {
 		return studentClassOfStudy;
 	}
 
-	public void setStudentClassOfStudy(int studentClassOfStudy) {
+	public void setStudentClassOfStudy(Integer studentClassOfStudy) {
 		this.studentClassOfStudy = studentClassOfStudy;
 	}
 
-	public char getStudentResidingStatus() {
+	public Character getStudentResidingStatus() {
 		return studentResidingStatus;
 	}
 
-	public void setStudentResidingStatus(char studentResidingStatus) {
+	public void setStudentResidingStatus(Character studentResidingStatus) {
 		this.studentResidingStatus = studentResidingStatus;
 	}
 
@@ -156,11 +156,11 @@ public class StudentListRequestDto {
 		this.homePostalCode = homePostalCode;
 	}
 
-	public char getStudentActiveStatus() {
+	public Character getStudentActiveStatus() {
 		return studentActiveStatus;
 	}
 
-	public void setStudentActiveStatus(char studentActiveStatus) {
+	public void setStudentActiveStatus(Character studentActiveStatus) {
 		this.studentActiveStatus = studentActiveStatus;
 	}
 
@@ -172,11 +172,11 @@ public class StudentListRequestDto {
 		this.studentEmail = studentEmail;
 	}
 
-	public StudentListRequestDto(Long studentId, String studentFirstName, String studentMiddleName,
-			String studentLastName, char studentGender, LocalDate studentDateOfBirth, int studentClassOfStudy,
-			char studentResidingStatus, String studentPhoneNumber, String emergencyContactPersonName,
+	public StudentDto(Long studentId, String studentFirstName, String studentMiddleName,
+			String studentLastName, Character studentGender, LocalDate studentDateOfBirth, Integer studentClassOfStudy,
+			Character studentResidingStatus, String studentPhoneNumber, String emergencyContactPersonName,
 			String emergencyContactPhoneNumber, String homeStreetName, String homeCityName, String homePostalCode,
-			char studentActiveStatus, String studentEmail) {
+			Character studentActiveStatus, String studentEmail) {
 		super();
 		this.studentId = studentId;
 		this.studentFirstName = studentFirstName;

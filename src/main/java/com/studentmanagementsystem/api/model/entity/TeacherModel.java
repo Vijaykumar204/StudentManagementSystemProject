@@ -45,7 +45,19 @@ public class TeacherModel {
 	private LocalDateTime updateTime;
 	
 	@OneToMany(mappedBy = "teacherModel")
-	List<StudentModel> studentModel;	
+	List<StudentModel> studentModel;
+	
+//	@OneToMany(mappedBy = "teacherModel")
+//	List<SchoolHolidaysModel> schoolHolidaysModel;
+//	
+//	@OneToMany(mappedBy = "teacherModel")
+//	List<DailyAttendanceModel> dailyAttendanceModel;
+	
+//	@OneToMany(mappedBy = "teacherModel")
+//	List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel;
+	
+//	@OneToMany(mappedBy = "teacherModel")
+//	List<MarkModel> markModel;
 	
 	
 	public Long getTeacherId() {

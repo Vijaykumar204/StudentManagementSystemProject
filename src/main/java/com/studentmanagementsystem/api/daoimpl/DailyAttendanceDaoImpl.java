@@ -42,84 +42,6 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	@Autowired
 	private DailyAttendanceRepository dailyAttendanceRepository;
 
-//	@Override
-//	public Object setAttendanceInSingleStudent(DailyAttendanceDto dailyAttendanceDto) {
-//
-//		DailyAttendanceModel attend;
-//		if (dailyAttendanceDto.getAttendanceId() == null) {
-//			attend = new DailyAttendanceModel();
-//			StudentModel student = studentModelRepository.getStudentByStudentId(dailyAttendanceDto.getStudentId());
-//			attend.setStudentModel(student);
-//		} else {
-//			Optional<DailyAttendanceModel> attendance = dailyAttendanceRepository
-//					.findById(dailyAttendanceDto.getAttendanceId());
-//			attend = attendance.get();
-//		}
-//		attend.setAttendanceDate(dailyAttendanceDto.getAttendanceDate());
-//		attend.setAttendanceStatus(dailyAttendanceDto.getAttendanceStatus());
-//		if (dailyAttendanceDto.getAttendanceStatus() == 'A') {
-//			attend.setLongApprovedSickLeaveFlag(dailyAttendanceDto.getLongApprovedSickLeaveFlag());
-//			attend.setApprovedExtraCurricularActivitiesFlag(
-//					dailyAttendanceDto.getApprovedExtraCurricularActivitiesFlag());
-//		}
-//		else {
-//			attend.setLongApprovedSickLeaveFlag('N');
-//			attend.setApprovedExtraCurricularActivitiesFlag('N');
-//		}
-//
-//		DailyAttendanceModel saved = dailyAttendanceRepository.save(attend);
-//		return new DailyAttendanceDto(saved.getAttendanceId(), saved.getAttendanceDate(), saved.getAttendanceStatus(),
-//				saved.getLongApprovedSickLeaveFlag(), saved.getApprovedExtraCurricularActivitiesFlag(),
-//				saved.getStudentModel().getStudentId());
-//	}
-//
-//	
-
-//	@Override
-//	public Object setAttandanceMultiSameDate(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
-//		
-//List<DailyAttendanceModel> attendance = new ArrayList<>();
-//		
-//		for(DailyAttendanceDto attend : dailyAttendanceDto) {
-//			DailyAttendanceModel  dailyAttendance;
-//			if(attend.getAttendanceId() == null) {
-//				dailyAttendance = new DailyAttendanceModel();
-//				StudentModel student = studentModelRepository.getStudentByStudentId(attend.getStudentId());
-//				dailyAttendance.setStudentModel(student);
-//			}
-//			else {
-//				Optional<DailyAttendanceModel> dailyattend = dailyAttendanceRepository.findById(attend.getAttendanceId());
-//				dailyAttendance = dailyattend.get();
-//			}
-//			
-//			if(attendanceDate != null) {
-//			dailyAttendance.setAttendanceDate(attendanceDate);
-//			}
-//			else {
-//				dailyAttendance.setAttendanceDate(attend.getAttendanceDate());
-//			}
-//			dailyAttendance.setAttendanceStatus(attend.getAttendanceStatus());
-//			if(attend.getAttendanceStatus() == 'A') {
-//				dailyAttendance.setLongApprovedSickLeaveFlag(attend.getLongApprovedSickLeaveFlag());
-//				dailyAttendance.setApprovedExtraCurricularActivitiesFlag(attend.getApprovedExtraCurricularActivitiesFlag());
-//			}
-//			else {
-//				attend.setLongApprovedSickLeaveFlag('N');
-//				attend.setApprovedExtraCurricularActivitiesFlag('N');
-//			}
-//			attendance.add(dailyAttendance);
-//			
-//		}
-//		
-//		List<DailyAttendanceModel> dailyAttendanceModel =dailyAttendanceRepository.saveAll(attendance);
-//
-//		return dailyAttendanceModel.stream().map(saved -> new DailyAttendanceDto(saved.getAttendanceId(), saved.getAttendanceDate(), saved.getAttendanceStatus(),
-//				saved.getLongApprovedSickLeaveFlag(), saved.getApprovedExtraCurricularActivitiesFlag(),
-//				saved.getStudentModel().getStudentId())).toList();
-//	}
-
-	
-
 	@Override
 	public DailyAttendanceModel createNewAttendance(Long studentId) {
 		  StudentModel student = studentModelRepository.getStudentByStudentId(studentId);
@@ -149,23 +71,23 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	public List<DailyAttendanceDto> getStudentAttendance(LocalDate today) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<DailyAttendanceDto> cq=cb.createQuery(DailyAttendanceDto.class);
-		Root<DailyAttendanceModel> attendance = cq.from(DailyAttendanceModel.class);
+		CriteriaQuery<DailyAttendanceDto> dailyAttendanceQuery=cb.createQuery(DailyAttendanceDto.class);
+		Root<DailyAttendanceModel> dailyAttendanceRoot = dailyAttendanceQuery.from(DailyAttendanceModel.class);
 		
-		Join<DailyAttendanceDto,StudentModel> student = attendance.join("studentModel");
-		 Predicate predicate = cb.equal(attendance.get("attendanceDate"), today);
+		Join<DailyAttendanceDto,StudentModel> studentAndDailyAttendanceJoin = dailyAttendanceRoot.join("studentModel");
+		 Predicate predicate = cb.equal(dailyAttendanceRoot.get("attendanceDate"), today);
 		
-	     cq.select(cb.construct(DailyAttendanceDto.class,
-	    		 attendance.get("attendanceDate"),
-		    		attendance.get("attendanceStatus"),
-	    		 student.get("studentId"),
-	     		student.get("studentFirstName"),
-	     		student.get("studentMiddleName"),
-	     		student.get("studentLastName")
+		 dailyAttendanceQuery.select(cb.construct(DailyAttendanceDto.class,
+				 dailyAttendanceRoot.get("attendanceDate"),
+				 dailyAttendanceRoot.get("attendanceStatus"),
+				 studentAndDailyAttendanceJoin.get("studentId"),
+				 studentAndDailyAttendanceJoin.get("studentFirstName"),
+				 studentAndDailyAttendanceJoin.get("studentMiddleName"),
+				 studentAndDailyAttendanceJoin.get("studentLastName")
 	    		
 	    		 )).where(predicate);
 		
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(dailyAttendanceQuery).getResultList();
 	}
 	
 	
@@ -177,72 +99,30 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	public List<DailyAttendanceDto> getStudentAttendanceNotTakeByToday(LocalDate today) {
 		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
 		
-		CriteriaQuery<DailyAttendanceDto> cq=cb.createQuery(DailyAttendanceDto.class);
-		Root<StudentModel> student = cq.from(StudentModel.class);
+		CriteriaQuery<DailyAttendanceDto> dailyAttendanceQuery=cb.createQuery(DailyAttendanceDto.class);
+		Root<StudentModel> studentRoot = dailyAttendanceQuery.from(StudentModel.class);
 		
-		Subquery<DailyAttendanceModel> sq=cq.subquery(DailyAttendanceModel.class);
-		Root<DailyAttendanceModel> attendance = sq.from(DailyAttendanceModel.class);
+		Subquery<DailyAttendanceModel> dailyAttendanceSubQuery=dailyAttendanceQuery.subquery(DailyAttendanceModel.class);
+		Root<DailyAttendanceModel> dailyAttendanceRoot = dailyAttendanceSubQuery.from(DailyAttendanceModel.class);
 		
-		Predicate condition1 = cb.equal(attendance.get("studentModel").get("studentId"),student.get("studentId"));
-		Predicate condition2 =  cb.equal(attendance.get("attendanceDate"), today);
-		sq.select(attendance).where(cb.and(condition1,condition2));
+		Predicate studentIdCondition = cb.equal(dailyAttendanceRoot.get("studentModel").get("studentId"),studentRoot.get("studentId"));
+		Predicate attendanceDateCondition =  cb.equal(dailyAttendanceRoot.get("attendanceDate"), today);
+		dailyAttendanceSubQuery.select(dailyAttendanceRoot).where(cb.and(studentIdCondition,attendanceDateCondition));
 		
-		Predicate condition3 = cb.not(cb.exists(sq));
-		cq.select(cb.construct(DailyAttendanceDto.class,
-				student.get("studentId"),
-				student.get("studentFirstName"),
-	     		student.get("studentMiddleName"),
-	     		student.get("studentLastName")
+		Predicate existsCondition = cb.not(cb.exists(dailyAttendanceSubQuery));
+		dailyAttendanceQuery.select(cb.construct(DailyAttendanceDto.class,
+				studentRoot.get("studentId"),
+				studentRoot.get("studentFirstName"),
+				studentRoot.get("studentMiddleName"),
+				studentRoot.get("studentLastName")
 	     		
 				)
-				).where(condition3);
-		return entityManager.createQuery(cq).getResultList();
+				).where(existsCondition);
+		return entityManager.createQuery(dailyAttendanceQuery).getResultList();
 	}
 	
 
 
-//	@Override
-//	public List<DailyAttendanceDto> getStudentleaveForExtraActivities(int month, int year, String leaveStatus) {
-//	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//
-//		 CriteriaQuery<DailyAttendanceDto> cq = cb.createQuery(DailyAttendanceDto.class);
-//		    Root<StudentModel> student = cq.from(StudentModel.class);
-//		    Join<StudentModel, DailyAttendanceModel> attendance = student.join("dailyAttendanceModel"); 
-//
-//		    Subquery<Long> subquery = cq.subquery(Long.class);
-//		    Root<DailyAttendanceModel> subAttendance = subquery.from(DailyAttendanceModel.class);
-//
-//		    Predicate statusCondition = cb.equal(attendance.get(leaveStatus), 'Y');
-//		    Predicate monthCondition = cb.equal(cb.function("MONTH", Integer.class, attendance.get("attendanceDate")), month);
-//		    Predicate yearCondition = cb.equal(cb.function("YEAR", Integer.class, attendance.get("attendanceDate")), year);
-//		    
-//		    subquery.select(subAttendance.get("studentModel").get("studentId"))
-//		            .where(statusCondition, monthCondition, yearCondition
-//
-//		            )
-//		            .groupBy(subAttendance.get("studentModel").get("studentId"))
-//		            .having(cb.gt(cb.count(subAttendance), 3));
-//
-//
-//		   
-//		    Predicate inSubquery = student.get("studentId").in(subquery);
-//
-//		    cq.select(
-//		        cb.construct(
-//		            DailyAttendanceDto.class,
-//		            attendance.get("attendanceDate"),
-//		            student.get("studentId"),
-//		            student.get("studentFirstName"),
-//		            student.get("studentMiddleName"),
-//		     		student.get("studentLastName")
-//		            
-//		        )
-//		    ).where(cb.and(statusCondition, monthCondition, yearCondition, inSubquery));
-//
-//		    return entityManager.createQuery(cq).getResultList();
-//	}
-//	
-//	
 	
 	
 
@@ -262,24 +142,24 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		Long totalWorkingDays = entityManager.createQuery(workingDaysQuery).getSingleResult();
 		
 		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-        Root<StudentModel> student = cq.from(StudentModel.class);
-        Join<StudentModel, DailyAttendanceModel> attendance = student.join("dailyAttendanceModel");
+        Root<StudentModel> studentRoot = cq.from(StudentModel.class);
+        Join<StudentModel, DailyAttendanceModel> dailyAttendanceAndStudentJoin = studentRoot.join("dailyAttendanceModel");
 
-        Predicate monthCondition = cb.equal(cb.function("MONTH", Integer.class, attendance.get("attendanceDate")), month);
-        Predicate yearCondition = cb.equal(cb.function("YEAR", Integer.class, attendance.get("attendanceDate")), year);
-        Predicate absentCondition = cb.equal(attendance.get("attendanceStatus"), 'A');
+        Predicate monthCondition = cb.equal(cb.function("MONTH", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), month);
+        Predicate yearCondition = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), year);
+        Predicate absentCondition = cb.equal(dailyAttendanceAndStudentJoin.get("attendanceStatus"), 'A');
         
         cq.multiselect(
-                student.get("studentId").alias("studentId"),
-                student.get("studentFirstName").alias("firstName"),
-                student.get("studentMiddleName").alias("middleName"),
-                student.get("studentLastName").alias("lastName"),
-                cb.count(attendance).alias("absentCount")
+        		studentRoot.get("studentId").alias("studentId"),
+        		studentRoot.get("studentFirstName").alias("firstName"),
+        		studentRoot.get("studentMiddleName").alias("middleName"),
+        		studentRoot.get("studentLastName").alias("lastName"),
+                cb.count(dailyAttendanceAndStudentJoin).alias("absentCount")
         )
         .where(cb.and(monthCondition, yearCondition, absentCondition))
-        .groupBy(student.get("studentId"), student.get("studentFirstName"),
-                 student.get("studentMiddleName"), student.get("studentLastName"))
-        .having(cb.gt(cb.count(attendance), totalWorkingDays / 2));
+        .groupBy(studentRoot.get("studentId"), studentRoot.get("studentFirstName"),
+        		studentRoot.get("studentMiddleName"), studentRoot.get("studentLastName"))
+        .having(cb.gt(cb.count(dailyAttendanceAndStudentJoin), totalWorkingDays / 2));
         
         List<Tuple> results = entityManager.createQuery(cq).getResultList();
         
@@ -304,7 +184,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
                     tuple.get("middleName", String.class),
                     tuple.get("lastName", String.class),
                     totalWorkingDays.intValue(),
-                    tuple.get("absentCount", Long.class),
+                    tuple.get("absentCount", Integer.class),
                     absentDates
             ));
         }
@@ -318,35 +198,35 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		  CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
 	        	  CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-			    Root<StudentModel> student = cq.from(StudentModel.class);
-			    Join<StudentModel, DailyAttendanceModel> attendance = student.join("dailyAttendanceModel"); 
+			    Root<StudentModel> studentRoot = cq.from(StudentModel.class);
+			    Join<StudentModel, DailyAttendanceModel> dailyAttendanceAndStudentJoin = studentRoot.join("dailyAttendanceModel"); 
 
 			    Subquery<Long> subquery = cq.subquery(Long.class);
 			    Root<DailyAttendanceModel> subAttendance = subquery.from(DailyAttendanceModel.class);
 
-			    Predicate statusCondition = cb.equal(attendance.get(leaveStatus), 'Y');
-			    Predicate monthCondition = cb.equal(cb.function("MONTH", Integer.class, attendance.get("attendanceDate")), month);
-			    Predicate yearCondition = cb.equal(cb.function("YEAR", Integer.class, attendance.get("attendanceDate")), year);
+			    Predicate statusCondition = cb.equal(dailyAttendanceAndStudentJoin.get(leaveStatus), 'Y');
+			    Predicate monthCondition = cb.equal(cb.function("MONTH", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), month);
+			    Predicate yearCondition = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), year);
 			    
 			    subquery.select(subAttendance.get("studentModel").get("studentId"))
 			            .where(statusCondition, monthCondition, yearCondition
 			            )
 			            .groupBy(subAttendance.get("studentModel").get("studentId"))
 			            .having(cb.gt(cb.count(subAttendance), leaveCount));		   
-			    Predicate inSubquery = student.get("studentId").in(subquery);
+			    Predicate inSubquery = studentRoot.get("studentId").in(subquery);
 
 			    cq.multiselect(
-			    		    student.get("studentId").alias("studentId"),
-			                student.get("studentFirstName").alias("firstName"),
-			                student.get("studentMiddleName").alias("middleName"),
-			                student.get("studentLastName").alias("lastName")		            
+			    		studentRoot.get("studentId").alias("studentId"),
+			    		studentRoot.get("studentFirstName").alias("firstName"),
+			    		studentRoot.get("studentMiddleName").alias("middleName"),
+			    		studentRoot.get("studentLastName").alias("lastName")		            
 			    ).distinct(true)
 			     .where(inSubquery);
 
-			    List<Tuple> results= entityManager.createQuery(cq).getResultList();
+			    List<Tuple> studentDetailsList= entityManager.createQuery(cq).getResultList();
 			    
-			    List<ExceedingDaysLeaveDto> dtoList = new ArrayList<>();
-			    for (Tuple tuple : results) {
+			    List<ExceedingDaysLeaveDto> exceedingDaysLeaveList = new ArrayList<>();
+			    for (Tuple tuple : studentDetailsList) {
 		            Long studentId = tuple.get("studentId", Long.class);
 		            List<LocalDate> absentDates = entityManager.createQuery(
 		                    "SELECT d.attendanceDate FROM DailyAttendanceModel d " +
@@ -360,7 +240,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		                    .setParameter("year", year)
 		                    .getResultList();
 			    
-		            dtoList.add(new ExceedingDaysLeaveDto(
+		            exceedingDaysLeaveList.add(new ExceedingDaysLeaveDto(
 		            		tuple.get("studentId", Long.class),
 		                    tuple.get("firstName", String.class),
 		                    tuple.get("middleName", String.class),
@@ -370,7 +250,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		            ));
 		        }
 
-		        return dtoList;
+		        return exceedingDaysLeaveList;
 }
 
 	@Override
