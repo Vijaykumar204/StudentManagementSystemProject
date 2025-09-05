@@ -4,24 +4,29 @@ import java.util.List;
 
 import org.springframework.http.HttpStatusCode;
 
+import com.studentmanagementsystem.api.model.custom.Response;
+import com.studentmanagementsystem.api.model.custom.quarterlyreport.response.ComplianceAndNonComplianceListResponse;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
+import com.studentmanagementsystem.api.model.custom.studentmarks.StudentWithPassOrFail;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.response.StudentMarkListResponse;
+import com.studentmanagementsystem.api.model.custom.studentmarks.response.StudentWithPassOrFailListResponse;
+import com.studentmanagementsystem.api.model.custom.studentmarks.response.TotalResultCountListResponse;
 
 public interface StudentMarksService {
 
 	
 
-	Object saveStudentMarks(List<StudentMarksDto> studentMarksDto);
+	Response saveStudentMarks(List<StudentMarksDto> studentMarksDto);
 
-	List<ComplianceStudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear);
+	StudentWithPassOrFailListResponse getAllComplianceStudentPassOrFail(String quarterAndYear);
 
-	List<StudentMarksDto> getAllStudentMarks(String quarterAndYear);
+	StudentMarkListResponse getAllStudentMarks(String quarterAndYear);
 
-	List<TotalResultCountdto> getToatalResultCount(String quarterAndYear);
+	TotalResultCountListResponse getToatalResultCount(String quarterAndYear);
 
-	ClassTopperDto getClassTopper(String quarterAndYear);
+	Response getClassTopper(String quarterAndYear);
 
 	
 

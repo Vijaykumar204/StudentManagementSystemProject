@@ -27,7 +27,7 @@ public class StudentController {
 	/**
 	 * Retrieve the list of all student details.
 	 *
-	 * Author: Vijayakumar
+	 * Author: Vijiyakumar
 	 * @return List of all students
 	 */
 	
@@ -40,8 +40,8 @@ public class StudentController {
 	 * Save or update student details.
 	 *
 	 * Author: Vijiyakumar
-	 * @param student All content of the student (from request body)
-	 * @return Saved or updated student details
+	 * @param studentSaveRequestDto All content of the student (from request body)
+	 * @return Confirmation message indicating saved or updated student details
 	 */
 	
 	@PostMapping("/save")
@@ -53,7 +53,7 @@ public class StudentController {
 	 *
 	 * Author: Vijiyakumar
 	 * @param studentActiveStatus
-	 * @return Saved or updated student details
+	 * @return List of all hostel students
 	 */
 	
 	
@@ -62,25 +62,64 @@ public class StudentController {
 		return new ResponseEntity<>( studentService.getAllHostelStudents(studentActiveStatus),HttpStatus.OK);
 	}
 	
+	/**
+	 * Retrive all dayscholar students
+	 *
+	 * Author: Vijiyakumar
+	 * @param studentActiveStatus
+	 * @return List os all dayscholar students
+	 */
+	
 	@GetMapping("/dayscholars")
 	
-	public ResponseEntity<?> getAllDaysStudents(@RequestParam char studentActiveStatus){
+	public ResponseEntity<?> getAllDaysStudents(@RequestParam Character studentActiveStatus){
 		return new ResponseEntity<>( studentService.getAllDaysStudents(studentActiveStatus),HttpStatus.OK);
 	}
+	
+	/**
+	 * Filter students by ID, email, or phone number.
+	 *
+	 * Author: Vijayakumar
+	 * @param studentId (optional) The unique ID of the student
+	 * @param studentEmail (optional) The email address of the student
+	 * @param studentPhoneNumber (optional) The phone number of the student
+	 * @return List of students that match the given filter criteria
+	 */
+
 	
 	@GetMapping
 	public ResponseEntity<?> getStudentsBy(@RequestParam(required = false) Long studentId ,  @RequestParam(required = false) String studentEmail,@RequestParam(required = false) String studentPhoneNumber){
 		return new ResponseEntity<>( studentService.getStudentsBy(studentId,studentEmail,studentPhoneNumber),HttpStatus.OK);
 	}
 	
+	/**
+	 * Retrieve the list of students based on active or deactive status.
+	 *
+	 * Author: Vijayakumar
+	 * @param studentActiveStatus (The status filter to determine active or inactive students)
+	 * @return List of students matching the given status
+	 */
+
+	
+	
 	@GetMapping("/getbystatus")
-	public ResponseEntity<?> getBystudentStatus(@RequestParam char studentActiveStatus){
-		return new ResponseEntity<>( studentService.getBystudentStatus(studentActiveStatus),HttpStatus.OK);
+	public ResponseEntity<?> getByStudentStatus(@RequestParam Character studentActiveStatus){
+		return new ResponseEntity<>( studentService.getByStudentStatus(studentActiveStatus),HttpStatus.OK);
 	}
 	
+	/**
+	 * Activate or deactivate a student by ID.
+	 *
+	 * Author: Vijayakumar
+	 * @param studentId The ID of the student to activate/deactivate 
+	 * @param studentActiveStatus The status object containing activation details)
+	 * @param TeacherId The tescher Id Who is create.
+	 * @return Updated student details with active/deactive status
+	 */
+	
 	@PostMapping("/statuschange/{studentId}")
-	public ResponseEntity<?> activeOrDeactiveByStudentId(@RequestParam Character studentActiveStatus,@PathVariable Long studentId){
-		return new ResponseEntity<>(studentService.activeOrDeactiveByStudentId(studentActiveStatus,studentId),HttpStatus.OK);
+	public ResponseEntity<?> activeOrDeactiveByStudentId(@RequestParam Character studentActiveStatus,@RequestParam Long studentId,@RequestParam Long TeacherId){
+		return new ResponseEntity<>(studentService.activeOrDeactiveByStudentId(studentActiveStatus,studentId,TeacherId),HttpStatus.OK);
 	}
 	
 }

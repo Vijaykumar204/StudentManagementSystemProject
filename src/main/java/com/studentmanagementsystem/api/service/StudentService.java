@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
-import com.studentmanagementsystem.api.model.custom.student.StudentModelListResponse;
 import com.studentmanagementsystem.api.model.custom.student.StudentSaveRequestDto;
+import com.studentmanagementsystem.api.model.custom.student.response.StudentModelListResponse;
 
 
 
@@ -23,9 +23,9 @@ public interface StudentService {
 
 	
 
-	 StudentModelListResponse getBystudentStatus(char studentActiveStatus);
+	 StudentModelListResponse getByStudentStatus(char studentActiveStatus);
 
-	Object activeOrDeactiveByStudentId(Character studentActiveStatus, Long studentId);
+	Response activeOrDeactiveByStudentId(Character studentActiveStatus, Long studentId,Long teacherId);
 
 	
 

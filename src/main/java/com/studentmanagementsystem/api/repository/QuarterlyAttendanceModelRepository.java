@@ -25,6 +25,12 @@ public interface QuarterlyAttendanceModelRepository extends JpaRepository<Quarte
 		        @Param("studentId") Long studentId,
 		        @Param("quarterAndYear") String quarterAndYear);
 
+	@Query("SELECT q.attendanceComplianceStatus FROM QuarterlyAttendanceReportModel q " +
+		       "WHERE q.studentModel.studentId = :studentId " +
+		       "AND q.quarterAndYear = :quarterAndYear")
+    String findAttendanceComplianceStatusByStudentIdandquarterAndYear( @Param("studentId") Long studentId,
+	        @Param("quarterAndYear") String quarterAndYear);
+
 //	StudentMarks findByStudentmodel_StudentIdAndQuarterlyAttendanceModel_QuarterAndYear(Long studentId,
 //			String quarterAndYear);
 

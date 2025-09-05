@@ -3,13 +3,17 @@ package com.studentmanagementsystem.api.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.ExceedingDaysLeaveDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.response.DailyAttendanceListResponse;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.response.ExceedingDaysLeaveListResponse;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.response.MonthlyAbsenceListResponse;
 
 public interface DailyAttendanceService {
 
-	Object setAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto);
+	Response setAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto);
 
 
 
@@ -20,42 +24,42 @@ public interface DailyAttendanceService {
 
 
 
-	Object setAttandanceMultiStudents(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate);
+	Response setAttandanceMultiStudents(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate);
 
 
 
 
 
 
-	List<DailyAttendanceDto> getStudentAttendanceByToday(LocalDate attendanceDate);
+	DailyAttendanceListResponse getStudentAttendanceByToday(LocalDate attendanceDate);
 
 
 
 
 
 
-	List<DailyAttendanceDto> getStudentAttendanceNotTakeByToday(LocalDate attendanceDate);
+	DailyAttendanceListResponse getStudentAttendanceNotTakeByToday(LocalDate attendanceDate);
 
 
 
 
 
 
-	List<ExceedingDaysLeaveDto> getStudentleaveForExtraActivities(int month, int year);
+	 ExceedingDaysLeaveListResponse getStudentleaveForExtraActivities(int month, int year);
 
 
 
 
 
 
-	List<ExceedingDaysLeaveDto> getStudentleaveForSickLeave(int month, int year);
+	 ExceedingDaysLeaveListResponse getStudentleaveForSickLeave(int month, int year);
 
 
 
 
 
 
-	List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(int month, int year);
+	MonthlyAbsenceListResponse getMonthlyAbsenceStudents(int month, int year);
 
 
 

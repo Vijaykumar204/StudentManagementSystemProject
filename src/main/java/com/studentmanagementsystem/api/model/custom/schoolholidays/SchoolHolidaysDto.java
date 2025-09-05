@@ -13,6 +13,8 @@ public class SchoolHolidaysDto {
 	private Boolean isHolidayCancelled = false;
 	
 	private String holidayCancelledReason;
+	
+	private Long teacherId;
 
 	public Long getHolidayId() {
 		return holidayId;
@@ -52,6 +54,15 @@ public class SchoolHolidaysDto {
 
 	public void setHolidayCancelledReason(String holidayCancelledReason) {
 		this.holidayCancelledReason = holidayCancelledReason;
+	}
+	
+
+	public Long getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(Long teacherId) {
+		this.teacherId = teacherId;
 	}
 
 	public SchoolHolidaysDto(Long holidayId, LocalDate holidayDate, String holidayReason, Boolean isHolidayCancelled,

@@ -18,6 +18,10 @@ public interface StudentModelRepository extends JpaRepository<StudentModel, Long
 	StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
 			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth);
 
+	StudentModel findStudentByStudentId(Long teacherId);
+
+	StudentModel findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(Long studentId);
+
 //	String findStudentEmailByStudentId(Long studentId);
 
 	

@@ -1,6 +1,6 @@
 package com.studentmanagementsystem.api.daoimpl;
 
-import java.time.LocalDate;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +69,10 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 		
 		return entityManager.createQuery(studentListQuery).getResultList();
 	}
+	
+	/**
+	 * Retrive all dayscholar students
+	 */
 
 	@Override
 	public List<StudentDto> getAllHostelStudents(char studentActiveStatus, char hostel) {
@@ -104,6 +108,10 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 		return entityManager.createQuery(studentListQuery).getResultList();
 	}
 
+	/**
+	 * Filter students by id or email or phone number
+	 */
+	
 	@Override
 	public List<StudentDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -149,8 +157,12 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 		return entityManager.createQuery(studentListQuery).getResultList();
 	}
 
+	/**
+	 * Retrieve the list of students based on active or deactive status.
+	 */
+	
 	@Override
-	public List<StudentDto> getBystudentStatus(char studentActiveStatus) {
+	public List<StudentDto> getByStudentStatus(char studentActiveStatus) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<StudentDto> studentListQuery= cb.createQuery(StudentDto.class);
@@ -204,22 +216,24 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 //		return studentModelRepository.save(student);
 //	}
 
+	/**
+	 * Activate or deactivate a student by ID.
+	 */
+
+//	@Override
+//	public Object activeOrDeactiveByStudentId(StudentModel student) {
+//		
+//		return studentModelRepository.save(student);
+//	}
 
 
-	@Override
-	public Object activeOrDeactiveByStudentId(StudentModel student) {
-		
-		return studentModelRepository.save(student);
-	}
 
-
-
-	@Override
-	public StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
-			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth) {
-		// TODO Auto-generated method stub
-		return studentModelRepository.findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(studentFirstName,studentMiddleName,studentLastName,studentDateOfBirth);
-	}
+//	@Override
+//	public StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
+//			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth) {
+//		// TODO Auto-generated method stub
+//		return studentModelRepository.findByFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(studentFirstName,studentMiddleName,studentLastName,studentDateOfBirth);
+//	}
 
 
 

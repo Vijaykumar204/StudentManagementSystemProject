@@ -9,8 +9,6 @@ import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAtt
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
-import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
-import com.studentmanagementsystem.api.repository.StudentModelRepository;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -28,12 +26,11 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	@Autowired
 	private EntityManager entityManager;
 
-	@Autowired
-	private QuarterlyAttendanceModelRepository quarterlyAttendanceModelRepository;
-
-	@Autowired
-	private StudentModelRepository studentModelRepository;
-
+	
+	/**
+	 * Retrieve the attendance summary report to update the quarterly attendance report.
+	 */
+	 
 //     SELECT 
 //    d.Student_Id AS studentId,
 //    SUM(CASE WHEN d.AT_Status = 'P' THEN 1 ELSE 0 END) AS totalDaysOfPresent,
@@ -48,6 +45,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 
 	@Override
 	public List<QuarterlyAttendanceReportDto> getAttendanceSummary(List<Integer> quarterMonth) {
+		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<Long> totakWorkingDaysQuery = cb.createQuery(Long.class);
@@ -56,7 +54,9 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		Predicate monthPredicate = cb.function("MONTH", Integer.class, dailyAttendanceRoot.get("attendanceDate")).in(quarterMonth);
 		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceRoot.get("attendanceDate")), 2025);
 
-		totakWorkingDaysQuery.select(cb.countDistinct(dailyAttendanceRoot.get("attendanceDate"))).where(cb.and(monthPredicate, yearPredicate));
+		totakWorkingDaysQuery.select(
+				cb.countDistinct(dailyAttendanceRoot.get("attendanceDate")
+						)).where(cb.and(monthPredicate, yearPredicate));
 
 		Long toatalWorkingdays = entityManager.createQuery(totakWorkingDaysQuery).getSingleResult();
 
@@ -80,37 +80,40 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 								cb.equal(quarterlyDailyAttendanceRoot.get("approvedExtraCurricularActivitiesFlag"), WebServiceUtil.YES)), 1)
 						.otherwise(0));
 
-		quarterlyAttendanceReportQuery.select(cb.construct(QuarterlyAttendanceReportDto.class, cb.literal(toatalWorkingdays), totalPresent,
-				totalAbsent, totalExtra, totalSick, dailyAttendanceAndStudentJoin.get("studentId"))).where(cb.and(monthPredicate, yearPredicate))
+		quarterlyAttendanceReportQuery.select(cb.construct(QuarterlyAttendanceReportDto.class,
+				cb.literal(toatalWorkingdays),
+				totalPresent,
+				totalAbsent, 
+				totalExtra, 
+				totalSick, 
+				dailyAttendanceAndStudentJoin.get("studentId")
+				)).where(cb.and(monthPredicate, yearPredicate))
 				.groupBy(dailyAttendanceAndStudentJoin.get("studentId"));
 
 		return entityManager.createQuery(quarterlyAttendanceReportQuery).getResultList();
 	}
 
-	@Override
-	public StudentModel getStudentModelByStuId(Long studentId) {
-		StudentModel student = studentModelRepository.getStudentByStudentId(studentId);
-		return student;
-	}
 
-	@Override
-	public void saveQuarterlyAttendanceReport(QuarterlyAttendanceReportModel quarterlyAttendanceReportModel) {
-		quarterlyAttendanceModelRepository.save(quarterlyAttendanceReportModel);
-
-	}
-
-	@Override
-	public QuarterlyAttendanceReportModel getStudentIdUpdateReport(Long studentId, String quarterAndYear) {
-
-	QuarterlyAttendanceReportModel quarterlyAttendanceReportModel=quarterlyAttendanceModelRepository.findByStudentAndQuarterAndYear(studentId,quarterAndYear);
-		if(quarterlyAttendanceReportModel == null) {
-			return new QuarterlyAttendanceReportModel();
-		}
-		else {
-			return quarterlyAttendanceReportModel;
-		}
-		
-	}
+	
+	/**
+	 * Retrieve the list of non-compliance students for a given quarter and year.
+	 * And
+	 * Retrieve the list of compliance students for a given quarter and year.
+	 *
+	 */
+	
+	
+//	SELECT 
+//    s.student_id,
+//    qar.quarter_and_year,
+//    s.student_first_name,
+//    s.student_middle_name,
+//    s.student_last_name,
+//    qar.attendance_compliance_status
+//   FROM quarterly_attendance_report qar
+//   INNER JOIN student s ON qar.student_id = s.student_id
+//  WHERE qar.quarter_and_year = :quarterAndYear
+//  AND qar.attendance_compliance_status = :complianceStatus;
 
 	@Override
 	public List<ComplianceAndNonComplianceReportDto> getNonComplianceStudents(String quarterAndYear,

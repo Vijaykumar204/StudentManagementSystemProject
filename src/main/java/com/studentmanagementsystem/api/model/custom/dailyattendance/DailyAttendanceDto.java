@@ -31,7 +31,7 @@ public class DailyAttendanceDto {
 	
 	private Long teacherId;
 	
-	private String studentFirstName;
+	private String firstName;
 	
 	private String studentMiddleName;
 	
@@ -86,11 +86,19 @@ public class DailyAttendanceDto {
 	}
 	
 	public String getStudentFirstName() {
-		return studentFirstName;
+		return getFirstName();
+	}
+
+	public String getFirstName() {
+		return firstName;
 	}
 
 	public void setStudentFirstName(String studentFirstName) {
-		this.studentFirstName = studentFirstName;
+		setFirstName(studentFirstName);
+	}
+
+	public void setFirstName(String studentFirstName) {
+		this.firstName = studentFirstName;
 	}
 
 	public String getStudentMiddleName() {
@@ -143,7 +151,7 @@ public class DailyAttendanceDto {
 		this.attendanceDate = attendanceDate;
 		this.attendanceStatus = attendanceStatus;
 		this.studentId = studentId;
-		this.studentFirstName = studentFirstName;
+		this.firstName = studentFirstName;
 		this.studentMiddleName = studentMiddleName;
 		this.studentLastName = studentLastName;
 		
@@ -154,7 +162,7 @@ public class DailyAttendanceDto {
 			String studentLastName) {
 		super();
 		this.studentId = studentId;
-		this.studentFirstName = studentFirstName;
+		this.firstName = studentFirstName;
 		this.studentMiddleName = studentMiddleName;
 		this.studentLastName = studentLastName;
 	}
@@ -164,7 +172,7 @@ public class DailyAttendanceDto {
 		super();
 		this.attendanceDate = attendanceDate;
 		this.studentId = studentId;
-		this.studentFirstName = studentFirstName;
+		this.firstName = studentFirstName;
 		this.studentMiddleName = studentMiddleName;
 		this.studentLastName = studentLastName;
 	}

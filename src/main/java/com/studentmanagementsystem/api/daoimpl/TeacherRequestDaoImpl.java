@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.studentmanagementsystem.api.dao.TeacherRequestDao;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
-import com.studentmanagementsystem.api.model.custom.teacher.TeacherSaveRequestDto;
+
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 
@@ -31,71 +31,65 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 	@Autowired
 	private TeacherRepository teacherRepository;
 	
+	/**
+	 * Retrieve the list of all teacher details.
+	 */
+	
 	@Override
 	public List<TeacherModelListDto> listAllTeachers() {
 		
 		CriteriaBuilder cb= entityManager.getCriteriaBuilder();
-		CriteriaQuery<TeacherModelListDto> cq=cb.createQuery(TeacherModelListDto.class);
-		Root<TeacherModel> root = cq.from(TeacherModel.class);
+		CriteriaQuery<TeacherModelListDto> teacherLisyQuery=cb.createQuery(TeacherModelListDto.class);
+		Root<TeacherModel> teacherRoot = teacherLisyQuery.from(TeacherModel.class);
 		
-		cq.select(cb.construct(TeacherModelListDto.class,
-				root.get("teacherId"),
-				root.get("teacherName"),
-				root.get("teacherRole"),
-				root.get("teacherDepartment"),
-				root.get("teacherPhoneNumber")
+		teacherLisyQuery.select(cb.construct(TeacherModelListDto.class,
+				teacherRoot.get("teacherId"),
+				teacherRoot.get("teacherName"),
+				teacherRoot.get("teacherRole"),
+				teacherRoot.get("teacherDepartment"),
+				teacherRoot.get("teacherPhoneNumber")
 				));
-		return entityManager.createQuery(cq).getResultList();
+		return entityManager.createQuery(teacherLisyQuery).getResultList();
 	}
 
-	@Override
-	public Object saveTeacher(TeacherModel teacher) {
-		
 
-		   return teacherRepository.save(teacher);
-	}
 	
 	
-	// Filter Teacher
+	/**
+	 * Filter teacher by ID, email, or phone number.
+	 */
 
 	@Override
 	public List<TeacherModelListDto> filterTeacher(Long teacherId, String teacherName, String teacherPhoneNumber) {
 		 CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		 CriteriaQuery<TeacherModelListDto> cq= cb.createQuery(TeacherModelListDto.class);
-		 Root<TeacherModel> root =cq.from(TeacherModel.class);
-		 cq.select(cb.construct(TeacherModelListDto.class,
-					root.get("teacherId"),
-					root.get("teacherName"),
-					root.get("teacherRole"),
-					root.get("teacherDepartment"),
-					root.get("teacherPhoneNumber")
+		 CriteriaQuery<TeacherModelListDto> teacherFilter= cb.createQuery(TeacherModelListDto.class);
+		 Root<TeacherModel> teacherRoot =teacherFilter.from(TeacherModel.class);
+		 teacherFilter.select(cb.construct(TeacherModelListDto.class,
+				 teacherRoot.get("teacherId"),
+				 teacherRoot.get("teacherName"),
+				 teacherRoot.get("teacherRole"),
+				 teacherRoot.get("teacherDepartment"),
+				 teacherRoot.get("teacherPhoneNumber")
 				 ));
 		 List<Predicate> predicates = new ArrayList<>();
 		 if(teacherId!=null) {
-				predicates.add(cb.equal(root.get("teacherId"),teacherId));
+				predicates.add(cb.equal(teacherRoot.get("teacherId"),teacherId));
 		 }
 		 
 		 if(teacherName!=null) {
-			 predicates.add(cb.equal(root.get("teacherName"),teacherName));
+			 predicates.add(cb.equal(teacherRoot.get("teacherName"),teacherName));
 		}
 		
 		if(teacherPhoneNumber!=null) {
-			 predicates.add(cb.equal(root.get("teacherPhoneNumber"),teacherPhoneNumber));
+			 predicates.add(cb.equal(teacherRoot.get("teacherPhoneNumber"),teacherPhoneNumber));
 		}
 		
 		if(!predicates.isEmpty()) {
-			cq.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+			teacherFilter.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		}
-		 return entityManager.createQuery(cq).getResultList();
+		 return entityManager.createQuery(teacherFilter).getResultList();
 
 	}
-
-	@Override
-	public TeacherModel getTeacherByTeacherId(Long teacherId) {
-		
-		return teacherRepository.getTeacherByTeacherId(teacherId);
-	}
-
 
 
 }

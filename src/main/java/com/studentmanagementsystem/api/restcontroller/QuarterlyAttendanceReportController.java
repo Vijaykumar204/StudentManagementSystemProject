@@ -23,14 +23,30 @@ public class QuarterlyAttendanceReportController {
 	private QuarterlyAttendanceReportService quarterlyAttendanceReportService;
 
 	
+	/**
+	 * Retrieve the list of non-compliance students for a given quarter and year.
+	 *
+	 * Author: Vijayakumar
+	 * @param quarterAndYear The quarter and year to fetch records for (e.g., 03/2025)
+	 * @return List of non-compliance student records
+	 */
 	
 	@GetMapping("/noncompliance")
-	ResponseEntity<List<ComplianceAndNonComplianceReportDto>> getNonComplianceStudents(@RequestParam String quarterAndYear){
-		return new ResponseEntity<List<ComplianceAndNonComplianceReportDto>>(quarterlyAttendanceReportService.getNonComplianceStudents(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> getNonComplianceStudents(@RequestParam String quarterAndYear){
+		return new ResponseEntity<>(quarterlyAttendanceReportService.getNonComplianceStudents(quarterAndYear),HttpStatus.OK);
 	}
+	
+	/**
+	 * Retrieve the list of compliance students for a given quarter and year.
+	 *
+	 * Author: Vijayakumar
+	 * @param quarterAndYear The quarter and year to fetch records for (e.g., 03/2025)
+	 * @return List of compliance student records
+	 */
+	
 	@GetMapping("/compliance")
-	ResponseEntity<List<ComplianceAndNonComplianceReportDto>> getComplianceStudents(@RequestParam String quarterAndYear){
-		return new ResponseEntity<List<ComplianceAndNonComplianceReportDto>>(quarterlyAttendanceReportService.getComplianceStudents(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> getComplianceStudents(@RequestParam String quarterAndYear){
+		return new ResponseEntity<>(quarterlyAttendanceReportService.getComplianceStudents(quarterAndYear),HttpStatus.OK);
 	}
 
 

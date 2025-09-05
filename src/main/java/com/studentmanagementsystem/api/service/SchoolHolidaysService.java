@@ -2,8 +2,9 @@ package com.studentmanagementsystem.api.service;
 
 import java.util.List;
 
-import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidayListResponse;
+import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
+import com.studentmanagementsystem.api.model.custom.schoolholidays.response.SchoolHolidayListResponse;
 
 public interface SchoolHolidaysService {
 
@@ -11,13 +12,13 @@ public interface SchoolHolidaysService {
 
 SchoolHolidayListResponse getHolidays();
 
-Object cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto);
+Response cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto);
 
-Object declareMultipleHolidays(List<SchoolHolidaysDto> schoolHolidaysDto);
+Response declareMultipleHolidays(List<SchoolHolidaysDto> schoolHolidaysDto);
 
-Object cancelMultipleHoliday(List<SchoolHolidaysDto> schoolHolidaysDto);
+Response cancelMultipleHoliday(List<SchoolHolidaysDto> schoolHolidaysDto);
 
-Object declareHoliday(SchoolHolidaysDto schoolHolidaysDto);
+Response declareHoliday(SchoolHolidaysDto schoolHolidaysDto);
 
 SchoolHolidayListResponse getCancelHolidays();
 

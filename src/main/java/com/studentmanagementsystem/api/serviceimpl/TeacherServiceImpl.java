@@ -1,9 +1,9 @@
 package com.studentmanagementsystem.api.serviceimpl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.regex.Pattern;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.TeacherRequestDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
-import com.studentmanagementsystem.api.model.custom.teacher.TeacherSaveRequestDto;
+import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListResponseDto;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
+import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.TeacherService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
@@ -24,19 +25,35 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Autowired
 	private FieldValidation fieldValidation;
+	
+	 
+	
+	@Autowired
+	private TeacherRepository teacherRepository;
 
+
+	/**
+	 * Retrieve the list of all teacher details.
+	 */
+	
 	@Override
-	public List<TeacherModelListDto> listAllTeachers() {
-		// TODO Auto-generated method stub
-		return teacherRequestDao.listAllTeachers();
+	public TeacherModelListResponseDto listAllTeachers() {
+		TeacherModelListResponseDto response = new TeacherModelListResponseDto();
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(teacherRequestDao.listAllTeachers());
+		return response;
 	}
+	
+	/**
+	 * Save or update teacher details.
+	 */
 
 	@Override
-	public Object saveTeacher(TeacherSaveRequestDto teacherSaveRequestDto,Long teacherId) {
+	public Response saveTeacher(TeacherModelListDto teacherModelListDto,Long teacherId) {
 		
 
 		Response response = new Response();
-		List<String> requestMissedFieldList = fieldValidation.checkValidationTeacherSave(teacherSaveRequestDto,teacherId);
+		List<String> requestMissedFieldList = fieldValidation.checkValidationTeacherSave(teacherModelListDto,teacherId);
 		
 		   LocalDateTime today = LocalDateTime.now();
 		   
@@ -48,29 +65,51 @@ public class TeacherServiceImpl implements TeacherService {
 			}
 		   
 		   TeacherModel teacher;
-		   if(teacherSaveRequestDto.getTeacherId() == null) {
+		   if(teacherModelListDto.getTeacherId() == null) {
 				 teacher = new TeacherModel();
-				teacher.setCreateUser(teacherId);
+				 TeacherModel createTeacher = teacherRepository.findTeacherIdByTeacherId(teacherId);
+				 if(createTeacher == null) {
+						response.setStatus(WebServiceUtil.WARNING);	
+						response.setData(WebServiceUtil.TEACHER_ID_ERROR);
+						return response;
+					} 
+				teacher.setCreateUser(createTeacher.getTeacherId());
 				teacher.setCreateTime(today);	
 		   }	   
 		   else {		   
-			   teacher = teacherRequestDao.getTeacherByTeacherId(teacherSaveRequestDto.getTeacherId());
-		        
-			    teacher.setUpdateUser(teacherId);
+			   teacher = teacherRepository.findTeacherByTeacherId(teacherModelListDto.getTeacherId());       
+			   TeacherModel createTeacher  = teacherRepository.findTeacherIdByTeacherId(teacherId);
+				if(createTeacher == null) {
+					response.setStatus(WebServiceUtil.WARNING);	
+					response.setData(WebServiceUtil.TEACHER_ID_ERROR);
+					return response;
+				}
+			    teacher.setUpdateUser(createTeacher.getTeacherId());
 				teacher.setUpdateTime(today);
 
 			}
-			teacher.setTeacherName(teacherSaveRequestDto.getTeacherName());
-			teacher.setTeacherRole(teacherSaveRequestDto.getTeacherRole());
-			teacher.setTeacherDepartment(teacherSaveRequestDto.getTeacherDepartment());
-			teacher.setTeacherPhoneNumber(teacherSaveRequestDto.getTeacherPhoneNumber());
-		return teacherRequestDao.saveTeacher(teacher);
+			teacher.setTeacherName(teacherModelListDto.getTeacherName());
+			teacher.setTeacherRole(teacherModelListDto.getTeacherRole());
+			teacher.setTeacherDepartment(teacherModelListDto.getTeacherDepartment());
+			teacher.setTeacherPhoneNumber(teacherModelListDto.getTeacherPhoneNumber());
+		    teacherRepository.save(teacher);
+		    
+		    response.setStatus(WebServiceUtil.SUCCESS);
+		    response.setData(WebServiceUtil.SAVE);
+		    
+		    return response;
 	}
 
+	/**
+	 * Filter teacher by ID, email, or phone number.
+	 */
+	
 	@Override
-	public List<TeacherModelListDto> filterTeacher(Long teacherId, String teacherName, String teacherPhoneNumber) {
-		
-		return teacherRequestDao.filterTeacher(teacherId,teacherName,teacherPhoneNumber);
+	public TeacherModelListResponseDto filterTeacher(Long teacherId, String teacherName, String teacherPhoneNumber) {
+		TeacherModelListResponseDto response = new TeacherModelListResponseDto();
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(teacherRequestDao.filterTeacher(teacherId,teacherName,teacherPhoneNumber));
+		return response;
 	}
 
 

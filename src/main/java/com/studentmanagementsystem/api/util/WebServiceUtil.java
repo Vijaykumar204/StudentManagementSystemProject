@@ -22,7 +22,7 @@ public final class WebServiceUtil {
 	
 //******************** Student Message *********************************
 	
-	public static final String STUDENT_NOT_FOUND ="Student not found with ID:";
+	public static final String STUDENT_NOT_FOUND ="Student ID not found";
 	public static final String NO_CHANGES = "No need to change already have %s status";
 	public static final String A_OR_D_STATUS="Student %s";
 	public static final String STUDENT_EXISTS ="Student name and DOB already exists";
@@ -97,7 +97,107 @@ public final class WebServiceUtil {
 	
 	public static final String EXTRA_CUR_ACTIVITIES_LEAVE_MESSAGE = " Extra curricular activity leave request accepted,Attendance marked Absent on ";
 	 
-	public static final String QUARTERLY_RESULT_REPORT_SUBJECT	 = "Quarterly result report";
+
+	
+	public static final String QUARTERLY_ATTENDANCE_REPORT_SUBJECT ="Academic Attendance Report for  ";
+	
+	public static final String QUARTERLY_ATTENDANCE_REPORT_BODY="""
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+            
+                <p>Dear Sir/Madam,</p>
+                <p>    I am writing to share the academic attendance report of your child, 
+                   <b>%s</b>, for the quarter <b>%s</b>.</p>
+                
+                <h3 > Attendance Report</h3>
+                
+                <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 60%%;">
+                    <tr style="background-color: #f2f2f2;">
+                        <th align="left">Metric</th>
+                        <th align="left">Value</th>
+                    </tr>
+                    <tr>
+                        <td><b>Total Working Days</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Days Present</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Days Absent</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Compliance Status</b></td>
+                        <td>%s</td>
+                    </tr>
+                </table>
+                
+                <p>Thank you for your continuous support in nurturing <b>%s</b>’s education.</p>
+                
+                <br>
+                <p>Warm regards,<br>
+                <b>Class Teacher</b><br>
+                Hum School, Chennai</p>
+                
+            </body>
+            </html>
+            """ ;
+	
+	public static final String QUARTERLY_MARK_REPORT_SUBJECT ="Academic progress Report for  ";
+	
+			
+	public static final String QUARTERLY_MARK_REPORT_BOBY="""
+	        <p>Dear Sir/Madam,</p>
+	        <p>   I am writing to share the academic progress report of your child, <b>%s</b>, for the quarter <b>%s</b>.</p>
+	        
+	        <h3>📌 Performance Summary</h3>
+	         <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 60%%;">
+                    <tr style="background-color: #f2f2f2;">
+                        <th align="left">Description</th>
+                        <th align="left">Mark</th>
+                    </tr>
+                    <tr>
+                        <td><b>Tamil</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>English</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Maths</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Science</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Social Science</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total mark obtained</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Result</b></td>
+                        <td>%s</td>
+                    </tr>
+                    
+                </table>
+	        
+	        <p>Thank you for your continuous support in nurturing %s’s education.</p>
+	        
+	        <br>
+	        <p>Warm regards,<br>
+	        Class Teacher<br>
+	         Hum School, Chennai</p>
+	        """;	
+	
+	//******************** Validation Message *********************************		
 	
 	public static final String NULL_ERROR = "%s is required";
 	
@@ -106,8 +206,20 @@ public final class WebServiceUtil {
 //******************** Response Status *********************************
 	
 	public static final String WARNING = "Warning";
+	
 	public static final String SUCCESS ="Success";
 	public static final String SAVE ="Successfully saved";
+	public static final String MARK_ATTENDANCE = "Attendance marked successfully";
+	public static final String FAILURE = "Failure";
+	public static final String DECLARE_MARK="Successfully declared mark";
+	public static final String STUDENT_ATTENDANCE_STATUS =" student attendance is non compliance,so does not declare the mark";
+	public static final String TEACHER_ID_ERROR = "Invalid Teacher ID. Please enter a valid one";
+
+	
+	
+	
+	
+	
 
 //	public static final String NAME_ERROR = "Name is null";
 //	public static final String NAME_REGEX_ERROR = "Name  can contain only letters ";

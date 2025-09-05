@@ -1,6 +1,8 @@
-package com.studentmanagementsystem.api.model.custom.schoolholidays;
+package com.studentmanagementsystem.api.model.custom.schoolholidays.response;
 
 import java.util.List;
+
+import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 
 
 

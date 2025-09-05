@@ -28,6 +28,12 @@ public class SchoolHolidaysDaoImpl implements SchoolHolidaysDao {
 
 
 
+	/**
+	 *  Retrieve the list of active holidays(iscancelHoliday = false).
+	 *  And
+	 *  Retrieve the list of cancel holidays(iscancelHoliday = true).
+	 */
+	
 	@Override
 	public List<SchoolHolidaysDto> getAllHolidays(Boolean holiday) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -50,31 +56,7 @@ public class SchoolHolidaysDaoImpl implements SchoolHolidaysDao {
 		return holidays;
 	}
 
-	@Override
-	public Object declareHoliday(SchoolHolidaysModel holiday) {
-		
-		return schoolHolidaysRepository.save(holiday);
-	}
 
-	@Override
-	public Object declareMultipleHolidays(List<SchoolHolidaysModel> holidays) {
-
-		return schoolHolidaysRepository.saveAll(holidays);
-	}
-
-
-
-	@Override
-	public Object cancelHolidayByDate(SchoolHolidaysModel holiday) {
-		
-		return schoolHolidaysRepository.save(holiday);
-	}
-
-	@Override
-	public Object cancelMultipleHoliday(List<SchoolHolidaysModel> holidays) {
-
-		return schoolHolidaysRepository.saveAll(holidays);
-	}
 
 	@Override
 	public SchoolHolidaysModel getHolidayByHolidayDate(LocalDate holidayDate) {

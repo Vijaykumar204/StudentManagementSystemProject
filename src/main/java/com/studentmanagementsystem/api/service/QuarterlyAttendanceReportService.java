@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.ComplianceAndNonComplianceReportDto;
+import com.studentmanagementsystem.api.model.custom.quarterlyreport.response.ComplianceAndNonComplianceListResponse;
 
 public interface QuarterlyAttendanceReportService {
 
@@ -11,9 +12,9 @@ public interface QuarterlyAttendanceReportService {
 
 	void monthEndCheck(LocalDate attendanceDate);
 
-	List<ComplianceAndNonComplianceReportDto> getNonComplianceStudents(String quarterAndYear);
+	ComplianceAndNonComplianceListResponse getNonComplianceStudents(String quarterAndYear);
 
-	List<ComplianceAndNonComplianceReportDto> getComplianceStudents(String quarterAndYear);
+	ComplianceAndNonComplianceListResponse getComplianceStudents(String quarterAndYear);
 
 //	String getAll();
 

@@ -17,7 +17,7 @@ import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.repository.DailyAttendanceRepository;
 import com.studentmanagementsystem.api.repository.StudentModelRepository;
-
+import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
@@ -56,16 +56,24 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	                .orElseThrow(() -> new RuntimeException("Attendance not found with ID: " + attendanceId));
 	}
 
-	@Override
-	public Object setAttendanceToSingleStudent(DailyAttendanceModel dailyAttendance) {
-		
-		return dailyAttendanceRepository.save(dailyAttendance);
-	}
+
 	
-	@Override
-	public Object setAttandanceMultiStudents(List<DailyAttendanceModel> attendance) {
-		 return dailyAttendanceRepository.saveAll(attendance);
-	}
+	/**
+	 * Retrieve student attendance.
+	 * <p>
+	 * By default, retrieves today's attendance. If a date is provided, retrieves attendance for that particular date.
+	 */
+	
+//	SELECT 
+//    da.attendance_date,
+//    da.attendance_status,
+//    s.student_id,
+//    s.student_first_name,
+//    s.student_middle_name,
+//    s.student_last_name
+//    FROM daily_attendance_registration da
+//    INNER JOIN student s ON da.student_id = s.student_id
+//    WHERE da.attendance_date = :today;
 
 	@Override
 	public List<DailyAttendanceDto> getStudentAttendance(LocalDate today) {
@@ -90,9 +98,13 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		return entityManager.createQuery(dailyAttendanceQuery).getResultList();
 	}
 	
+	/**
+	 * Retrieve students with no attendance marked.
+	 * By default, retrieves students without attendance for today. 
+	 * If a date is provided, retrieves students without attendance for that particular date.
+	 */
 	
-	
-//	SELECT s.* FROM student s WHERE NOT EXISTS ( SELECT 1 FROM daily_attendance_registration d    WHERE d.student_Id = s.STU_Id  AND d.AT_Date = '2025-08-23');
+//	SELECT s.* FROM student s WHERE NOT EXISTS ( SELECT 1 FROM daily_attendance_registration d  WHERE d.student_Id = s.STU_Id  AND d.AT_Date = '2025-08-23');
 	
 
 	@Override
@@ -124,7 +136,9 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 
 
 	
-	
+	/**
+	 * Retrieve students who were absent in a given month.
+	 */
 
 	@Override
 	public List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(int month, int year) {
@@ -147,7 +161,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 
         Predicate monthCondition = cb.equal(cb.function("MONTH", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), month);
         Predicate yearCondition = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), year);
-        Predicate absentCondition = cb.equal(dailyAttendanceAndStudentJoin.get("attendanceStatus"), 'A');
+        Predicate absentCondition = cb.equal(dailyAttendanceAndStudentJoin.get("attendanceStatus"), WebServiceUtil.ABSENT);
         
         cq.multiselect(
         		studentRoot.get("studentId").alias("studentId"),
@@ -193,6 +207,15 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		
 	}
 
+	/**
+	 * Retrieve students who have taken extra-curricular activity leave 
+	 * for more than 3 days in a given month.
+	 * And
+	 * Retrieve students who have taken sick leave 
+	 * for more than 6 days in a given month.
+	 *
+	 */
+	
 	@Override
 	public List<ExceedingDaysLeaveDto> getStudentleaveForExtraActivitiesd(int month, int year, String leaveStatus,int leaveCount) {
 		  CriteriaBuilder cb = entityManager.getCriteriaBuilder();

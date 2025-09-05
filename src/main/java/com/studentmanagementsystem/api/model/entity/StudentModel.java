@@ -115,8 +115,17 @@ public class StudentModel {
 		this.studentId = studentId;
 	}
 
+	public String getFirstName() {
+		return getStudentFirstName();
+	}
+
 	public String getStudentFirstName() {
 		return studentFirstName;
+	}
+
+
+	public void setFirstName(String studentFirstName) {
+		setStudentFirstName(studentFirstName);
 	}
 
 	public void setStudentFirstName(String studentFirstName) {

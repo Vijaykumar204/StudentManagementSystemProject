@@ -1,6 +1,8 @@
-package com.studentmanagementsystem.api.model.custom.student;
+package com.studentmanagementsystem.api.model.custom.student.response;
 
 import java.util.List;
+
+import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 
 public class StudentModelListResponse {
 	

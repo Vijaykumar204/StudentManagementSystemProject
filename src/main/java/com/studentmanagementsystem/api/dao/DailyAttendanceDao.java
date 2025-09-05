@@ -14,13 +14,13 @@ public interface DailyAttendanceDao {
 
 //	Object setAttandanceMultiSameDate(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate);
 
-	Object setAttandanceMultiStudents(List<DailyAttendanceModel> attendance);
+//	Object setAttandanceMultiStudents(List<DailyAttendanceModel> attendance);
 
 	DailyAttendanceModel createNewAttendance(Long studentId);
 
 	DailyAttendanceModel findAttendanceById(Long attendanceId);
 
-	Object setAttendanceToSingleStudent(DailyAttendanceModel dailyAttendance);
+//	Object setAttendanceToSingleStudent(DailyAttendanceModel dailyAttendance);
 
 	List<DailyAttendanceDto> getStudentAttendance(LocalDate today);
 

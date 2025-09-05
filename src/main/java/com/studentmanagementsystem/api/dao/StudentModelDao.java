@@ -5,23 +5,18 @@ import java.util.List;
 import java.util.Optional;
 
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
-import com.studentmanagementsystem.api.model.custom.student.StudentSaveRequestDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 public interface StudentModelDao {
 
 	List<StudentDto> listAllDetailsStudent();
 
-	
 
-//	List<StudentListRequestDto> getAllHostelStudents(String studentActiveStatus);
-
-//	List<StudentListRequestDto> getAllDaysStudents(String studentActiveStatus,String dayscholar);
 
 	List<StudentDto> getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber);
 
-	List<StudentDto> getBystudentStatus(char studentActiveStatus);
+	List<StudentDto> getByStudentStatus(char studentActiveStatus);
 
 	
 	List<StudentDto> getAllHostelStudents(char studentActiveStatus, char hostel);
@@ -38,12 +33,12 @@ public interface StudentModelDao {
 
 
 
-	Object activeOrDeactiveByStudentId(StudentModel student);
+//	Object activeOrDeactiveByStudentId(StudentModel student);
 
 
 
-	StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
-			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth);
+//	StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
+//			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth);
 
 
 

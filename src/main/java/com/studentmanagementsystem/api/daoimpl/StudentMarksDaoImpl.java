@@ -7,14 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import com.studentmanagementsystem.api.dao.StudentMarksDao;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
+import com.studentmanagementsystem.api.model.custom.studentmarks.StudentWithPassOrFail;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
-import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
-import com.studentmanagementsystem.api.repository.StudentMarksRepository;
+
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 import jakarta.persistence.EntityManager;
@@ -22,7 +21,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Path;
+
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -32,28 +31,20 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 	@Autowired
 	private EntityManager entityManager;
 
-	@Autowired
-	private StudentMarksRepository studentMarksRepository;
 
+
+
+	/**
+	 * Retrieve the list of students with their result status (pass or fail) 
+	 * for a given quarter and year.
+	 */
 
 
 	@Override
-	public MarkModel getStudentModelandquarterAndYear(Long studentId, String quarterAndYear) {
-
-		return studentMarksRepository.findByStudentIdAndQuarterAndYear(studentId, quarterAndYear);
-	}
-
-	@Override
-	public void saveStudentMarks(MarkModel studentMark) {
-		studentMarksRepository.save(studentMark);
-
-	}
-
-	@Override
-	public List<ComplianceStudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear) {
+	public List<StudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear) {
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<ComplianceStudentWithPassOrFail> complianceStudentQuery = cb.createQuery(ComplianceStudentWithPassOrFail.class);
+		CriteriaQuery<StudentWithPassOrFail> complianceStudentQuery = cb.createQuery(StudentWithPassOrFail.class);
 
 //	    Root<StudentMarks> sm = cq.from(StudentMarks.class);
 
@@ -64,24 +55,30 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 
 		Root<MarkModel> studentMarksRoot = complianceStudentQuery.from(MarkModel.class);
 
-		Join<MarkModel, StudentModel> studentMarksAndStudentJoin = studentMarksRoot.join("studentModel");
-
-		Join<StudentModel, QuarterlyAttendanceReportModel> studentAndQuarterlyAttendanceReportJoin = studentMarksAndStudentJoin
-				.join("quarterlyAttendanceReportModel");
+//		Join<MarkModel, StudentModel> studentMarksAndStudentJoin = studentMarksRoot.join("studentModel");
+//
+//		Join<StudentModel, QuarterlyAttendanceReportModel> studentAndQuarterlyAttendanceReportJoin = studentMarksAndStudentJoin
+//				.join("quarterlyAttendanceReportModel");
 
 		// Conditions
-		Predicate qarQuarterCondition = cb.equal(studentAndQuarterlyAttendanceReportJoin.get("quarterAndYear"), quarterAndYear);
+//		Predicate qarQuarterCondition = cb.equal(studentAndQuarterlyAttendanceReportJoin.get("quarterAndYear"), quarterAndYear);
+//		Predicate complianceCondition = cb.equal(studentAndQuarterlyAttendanceReportJoin.get("attendanceComplianceStatus"),
+//				WebServiceUtil.COMPLIANCE);
 		Predicate smQuarterCondition = cb.equal(studentMarksRoot.get("quarterAndYear"), quarterAndYear);
-		Predicate complianceCondition = cb.equal(studentAndQuarterlyAttendanceReportJoin.get("attendanceComplianceStatus"),
-				WebServiceUtil.COMPLIANCE);
 
-		complianceStudentQuery.select(cb.construct(ComplianceStudentWithPassOrFail.class, studentMarksRoot.get("studentModel").get("studentId"),
-				studentMarksRoot.get("quarterAndYear"), studentMarksRoot.get("result")))
-				.where(cb.and(qarQuarterCondition, smQuarterCondition, complianceCondition));
+		complianceStudentQuery.select(cb.construct(StudentWithPassOrFail.class,
+				studentMarksRoot.get("studentModel").get("studentId"),				
+				studentMarksRoot.get("quarterAndYear"), 
+				studentMarksRoot.get("result"))).where((smQuarterCondition));
+				//.where(cb.and(qarQuarterCondition, smQuarterCondition, complianceCondition));
 
 		return entityManager.createQuery(complianceStudentQuery).getResultList();
 	}
 
+	/**
+	 * Retrieve the list of all student marks for a given quarter and year.
+	 */
+	
 	@Override
 	public List<StudentMarksDto> getAllStudentMarks(String quarterAndYear) {
 
@@ -105,6 +102,10 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 
 		return entityManager.createQuery(studentMarksQuery).getResultList();
 	}
+	
+	/**
+	 * Retrieve the overall result summary for students in a given quarter and year.
+	 */
 
 	@Override
 	public List<TotalResultCountdto> getToatalResultCount(String quarterAndYear) {
@@ -160,6 +161,29 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 
 		return entityManager.createQuery(totalResultCountQuery).getResultList();
 	}
+	
+	/**
+	 * Retrieve the class topper in agiven quarter and Year.
+	 */
+	
+//	SELECT 
+//    s.student_id,
+//    m.quarter_and_year,
+//    s.student_first_name,
+//    s.student_middle_name,
+//    s.student_last_name,
+//    m.total_marks
+//    FROM marks m
+//    INNER JOIN student s ON m.student_id = s.student_id
+//    WHERE m.quarter_and_year = :quarterAndYear
+//    AND m.result = 'PRESENT'
+//    AND m.total_marks = (
+//        SELECT MAX(m2.total_marks)
+//        FROM marks m2
+//        WHERE m2.quarter_and_year = :quarterAndYear
+//          AND m2.result = Pass
+//  );
+
 
 	@Override
 	public ClassTopperDto getClassTopper(String quarterAndYear) {
@@ -167,25 +191,29 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 		
 		 CriteriaQuery<ClassTopperDto> classTopperQuery = cb.createQuery(ClassTopperDto.class);
 		    Root<MarkModel> studentMark = classTopperQuery.from(MarkModel.class);
-		    Join<MarkModel, StudentModel> studentMarksAndStudentJoin = studentMark.join("studentModel");
+	//	    Join<MarkModel, StudentModel> studentMarksAndStudentJoin = studentMark.join("studentModel");
 
-		    // Subquery to find MAX(totalMarks) for given quarter and PRESENT result
+		   
 		    Subquery<Integer> subquery = classTopperQuery.subquery(Integer.class);
 		    Root<MarkModel> subQueryStudentMarksRoot = subquery.from(MarkModel.class);
 		     subquery.select(cb.max(subQueryStudentMarksRoot.get("totalMarks")))
 		            .where(
 		                cb.equal(subQueryStudentMarksRoot.get("quarterAndYear"), quarterAndYear),
-		                cb.equal(subQueryStudentMarksRoot.get("result"), WebServiceUtil.PRESENT)
+		                cb.equal(subQueryStudentMarksRoot.get("result"), WebServiceUtil.PASS)
 		            );
 
-		    // Main query: fetch student whose marks = MAX(totalMarks)
+
 		     classTopperQuery.select(cb.construct(
 		            ClassTopperDto.class,
-		            studentMarksAndStudentJoin.get("studentId"),
+//		            studentMarksAndStudentJoin.get("studentId"),
+		            studentMark.get("studentM dodel").get("studentId"),
 		            studentMark.get("quarterAndYear"),
-		            studentMarksAndStudentJoin.get("studentFirstName"),
-		            studentMarksAndStudentJoin.get("studentMiddleName"),
-		            studentMarksAndStudentJoin.get("studentLastName"),
+		        //    studentMarksAndStudentJoin.get("firstName"),
+		            studentMark.get("studentModel").get("firstName"),
+		          //  studentMarksAndStudentJoin.get("studentMiddleName"),
+		            studentMark.get("studentModel").get("studentMiddleName"),
+		       //     studentMarksAndStudentJoin.get("studentLastName"),
+		            studentMark.get("studentModel").get("studentLastName"),
 		            studentMark.get("totalMarks")
 		    ))
 		    .where(

@@ -14,11 +14,11 @@ public interface QuarterlyAttendanceReportDao {
 
 	List<QuarterlyAttendanceReportDto> getAttendanceSummary(List<Integer> marchend);
 
-	StudentModel getStudentModelByStuId(Long studentId);
+//	StudentModel getStudentModelByStuId(Long studentId);
 
-	void saveQuarterlyAttendanceReport(QuarterlyAttendanceReportModel quarterlyAttendanceReportModel);
+//	void saveQuarterlyAttendanceReport(QuarterlyAttendanceReportModel quarterlyAttendanceReportModel);
 
-	QuarterlyAttendanceReportModel getStudentIdUpdateReport(Long studentId, String quarterAndYear);
+//	QuarterlyAttendanceReportModel getStudentIdUpdateReport(Long studentId, String quarterAndYear);
 
 	List<ComplianceAndNonComplianceReportDto> getNonComplianceStudents(String quarterAndYear,
 			String complianceStatus);

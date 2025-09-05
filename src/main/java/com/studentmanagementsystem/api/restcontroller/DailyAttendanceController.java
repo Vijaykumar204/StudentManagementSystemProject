@@ -26,46 +26,109 @@ public class DailyAttendanceController {
 	@Autowired
 	private DailyAttendanceService dailyAttendanceService;
 	
+	/**
+	 * Mark attendance for a single student.
+	 *
+	 * Author: Vijayakumar
+	 * @param dailyAttendanceDto The attendance details of the student (from request body)
+	 * @return Confirmation message indicating successful attendance marking
+	 */
+
+	
 	@PostMapping("/single")
 	ResponseEntity<?> setAttendanceToSingleStudent(@RequestBody DailyAttendanceDto dailyAttendanceDto ){
 		return new ResponseEntity<>(dailyAttendanceService.setAttendanceToSingleStudent(dailyAttendanceDto),HttpStatus.OK);
 	}
 	
-//	@PostMapping("/multiesame")
-//	ResponseEntity<?> setAttandanceMultiSameDate(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,@RequestParam(required = false) LocalDate attendanceDate){
-//		return new ResponseEntity<>(dailyAttendanceService.setAttandanceMultiSameDate(dailyAttendanceDto,attendanceDate),HttpStatus.OK);
-//		
-//	}
+	/**
+	 * Mark attendance for multliple students.
+	 *
+	 * Author: Vijayakumar
+	 * @param dailyAttendanceDto The list of  attendance details of the student (from request body)
+	 * @return Confirmation message indicating successful attendance marking
+	 */
+
 	@PostMapping("/mulstu")
 	ResponseEntity<?> setAttandanceMultiStudents(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,@RequestParam(required = false) LocalDate attendanceDate){
-		return new ResponseEntity<>(dailyAttendanceService.setAttandanceMultiStudents(dailyAttendanceDto,attendanceDate),HttpStatus.OK);
-		
+		return new ResponseEntity<>(dailyAttendanceService.setAttandanceMultiStudents(dailyAttendanceDto,attendanceDate),HttpStatus.OK);		
 	}
 	
+	/**
+	 * Retrieve student attendance.
+	 * By default, retrieves today's attendance. If a date is provided, retrieves attendance for that particular date.
+	 *
+	 * Author: Vijayakumar
+	 * @param attendanceDate (optional) The date for which to retrieve attendance
+	 * @return List of student attendance records
+	 */
+	
 	@GetMapping("/todayAttendance")
-	ResponseEntity<List<DailyAttendanceDto>> getStudentAttendanceByToday(@RequestParam(required = false) LocalDate attendanceDate){
+	ResponseEntity<?> getStudentAttendanceByToday(@RequestParam(required = false) LocalDate attendanceDate){
 		return new ResponseEntity<>(dailyAttendanceService.getStudentAttendanceByToday(attendanceDate),HttpStatus.OK);
 	}
 	
+	/**
+	 * Retrieve students with no attendance marked.
+	 * <p>
+	 * By default, retrieves students without attendance for today. 
+	 * If a date is provided, retrieves students without attendance for that particular date.
+	 *
+	 * Author: Vijayakumar
+	 * @param attendanceDate (optional) The date for which to retrieve students without attendance
+	 * @return List of student records without attendance
+	 */
+	
+	
 	@GetMapping("/todaynotAttendance")
-	ResponseEntity<List<DailyAttendanceDto>> getStudentAttendanceNotTakeByToday(@RequestParam(required = false) LocalDate attendanceDate){
-		return new ResponseEntity<List<DailyAttendanceDto>>(dailyAttendanceService.getStudentAttendanceNotTakeByToday(attendanceDate),HttpStatus.OK);
+	ResponseEntity<?> getStudentAttendanceNotTakeByToday(@RequestParam(required = false) LocalDate attendanceDate){
+		return new ResponseEntity<>(dailyAttendanceService.getStudentAttendanceNotTakeByToday(attendanceDate),HttpStatus.OK);
 	}
+	
+	/**
+	 * Retrieve students who have taken extra-curricular activity leave 
+	 * for more than 3 days in a given month.
+	 *
+	 * Author: Vijayakumar
+	 * @param month The month for which to check leave records(path variable)
+	 * @param year The year for which to check leave records(path variable)
+	 * @return List of student records exceeding 3 days of extra-curricular leave
+	 */
+	
 	
 	@GetMapping("/activities/{month}/{year}")
-	ResponseEntity<List<ExceedingDaysLeaveDto>> getStudentleaveForExtraActivities(@PathVariable int month,@PathVariable int year){
-		return new ResponseEntity<List<ExceedingDaysLeaveDto>>(dailyAttendanceService.getStudentleaveForExtraActivities(month,year),HttpStatus.OK);
-	}
-
-	@GetMapping("/sickLeave/{month}/{year}")
-	ResponseEntity<List<ExceedingDaysLeaveDto>> getStudentleaveForSickLeave(@PathVariable int month,@PathVariable int year){
-		return new ResponseEntity<List<ExceedingDaysLeaveDto>>(dailyAttendanceService.getStudentleaveForSickLeave(month,year),HttpStatus.OK);
+	ResponseEntity<?> getStudentleaveForExtraActivities(@PathVariable int month,@PathVariable int year){
+		return new ResponseEntity<>(dailyAttendanceService.getStudentleaveForExtraActivities(month,year),HttpStatus.OK);
 	}
 	
+	/**
+	 * Retrieve students who have taken sick leave 
+	 * for more than 3 days in a given month.
+	 *
+	 * Author: Vijayakumar
+	 * @param month The month for which to check leave records(path variable)
+	 * @param year The year for which to check leave records(path variable)
+	 * @return List of student records exceeding 3 days of sick leave
+	 */
+	
+
+	@GetMapping("/sickLeave/{month}/{year}")
+	ResponseEntity<?> getStudentleaveForSickLeave(@PathVariable int month,@PathVariable int year){
+		return new ResponseEntity<>(dailyAttendanceService.getStudentleaveForSickLeave(month,year),HttpStatus.OK);
+	}
+	
+	/**
+	 * Retrieve students who were absent in a given month.
+	 *
+	 * Author: Vijayakumar
+	 * @param month The month for which to retrieve absence records (path variable)
+	 * @param year The year for which to retrieve absence records (path variable)
+	 * @return List of student absence records for the specified month and year
+	 */
+
 	
 	@GetMapping("/monthAbsent/{month}/{year}")
 	
-	ResponseEntity<List<MonthlyAbsenceDto>> getMonthlyAbsenceStudents(@PathVariable int month,@PathVariable int year){
-		return new ResponseEntity<List<MonthlyAbsenceDto>>(dailyAttendanceService.getMonthlyAbsenceStudents(month,year),HttpStatus.OK);
+	ResponseEntity<?> getMonthlyAbsenceStudents(@PathVariable int month,@PathVariable int year){
+		return new ResponseEntity<>(dailyAttendanceService.getMonthlyAbsenceStudents(month,year),HttpStatus.OK);
 	}
 }

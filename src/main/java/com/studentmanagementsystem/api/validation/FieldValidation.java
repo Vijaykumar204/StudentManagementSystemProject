@@ -10,7 +10,8 @@ import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttenda
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.custom.student.StudentSaveRequestDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
-import com.studentmanagementsystem.api.model.custom.teacher.TeacherSaveRequestDto;
+import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
+
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 @Service
@@ -200,27 +201,27 @@ public class FieldValidation {
 		return requestMissedFieldList;
 	}
 
-	public List<String> checkValidationTeacherSave(TeacherSaveRequestDto teacherSaveRequestDto, Long teacherId) {
+	public List<String> checkValidationTeacherSave(TeacherModelListDto teacherModelListDto, Long teacherId) {
 		List<String> requestMissedFieldList = new ArrayList<>();
-		   if(teacherSaveRequestDto.getTeacherId() == null) {
+		   if(teacherId == null) {
 			   requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"teacherId"));
 		   }
 		   
-		   if(teacherSaveRequestDto.getTeacherName()==null) {
+		   if(teacherModelListDto.getTeacherName()==null) {
 			   
 			   requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"teacherName"));
 		   }
-		   else if(!NAME_PATTERN.matcher(teacherSaveRequestDto.getTeacherName()).matches()) {
+		   else if(!NAME_PATTERN.matcher(teacherModelListDto.getTeacherName()).matches()) {
 			   requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"teacherName"));
 		   }
 		   
-		   if(teacherSaveRequestDto.getTeacherPhoneNumber() == null) {
+		   if(teacherModelListDto.getTeacherPhoneNumber() == null) {
 			   requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"teacherPhoneNumber"));
 		   }
-		   else if(!PHONE_PATTERN.matcher(teacherSaveRequestDto.getTeacherPhoneNumber()).matches()) {
+		   else if(!PHONE_PATTERN.matcher(teacherModelListDto.getTeacherPhoneNumber()).matches()) {
 			   requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"teacherPhoneNumber"));
 		   }
-		   if(teacherSaveRequestDto.getTeacherDepartment() == null) {
+		   if(teacherModelListDto.getTeacherDepartment() == null) {
 			   requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"teacherDepartment"));
 		   }
 		return requestMissedFieldList;

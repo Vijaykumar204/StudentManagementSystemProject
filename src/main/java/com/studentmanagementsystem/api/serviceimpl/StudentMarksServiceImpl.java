@@ -11,12 +11,19 @@ import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
 import com.studentmanagementsystem.api.dao.StudentMarksDao;
 import com.studentmanagementsystem.api.dao.StudentModelDao;
 import com.studentmanagementsystem.api.model.custom.Response;
-import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
+
+
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
+
+import com.studentmanagementsystem.api.model.custom.studentmarks.response.StudentMarkListResponse;
+import com.studentmanagementsystem.api.model.custom.studentmarks.response.StudentWithPassOrFailListResponse;
+import com.studentmanagementsystem.api.model.custom.studentmarks.response.TotalResultCountListResponse;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
+import com.studentmanagementsystem.api.model.entity.TeacherModel;
+import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
+import com.studentmanagementsystem.api.repository.StudentMarksRepository;
+import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.StudentMarksService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
@@ -34,10 +41,23 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	
 	@Autowired
 	private FieldValidation fieldValidation;
+	
+	@Autowired
+	private StudentMarksRepository studentMarksRepository;
+	
+	@Autowired
+	private QuarterlyAttendanceModelRepository quarterlyAttendanceModelRepository;
+	
+	@Autowired
+	private TeacherRepository teacherRepository;
+	
 
-
+	/**
+	 * Declare the marks of a student.
+	 */
+	
 	@Override
-	public Object saveStudentMarks(List<StudentMarksDto> studentMarksDto) {
+	public Response saveStudentMarks(List<StudentMarksDto> studentMarksDto) {
 
 	
 		Response response = new Response();
@@ -53,18 +73,37 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 				return response;
 			}
 
-			studentMark = studentMarksDao.getStudentModelandquarterAndYear(mark.getStudentId(),
+			String ComplianceStatus = quarterlyAttendanceModelRepository.findAttendanceComplianceStatusByStudentIdandquarterAndYear(mark.getStudentId(),
 					mark.getQuarterAndYear());
+			
+			if(ComplianceStatus == WebServiceUtil.NON_COMPLIANCE) {
+				response.setStatus(WebServiceUtil.WARNING);	
+				response.setData(WebServiceUtil.STUDENT_ATTENDANCE_STATUS);
+				return response;
+			}
+			
+			studentMark = studentMarksRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(),
+					mark.getQuarterAndYear());
+			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(mark.getTeacherId());
+			if(teacher==null) {
+				response.setStatus(WebServiceUtil.WARNING);	
+				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
+				return response;
+			}
+			
 			if (studentMark == null) {
 				studentMark = new MarkModel();
 				StudentModel student = studentRequestDao.getStudentModel(mark.getStudentId());
+				
+				
 				studentMark.setStudentModel(student);
 				studentMark.setQuarterAndYear(mark.getQuarterAndYear());
-//				studentMark.setCreateTeacher(mark.getTecaherId());
+
 				studentMark.setCreateDate(today);
-				studentMark.setCreateTeacher(mark.getTeacherId());
+				studentMark.setCreateTeacher(teacher.getTeacherId());
 			} else {
-				studentMark.setUpdateTeacher(mark.getTeacherId());
+				
+				studentMark.setUpdateTeacher(teacher.getTeacherId());
 				studentMark.setUpdateTime(today);
 			}
 
@@ -94,37 +133,70 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 				studentMark.setResult(WebServiceUtil.FAIL);
 			}
 
-			studentMarksDao.saveStudentMarks(studentMark);
+
+			studentMarksRepository.save(studentMark);
+			response.setStatus(WebServiceUtil.SUCCESS);	
+			response.setData(WebServiceUtil.DECLARE_MARK);
 
 //			emailSentService.sendQuarterlyResultReportEmail(List<StudentMarksDto> studentMarksDto);
 
 		}
 
-		return "Successfully saved";
+		return response;
 	}
+	
+	/**
+	 * Retrieve the list of students with their result status (pass or fail) 
+	 * for a given quarter and year.
+	 */
 
 	@Override
-	public List<ComplianceStudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear) {
+	public StudentWithPassOrFailListResponse getAllComplianceStudentPassOrFail(String quarterAndYear) {
+		StudentWithPassOrFailListResponse response = new StudentWithPassOrFailListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentMarksDao.getAllComplianceStudentPassOrFail(quarterAndYear));
+		
 
-		return studentMarksDao.getAllComplianceStudentPassOrFail(quarterAndYear);
+		return response;
 	}
 
+	/**
+	 * Retrieve the list of all student marks for a given quarter and year.
+	 */
+	
 	@Override
-	public List<StudentMarksDto> getAllStudentMarks(String quarterAndYear) {
+	public StudentMarkListResponse getAllStudentMarks(String quarterAndYear) {
+		StudentMarkListResponse response = new StudentMarkListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentMarksDao.getAllStudentMarks(quarterAndYear));
+		
 
-		return studentMarksDao.getAllStudentMarks(quarterAndYear);
+		return response;
 	}
 
-	@Override
-	public List<TotalResultCountdto> getToatalResultCount(String quarterAndYear) {
+	/**
+	 * Retrieve the overall result summary for students in a given quarter and year.
+	 */
 
-		return studentMarksDao.getToatalResultCount(quarterAndYear);
+	@Override
+	public TotalResultCountListResponse getToatalResultCount(String quarterAndYear) {
+		TotalResultCountListResponse response =new  TotalResultCountListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentMarksDao.getToatalResultCount(quarterAndYear));
+		return response;
 	}
+	
+	/**
+	 * Retrieve the class topper in a given quarter and Year.
+	 */
 
 	@Override
-	public ClassTopperDto getClassTopper(String quarterAndYear) {
+	public Response getClassTopper(String quarterAndYear) {
+		Response response = new Response();
+		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setData(studentMarksDao.getClassTopper(quarterAndYear));
 
-		return studentMarksDao.getClassTopper(quarterAndYear);
+		return response;
 	}
 
 }

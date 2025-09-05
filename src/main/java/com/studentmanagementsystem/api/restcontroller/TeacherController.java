@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
-import com.studentmanagementsystem.api.model.custom.teacher.TeacherSaveRequestDto;
+
 import com.studentmanagementsystem.api.service.TeacherService;
 
 @RestController
@@ -23,18 +23,45 @@ public class TeacherController {
 	@Autowired
 	private TeacherService teacherService;
 	
+	/**
+	 * Retrieve the list of all teacher details.
+	 *
+	 * Author: Vijiyakumar
+	 * @return List of all teachers
+	 */
+	
 	@GetMapping("/list")
-	public ResponseEntity<List<TeacherModelListDto>>  listAllTeachers() {
+	public ResponseEntity<?>  listAllTeachers() {
 		return new ResponseEntity<>( teacherService.listAllTeachers(),HttpStatus.OK);
 	}
 	
+	/**
+	 * Save or update teacher details.
+	 *
+	 * Author: Vijayakumar
+	 * @param teacherModelListDto The teacher details to be saved or updated (from request body)
+	 * @param teacherId The ID of the teacher who created or updated the record
+	 * @return Confirmation message indicating that the teacher details were successfully saved or updated
+	*/
+	
 	@PostMapping("/save/{teacherId}")
-	public ResponseEntity<?>  saveTeacher(@RequestBody TeacherSaveRequestDto teacherSaveRequestDto,@PathVariable Long teacherId ) {
-		return new ResponseEntity<>( teacherService.saveTeacher(teacherSaveRequestDto,teacherId),HttpStatus.OK);
+	public ResponseEntity<?>  saveTeacher(@RequestBody TeacherModelListDto teacherModelListDto,@PathVariable Long teacherId ) {
+		return new ResponseEntity<>( teacherService.saveTeacher(teacherModelListDto,teacherId),HttpStatus.OK);
 	}
 	
+	
+	/**
+	 * Filter teacher by ID, email, or phone number.
+	 *
+	 * Author: Vijayakumar
+	 * @param teacherId (optional) The unique ID of the teacher
+	 * @param teacherName (optional) The email address of the teacher
+	 * @param teacherPhoneNumber (optional) The phone number of the teacher
+	 * @return List of teacher that match the given filter criteria
+	 */
+	
 	@GetMapping("/filter")
-	public ResponseEntity<List<TeacherModelListDto>>  filterTeacher(@RequestParam(required = false) Long teacherId,@RequestParam(required = false) String teacherName,@RequestParam(required = false) String teacherPhoneNumber){
+	public ResponseEntity<?>  filterTeacher(@RequestParam(required = false) Long teacherId,@RequestParam(required = false) String teacherName,@RequestParam(required = false) String teacherPhoneNumber){
 		return new ResponseEntity<>( teacherService.filterTeacher(teacherId,teacherName,teacherPhoneNumber),HttpStatus.OK);
 	}
 

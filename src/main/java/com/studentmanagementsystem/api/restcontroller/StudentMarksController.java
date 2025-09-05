@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.studentmanagementsystem.api.model.custom.studentmarks.ClassTopperDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.ComplianceStudentWithPassOrFail;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.TotalResultCountdto;
+
 import com.studentmanagementsystem.api.service.StudentMarksService;
 
 @RestController
@@ -25,30 +23,72 @@ public class StudentMarksController {
 	@Autowired
 	private StudentMarksService studentMarksService;
 	
+	/**
+	 * Declare the marks of a student.
+	 *
+	 * Author: Vijiyakumar
+	 * @param studentMarksDto The student marks details (from request body)
+	 * @return Confirmation message indicating that the marks were successfully declared
+	 */
+	
 	@PostMapping("/add")
 	ResponseEntity<?> saveStudentMarks(@RequestBody List<StudentMarksDto> studentMarksDto){
 		return new ResponseEntity<>(studentMarksService.saveStudentMarks(studentMarksDto),HttpStatus.OK);
 	}
 	
+	/**
+	 * Retrieve the list of students with their result status (pass or fail) 
+	 * for a given quarter and year.
+	 *
+	 * Author: Vijiyakumar
+	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
+	 * @return List of students with their result status
+	 */
 	
 	@GetMapping("/listCompilance")
-	ResponseEntity<List<ComplianceStudentWithPassOrFail>> getAllComplianceStudentPassOrFail(@RequestParam String quarterAndYear){
-		return new ResponseEntity<List<ComplianceStudentWithPassOrFail>>(studentMarksService.getAllComplianceStudentPassOrFail(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> getAllComplianceStudentPassOrFail(@RequestParam String quarterAndYear){
+		return new ResponseEntity<>(studentMarksService.getAllComplianceStudentPassOrFail(quarterAndYear),HttpStatus.OK);
 	}
+	
+	/**
+	 * Retrieve the list of all student marks for a given quarter and year.
+	 *
+	 * Author: Vijiyakumar
+	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
+	 * @return List of all student marks
+	 */
 	
 	@GetMapping("/list")
-	ResponseEntity<List<StudentMarksDto>> getAllStudentMarks(@RequestParam String quarterAndYear){
-		return new ResponseEntity<List<StudentMarksDto>>(studentMarksService.getAllStudentMarks(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> getAllStudentMarks(@RequestParam String quarterAndYear){
+		return new ResponseEntity<>(studentMarksService.getAllStudentMarks(quarterAndYear),HttpStatus.OK);
 	}
+	
+	
+	/**
+	 * Retrieve the overall result summary for students in a given quarter and year.
+	 *
+	 * Author: Vijayakumar
+	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
+	 * @return A summary report of student results
+	 */
+
+	
 	
 	@GetMapping("/totalList")
-	ResponseEntity<List<TotalResultCountdto>> getToatalResultCount(@RequestParam String quarterAndYear){
-		return new ResponseEntity<List<TotalResultCountdto>>(studentMarksService.getToatalResultCount(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> getToatalResultCount(@RequestParam String quarterAndYear){
+		return new ResponseEntity<>(studentMarksService.getToatalResultCount(quarterAndYear),HttpStatus.OK);
 	}
 	
+	/**
+	 * Retrieve the class topper in agiven quarter and Year.
+	 *
+	 * Author: Vijayakumar
+	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
+	 * @return Display the class topper
+	 */
 	@GetMapping("/classTopper")
-	ResponseEntity<ClassTopperDto> getClassTopper(@RequestParam String quarterAndYear){
-		return new ResponseEntity<ClassTopperDto>(studentMarksService.getClassTopper(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> getClassTopper(@RequestParam String quarterAndYear){
+		return new ResponseEntity<>(studentMarksService.getClassTopper(quarterAndYear),HttpStatus.OK);
 	}
 	
 	
