@@ -7,7 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,8 +28,10 @@ public class TeacherModel {
 	@Column(name = "TEACH_Phone_Number",unique = true,nullable = false,length=10)
 	private String teacherPhoneNumber;
 	
-	@Column(name = "TEACH_Role",nullable = false,length=2)
-	private String teacherRole = "T";
+//	@Column(name = "TEACH_Role",nullable = false,length=2)
+	@OneToOne
+	@JoinColumn(name ="TEACH_Role",referencedColumnName = "CODE" )
+	private StudentCodeModel teacherRole;
 	
 	@Column(name = "TEACH_Department",length=15,nullable = false)
 	private String teacherDepartment;
@@ -72,11 +76,18 @@ public class TeacherModel {
 	public void setTeacherName(String teacherName) {
 		this.teacherName = teacherName;
 	}
-	public String getTeacherRole() {
+
+	public StudentCodeModel getTeacherRole() {
 		return teacherRole;
 	}
-	public void setTeacherRole(String teacherRole) {
+	public void setTeacherRole(StudentCodeModel teacherRole) {
 		this.teacherRole = teacherRole;
+	}
+	public List<StudentModel> getStudentModel() {
+		return studentModel;
+	}
+	public void setStudentModel(List<StudentModel> studentModel) {
+		this.studentModel = studentModel;
 	}
 	public String getTeacherDepartment() {
 		return teacherDepartment;

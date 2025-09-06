@@ -12,7 +12,9 @@ import com.studentmanagementsystem.api.dao.TeacherRequestDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListResponseDto;
+import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
+import com.studentmanagementsystem.api.repository.StudentCodeRespository;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.TeacherService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
@@ -25,11 +27,12 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Autowired
 	private FieldValidation fieldValidation;
-	
-	 
-	
+
 	@Autowired
 	private TeacherRepository teacherRepository;
+	
+	@Autowired
+	private StudentCodeRespository studentCodeRespository;
 
 
 	/**
@@ -89,7 +92,9 @@ public class TeacherServiceImpl implements TeacherService {
 
 			}
 			teacher.setTeacherName(teacherModelListDto.getTeacherName());
-			teacher.setTeacherRole(teacherModelListDto.getTeacherRole());
+			StudentCodeModel teacherRole = studentCodeRespository.findStudentCodeByCode(teacherModelListDto.getTeacherRole());
+
+			teacher.setTeacherRole(teacherRole);
 			teacher.setTeacherDepartment(teacherModelListDto.getTeacherDepartment());
 			teacher.setTeacherPhoneNumber(teacherModelListDto.getTeacherPhoneNumber());
 		    teacherRepository.save(teacher);

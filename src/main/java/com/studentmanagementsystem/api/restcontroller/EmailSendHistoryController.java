@@ -22,4 +22,9 @@ public class EmailSendHistoryController {
 	ResponseEntity<?> sendQuarterlyResultReport(@RequestParam String quarterAndYear) throws MessagingException{
 		return new ResponseEntity<>(emailSentService.sendQuarterlyResultReport(quarterAndYear),HttpStatus.OK);
 	}
+	@GetMapping("/absentAlert")
+	ResponseEntity<?> runAbsentAlertMessage() throws MessagingException{
+		return new ResponseEntity<>(emailSentService.runAbsentAlertMessage(),HttpStatus.OK);
+	}
+	
 }

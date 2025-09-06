@@ -6,23 +6,20 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
 import com.studentmanagementsystem.api.dao.StudentMarksDao;
-import com.studentmanagementsystem.api.dao.StudentModelDao;
 import com.studentmanagementsystem.api.model.custom.Response;
-
-
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
-
 import com.studentmanagementsystem.api.model.custom.studentmarks.response.StudentMarkListResponse;
 import com.studentmanagementsystem.api.model.custom.studentmarks.response.StudentWithPassOrFailListResponse;
 import com.studentmanagementsystem.api.model.custom.studentmarks.response.TotalResultCountListResponse;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
+import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
+import com.studentmanagementsystem.api.repository.StudentCodeRespository;
 import com.studentmanagementsystem.api.repository.StudentMarksRepository;
+import com.studentmanagementsystem.api.repository.StudentModelRepository;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.StudentMarksService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
@@ -33,11 +30,9 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	@Autowired
 	private StudentMarksDao studentMarksDao;
 
-	@Autowired
-	private StudentModelDao studentRequestDao;
+@Autowired
+private StudentModelRepository studentModelRepository;
 
-	@Autowired
-	private QuarterlyAttendanceReportDao quarterlyAttendanceReportDao;
 	
 	@Autowired
 	private FieldValidation fieldValidation;
@@ -50,6 +45,9 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	
 	@Autowired
 	private TeacherRepository teacherRepository;
+	
+	@Autowired
+	private StudentCodeRespository studentCodeRespository;
 	
 
 	/**
@@ -93,7 +91,7 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 			
 			if (studentMark == null) {
 				studentMark = new MarkModel();
-				StudentModel student = studentRequestDao.getStudentModel(mark.getStudentId());
+				StudentModel student = studentModelRepository.findStudentByStudentId(mark.getStudentId());
 				
 				
 				studentMark.setStudentModel(student);
@@ -117,20 +115,22 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 			studentMark.setTotalMarks(totalMark);
 
 
-			String compliance = quarterlyAttendanceReportDao.getComplianceStatus(mark.getStudentId(),
-					mark.getQuarterAndYear());
+		//	String compliance = quarterlyAttendanceReportDao.getComplianceStatus(mark.getStudentId(),
+	//				mark.getQuarterAndYear());
 
 			boolean allSubjectsPassed = tamil >= 35 && english >= 35 && maths >= 35 && science >= 35
 					&& socialscience >= 35;
 
-			if (allSubjectsPassed && WebServiceUtil.COMPLIANCE.equals(compliance)) {
-				studentMark.setResult(WebServiceUtil.PASS);
+			if (allSubjectsPassed ) {
+				StudentCodeModel resultStatus = studentCodeRespository.findStudentCodeByCode(WebServiceUtil.PASS);
+				studentMark.setResult(resultStatus);
 			} else {
 				if (allSubjectsPassed != true) {
 					studentMark.setFailedForMark(true);
 				}
+				StudentCodeModel resultStatus = studentCodeRespository.findStudentCodeByCode(WebServiceUtil.FAIL);
 
-				studentMark.setResult(WebServiceUtil.FAIL);
+				studentMark.setResult(resultStatus);
 			}
 
 
@@ -149,7 +149,6 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	 * Retrieve the list of students with their result status (pass or fail) 
 	 * for a given quarter and year.
 	 */
-
 	@Override
 	public StudentWithPassOrFailListResponse getAllComplianceStudentPassOrFail(String quarterAndYear) {
 		StudentWithPassOrFailListResponse response = new StudentWithPassOrFailListResponse();
@@ -163,7 +162,6 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	/**
 	 * Retrieve the list of all student marks for a given quarter and year.
 	 */
-	
 	@Override
 	public StudentMarkListResponse getAllStudentMarks(String quarterAndYear) {
 		StudentMarkListResponse response = new StudentMarkListResponse();
@@ -177,7 +175,6 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	/**
 	 * Retrieve the overall result summary for students in a given quarter and year.
 	 */
-
 	@Override
 	public TotalResultCountListResponse getToatalResultCount(String quarterAndYear) {
 		TotalResultCountListResponse response =new  TotalResultCountListResponse();
@@ -189,7 +186,6 @@ public class StudentMarksServiceImpl implements StudentMarksService {
 	/**
 	 * Retrieve the class topper in a given quarter and Year.
 	 */
-
 	@Override
 	public Response getClassTopper(String quarterAndYear) {
 		Response response = new Response();

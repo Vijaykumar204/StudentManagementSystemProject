@@ -28,7 +28,7 @@ public class StudentMarksDto {
 	private Integer totalMarks;
 	
 	
-	private Character result;
+	private String result;
 	
 	private Long teacherId;
 
@@ -112,12 +112,12 @@ public class StudentMarksDto {
 	}
 
 
-	public Character getResult() {
+	public String getResult() {
 		return result;
 	}
 
 
-	public void setResult(Character result) {
+	public void setResult(String result) {
 		this.result = result;
 	}
 
@@ -133,7 +133,7 @@ public class StudentMarksDto {
 
 
 	public StudentMarksDto(Long studentId, String quarterAndYear, Integer tamil, Integer english, Integer maths, int science,
-			Integer socialScience, Integer totalMarks, Character result) {
+			Integer socialScience, Integer totalMarks, String result) {
 	
 		StudentId = studentId;
 		this.quarterAndYear = quarterAndYear;

@@ -1,7 +1,8 @@
 package com.studentmanagementsystem.api.serviceimpl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,23 +29,42 @@ public class StudentCodeServiceImpl implements StudentCodeService {
 	public Response addStudentCode(List<StudentCodeDto> studentCodeDto) {
 		
 		Response response = new Response();
-				
-		
+		List<StudentCodeModel> codeList = new ArrayList<>();
+		LocalDateTime today = LocalDateTime.now();
 		
 		for(StudentCodeDto code : studentCodeDto ) {
 			
 			StudentCodeModel studentCode = studentCodeRespository.findStudentCodeByCode(code.getCode());
+			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(code.getTeacherId());
+			if(teacher == null) {
+				response.setStatus(WebServiceUtil.WARNING);
+				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
+			}
 			if(studentCode == null) {
 				studentCode = new StudentCodeModel();
-				TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(code.getTeacherId());
-				if(teacher == null) {
-					response.setStatus(WebServiceUtil.WARNING);
-					response.setData(WebServiceUtil.TEACHER_ID_ERROR);
-				}
+				
+				studentCode.setCreateUser(teacher.getTeacherId());
+				studentCode.setCreateDate(today);			
+			}
+			else {
+				studentCode.setUpdateUser(teacher.getTeacherId());
+				studentCode.setUpdatdDate(today);
 			}
 			
+			studentCode.setCode(code.getCode());
+			studentCode.setDescription(code.getDescription());
+			studentCode.setGroupCode(code.getGroupCode());
+			studentCode.setSubGroupCode(code.getSubGroupCode());
+			if(code.getIsActiveFlag()!=null) {
+			studentCode.setIsActiveFlag(code.getIsActiveFlag());
+			}
+			codeList.add(studentCode);
+				
 		}
-		return null;
+		studentCodeRespository.saveAll(codeList);
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(WebServiceUtil.SAVE);
+		return response;
 	}
 
 	

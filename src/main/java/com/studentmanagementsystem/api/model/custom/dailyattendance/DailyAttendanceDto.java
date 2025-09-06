@@ -21,11 +21,11 @@ public class DailyAttendanceDto {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate attendanceDate;
 	
-	private Character attendanceStatus;
+	private String attendanceStatus;
 	
-	private Character longApprovedSickLeaveFlag='N';
+	private String longApprovedSickLeaveFlag="N";
 	
-	private Character approvedExtraCurricularActivitiesFlag = 'N';
+	private String approvedExtraCurricularActivitiesFlag = "N";
 	
 	private Long studentId;
 	
@@ -53,27 +53,27 @@ public class DailyAttendanceDto {
 		this.attendanceDate = attendanceDate;
 	}
 
-	public Character getAttendanceStatus() {
+	public String getAttendanceStatus() {
 		return attendanceStatus;
 	}
 
-	public void setAttendanceStatus(Character attendanceStatus) {
+	public void setAttendanceStatus(String attendanceStatus) {
 		this.attendanceStatus = attendanceStatus;
 	}
 
-	public Character getLongApprovedSickLeaveFlag() {
+	public String getLongApprovedSickLeaveFlag() {
 		return longApprovedSickLeaveFlag;
 	}
 
-	public void setLongApprovedSickLeaveFlag(Character longApprovedSickLeaveFlag) {
+	public void setLongApprovedSickLeaveFlag(String longApprovedSickLeaveFlag) {
 		this.longApprovedSickLeaveFlag = longApprovedSickLeaveFlag;
 	}
 
-	public Character getApprovedExtraCurricularActivitiesFlag() {
+	public String getApprovedExtraCurricularActivitiesFlag() {
 		return approvedExtraCurricularActivitiesFlag;
 	}
 
-	public void setApprovedExtraCurricularActivitiesFlag(Character approvedExtraCurricularActivitiesFlag) {
+	public void setApprovedExtraCurricularActivitiesFlag(String approvedExtraCurricularActivitiesFlag) {
 		this.approvedExtraCurricularActivitiesFlag = approvedExtraCurricularActivitiesFlag;
 	}
 
@@ -144,7 +144,7 @@ public class DailyAttendanceDto {
 
 
 
-	public DailyAttendanceDto(LocalDate attendanceDate, Character attendanceStatus, Long studentId, String studentFirstName,
+	public DailyAttendanceDto(LocalDate attendanceDate, String attendanceStatus, Long studentId, String studentFirstName,
 			String studentMiddleName, String studentLastName) {
 		
 	

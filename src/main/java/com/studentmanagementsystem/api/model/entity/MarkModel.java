@@ -43,8 +43,10 @@ public class MarkModel {
 	@Column(name = "Toatal_Mark")
 	private Integer totalMarks;
 	
-	@Column(name = "Result_Status")
-	private Character result;
+//	@Column(name = "Result_Status")
+	@OneToOne
+	@JoinColumn(name ="Result_Status",referencedColumnName = "CODE" )
+	private StudentCodeModel result;
 	
 	@Column(name = "Mark_Create_Teacher",nullable = false)
 	private Long createTeacher;
@@ -129,11 +131,13 @@ public class MarkModel {
 		this.totalMarks = totalMarks;
 	}
 
-	public Character getResult() {
+
+
+	public StudentCodeModel getResult() {
 		return result;
 	}
 
-	public void setResult(Character result) {
+	public void setResult(StudentCodeModel result) {
 		this.result = result;
 	}
 

@@ -4,8 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -20,13 +19,13 @@ public class StudentCodeModel {
 	@Column(name = "CODE_Description", nullable = false, length = 30)
 	private String description;
 
-	@Column(name = "CODE_Code", nullable = false, length = 30)
+	@Column(name = "CODE_Group", nullable = false, length = 30)
 	private String groupCode;
 
 	@Column(name = "CODE_Sub_Group")
 	private String subGroupCode;
 
-	@Column(name = "CODE_Is_Active_Flag")
+	@Column(name = "CODE_Is_Active_Flag", columnDefinition = "BOOLEAN DEFAULT true")
 	private Boolean isActiveFlag = true;
 
 	@Column(name = "CODE_Last_Effective_Date")

@@ -4,7 +4,6 @@ package com.studentmanagementsystem.api.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
@@ -13,10 +12,6 @@ import com.studentmanagementsystem.api.dao.StudentModelDao;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 
 import com.studentmanagementsystem.api.model.entity.StudentModel;
-
-import com.studentmanagementsystem.api.repository.StudentModelRepository;
-
-
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -33,13 +28,9 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	
 
 	
-	@Autowired
-	private StudentModelRepository studentModelRepository;
-	
 	/**
 	 * Retrieve the list of all student details.
 	 */
-
 	@Override
 	public List<StudentDto> listAllDetailsStudent() {
 		
@@ -52,17 +43,17 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 				studentListRoot.get("studentFirstName"),
 				studentListRoot.get("studentMiddleName"),
 				studentListRoot.get("studentLastName"),
-				studentListRoot.get("studentGender"),
+				studentListRoot.get("studentGender").get("description"),
 				studentListRoot.get("studentDateOfBirth"),
 				studentListRoot.get("studentClassOfStudy"),
-				studentListRoot.get("studentResidingStatus"),
+				studentListRoot.get("studentResidingStatus").get("description"),
 				studentListRoot.get("studentPhoneNumber"),
 				studentListRoot.get("emergencyContactPersonName"),
 				studentListRoot.get("emergencyContactPhoneNumber"),
 				studentListRoot.get("homeStreetName"),
 				studentListRoot.get("homeCityName"),
 				studentListRoot.get("homePostalCode"),
-				studentListRoot.get("studentActiveStatus"),
+				studentListRoot.get("studentActiveStatus").get("description"),
 				studentListRoot.get("studentEmail")
 			
 				);
@@ -72,10 +63,11 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	
 	/**
 	 * Retrive all dayscholar students
+	 * And
+	 * Retrive all hostel students
 	 */
-
 	@Override
-	public List<StudentDto> getAllHostelStudents(char studentActiveStatus, char hostel) {
+	public List<StudentDto> getAllHostelStudents(String studentActiveStatus, String hostel) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<StudentDto> studentListQuery= cb.createQuery(StudentDto.class);
 		Root<StudentModel> studentListRoot = studentListQuery.from(StudentModel.class);
@@ -89,17 +81,17 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	    		   studentListRoot.get("studentFirstName"),
 	    		   studentListRoot.get("studentMiddleName"),
 	    		   studentListRoot.get("studentLastName"),
-	    		   studentListRoot.get("studentGender"),
+	    		   studentListRoot.get("studentGender").get("description"),
 	    		   studentListRoot.get("studentDateOfBirth"),
 	    		   studentListRoot.get("studentClassOfStudy"),
-	    		   studentListRoot.get("studentResidingStatus"),
+	    		   studentListRoot.get("studentResidingStatus").get("description"),
 	    		   studentListRoot.get("studentPhoneNumber"),
 	    		   studentListRoot.get("emergencyContactPersonName"),
 	    		   studentListRoot.get("emergencyContactPhoneNumber"),
 	    		   studentListRoot.get("homeStreetName"),
 	    		   studentListRoot.get("homeCityName"),
 	    		   studentListRoot.get("homePostalCode"),
-	    		   studentListRoot.get("studentActiveStatus"),
+	    		   studentListRoot.get("studentActiveStatus").get("description"),
 	    		   studentListRoot.get("studentEmail")
 				
 					).where(cb.and(residingStatus, activeStatus,lastEffectiveDateCondition));
@@ -123,17 +115,17 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 				 studentListRoot.get("studentFirstName"),
 				 studentListRoot.get("studentMiddleName"),
 				 studentListRoot.get("studentLastName"),
-				 studentListRoot.get("studentGender"),
+				 studentListRoot.get("studentGender").get("description"),
 				 studentListRoot.get("studentDateOfBirth"),
 				 studentListRoot.get("studentClassOfStudy"),
-				 studentListRoot.get("studentResidingStatus"),
+				 studentListRoot.get("studentResidingStatus").get("description"),
 				 studentListRoot.get("studentPhoneNumber"),
 				 studentListRoot.get("emergencyContactPersonName"),
 				 studentListRoot.get("emergencyContactPhoneNumber"),
 				 studentListRoot.get("homeStreetName"),
 				 studentListRoot.get("homeCityName"),
 				 studentListRoot.get("homePostalCode"),
-				 studentListRoot.get("studentActiveStatus"),
+				 studentListRoot.get("studentActiveStatus").get("description"),
 				 studentListRoot.get("studentEmail")
 			
 				).where(lastEffectiveDateCondition);
@@ -162,7 +154,7 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	 */
 	
 	@Override
-	public List<StudentDto> getByStudentStatus(char studentActiveStatus) {
+	public List<StudentDto> getByStudentStatus(String studentActiveStatus) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<StudentDto> studentListQuery= cb.createQuery(StudentDto.class);
@@ -175,17 +167,17 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 				studentListRoot.get("studentFirstName"),
 				studentListRoot.get("studentMiddleName"),
 				studentListRoot.get("studentLastName"),
-				studentListRoot.get("studentGender"),
+				studentListRoot.get("studentGender").get("description"),
 				studentListRoot.get("studentDateOfBirth"),
 				studentListRoot.get("studentClassOfStudy"),
-				studentListRoot.get("studentResidingStatus"),
+				studentListRoot.get("studentResidingStatus").get("description"),
 				studentListRoot.get("studentPhoneNumber"),
 				studentListRoot.get("emergencyContactPersonName"),
 				studentListRoot.get("emergencyContactPhoneNumber"),
 				studentListRoot.get("homeStreetName"),
 				studentListRoot.get("homeCityName"),
 				studentListRoot.get("homePostalCode"),
-				studentListRoot.get("studentActiveStatus"),
+				studentListRoot.get("studentActiveStatus").get("description"),
 				studentListRoot.get("studentEmail")
 			
 				).where(studentActiveCondition);
@@ -194,46 +186,6 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	}
 
 
-	@Override
-	public StudentModel getStudentModel(Long studentId) {
-		  
-		return studentModelRepository.getStudentByStudentId(studentId);
-	}
-
-
-
-	@Override
-	public Optional<StudentModel> getByStudentId(Long studentId) {
-	
-		return studentModelRepository.findById(studentId);
-	}
-
-
-
-//	@Override
-//	public Object saveStudent(StudentModel student) {
-//		
-//		return studentModelRepository.save(student);
-//	}
-
-	/**
-	 * Activate or deactivate a student by ID.
-	 */
-
-//	@Override
-//	public Object activeOrDeactiveByStudentId(StudentModel student) {
-//		
-//		return studentModelRepository.save(student);
-//	}
-
-
-
-//	@Override
-//	public StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
-//			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth) {
-//		// TODO Auto-generated method stub
-//		return studentModelRepository.findByFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(studentFirstName,studentMiddleName,studentLastName,studentDateOfBirth);
-//	}
 
 
 

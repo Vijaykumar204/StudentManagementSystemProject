@@ -15,8 +15,7 @@ import com.studentmanagementsystem.api.model.custom.dailyattendance.ExceedingDay
 import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
-import com.studentmanagementsystem.api.repository.DailyAttendanceRepository;
-import com.studentmanagementsystem.api.repository.StudentModelRepository;
+
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 import jakarta.persistence.EntityManager;
@@ -35,26 +34,6 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 
 	@Autowired
 	private EntityManager entityManager;
-
-	@Autowired
-	private StudentModelRepository studentModelRepository;
-
-	@Autowired
-	private DailyAttendanceRepository dailyAttendanceRepository;
-
-	@Override
-	public DailyAttendanceModel createNewAttendance(Long studentId) {
-		  StudentModel student = studentModelRepository.getStudentByStudentId(studentId);
-	        DailyAttendanceModel dailyAttendance = new DailyAttendanceModel();
-	        dailyAttendance.setStudentModel(student);
-	        return dailyAttendance;
-	}
-
-	@Override
-	public DailyAttendanceModel findAttendanceById(Long attendanceId) {
-		 return dailyAttendanceRepository.findById(attendanceId)
-	                .orElseThrow(() -> new RuntimeException("Attendance not found with ID: " + attendanceId));
-	}
 
 
 	
@@ -87,7 +66,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		
 		 dailyAttendanceQuery.select(cb.construct(DailyAttendanceDto.class,
 				 dailyAttendanceRoot.get("attendanceDate"),
-				 dailyAttendanceRoot.get("attendanceStatus"),
+				 dailyAttendanceRoot.get("attendanceStatus").get("description"),
 				 studentAndDailyAttendanceJoin.get("studentId"),
 				 studentAndDailyAttendanceJoin.get("studentFirstName"),
 				 studentAndDailyAttendanceJoin.get("studentMiddleName"),
@@ -103,10 +82,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	 * By default, retrieves students without attendance for today. 
 	 * If a date is provided, retrieves students without attendance for that particular date.
 	 */
-	
 //	SELECT s.* FROM student s WHERE NOT EXISTS ( SELECT 1 FROM daily_attendance_registration d  WHERE d.student_Id = s.STU_Id  AND d.AT_Date = '2025-08-23');
-	
-
 	@Override
 	public List<DailyAttendanceDto> getStudentAttendanceNotTakeByToday(LocalDate today) {
 		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
@@ -139,7 +115,6 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	/**
 	 * Retrieve students who were absent in a given month.
 	 */
-
 	@Override
 	public List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(int month, int year) {
 		
@@ -214,8 +189,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	 * Retrieve students who have taken sick leave 
 	 * for more than 6 days in a given month.
 	 *
-	 */
-	
+	 */	
 	@Override
 	public List<ExceedingDaysLeaveDto> getStudentleaveForExtraActivitiesd(int month, int year, String leaveStatus,int leaveCount) {
 		  CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -227,7 +201,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 			    Subquery<Long> subquery = cq.subquery(Long.class);
 			    Root<DailyAttendanceModel> subAttendance = subquery.from(DailyAttendanceModel.class);
 
-			    Predicate statusCondition = cb.equal(dailyAttendanceAndStudentJoin.get(leaveStatus), 'Y');
+			    Predicate statusCondition = cb.equal(dailyAttendanceAndStudentJoin.get(leaveStatus), WebServiceUtil.YES);
 			    Predicate monthCondition = cb.equal(cb.function("MONTH", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), month);
 			    Predicate yearCondition = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceAndStudentJoin.get("attendanceDate")), year);
 			    
@@ -276,9 +250,4 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		        return exceedingDaysLeaveList;
 }
 
-	@Override
-	public DailyAttendanceModel getStudentIdAndAttendanceDate(Long studentId, LocalDate attendanceDate) {
-		
-		return dailyAttendanceRepository.findStudentIdAndAttendanceDate(studentId,attendanceDate) ;
-	}
 }

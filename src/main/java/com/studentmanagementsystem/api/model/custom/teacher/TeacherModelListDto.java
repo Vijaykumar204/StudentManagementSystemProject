@@ -49,6 +49,8 @@ public class TeacherModelListDto {
 		this.teacherDepartment = teacherDepartment;
 		this.teacherPhoneNumber = teacherPhoneNumber;
 	}
+	public TeacherModelListDto() {
+	}
 
 	
 	

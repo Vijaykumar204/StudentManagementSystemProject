@@ -69,7 +69,7 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 		complianceStudentQuery.select(cb.construct(StudentWithPassOrFail.class,
 				studentMarksRoot.get("studentModel").get("studentId"),				
 				studentMarksRoot.get("quarterAndYear"), 
-				studentMarksRoot.get("result"))).where((smQuarterCondition));
+				studentMarksRoot.get("result").get("description"))).where((smQuarterCondition));
 				//.where(cb.and(qarQuarterCondition, smQuarterCondition, complianceCondition));
 
 		return entityManager.createQuery(complianceStudentQuery).getResultList();
@@ -96,7 +96,7 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 				studentMarksRoot.get("science"), 
 				studentMarksRoot.get("socialScience"),
 				studentMarksRoot.get("totalMarks"),
-				studentMarksRoot.get("result")
+				studentMarksRoot.get("result").get("description")
 
 		).where(quarterCondition);
 
@@ -128,23 +128,23 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 
 		
 		Expression<Integer> totalPass = cb
-				.sum(cb.<Integer>selectCase().when(cb.equal(studentMarkRoot.get("result"), "P"), 1).otherwise(0));
+				.sum(cb.<Integer>selectCase().when(cb.equal(studentMarkRoot.get("result").get("code"), WebServiceUtil.PRESENT), 1).otherwise(0));
 
 		
 		Expression<Integer> totalFail = cb
-				.sum(cb.<Integer>selectCase().when(cb.equal(studentMarkRoot.get("result"), "F"), 1).otherwise(0));
+				.sum(cb.<Integer>selectCase().when(cb.equal(studentMarkRoot.get("result").get("code"), WebServiceUtil.FAIL), 1).otherwise(0));
 
 		
 		Expression<Integer> failDueToMark = cb.sum(cb.<Integer>selectCase()
 				.when(cb.and(cb.equal(studentMarkRoot.get("result"), "F"),
-						cb.equal(studentAndQuarterlyReportJoin.get("attendanceComplianceStatus"), "C"),
+						cb.equal(studentAndQuarterlyReportJoin.get("attendanceComplianceStatus").get("code"), WebServiceUtil.COMPLIANCE),
 						cb.isTrue(studentMarkRoot.get("failedForMark"))), 1)
 				.otherwise(0));
 
 	
 		Expression<Integer> failDueToAttendance = cb
-				.sum(cb.<Integer>selectCase().when(cb.and(cb.equal(studentMarkRoot.get("result"), "F"),
-						cb.equal(studentAndQuarterlyReportJoin.get("attendanceComplianceStatus"), "NC")), 1).otherwise(0));
+				.sum(cb.<Integer>selectCase().when(cb.and(cb.equal(studentMarkRoot.get("result").get("code"), WebServiceUtil.FAIL),
+						cb.equal(studentAndQuarterlyReportJoin.get("attendanceComplianceStatus").get("code"), WebServiceUtil.NON_COMPLIANCE)), 1).otherwise(0));
 
 		
 		Predicate predicate = cb.and(cb.equal(studentAndQuarterlyReportJoin.get("quarterAndYear"), quarterAndYear),
@@ -199,7 +199,7 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 		     subquery.select(cb.max(subQueryStudentMarksRoot.get("totalMarks")))
 		            .where(
 		                cb.equal(subQueryStudentMarksRoot.get("quarterAndYear"), quarterAndYear),
-		                cb.equal(subQueryStudentMarksRoot.get("result"), WebServiceUtil.PASS)
+		                cb.equal(subQueryStudentMarksRoot.get("result").get("code"), WebServiceUtil.PASS)
 		            );
 
 
@@ -218,7 +218,7 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 		    ))
 		    .where(
 		        cb.equal(studentMark.get("quarterAndYear"), quarterAndYear),
-		        cb.equal(studentMark.get("result"), WebServiceUtil.PRESENT),
+		        cb.equal(studentMark.get("result").get("code"), WebServiceUtil.PRESENT),
 		        cb.equal(studentMark.get("totalMarks"), subquery) // ✅ match with max
 		    );
 

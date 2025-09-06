@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -37,8 +38,10 @@ public class QuarterlyAttendanceReportModel {
 	@Column(name = "QUARTER_Tot_Approved_Sick_Leave",nullable = false)
 	private Long totalApprovedSickdays;
 	
-	@Column(name = "QUARTER_Attendance_Compliance_Status" ,length=2,nullable = false)
-	private String  attendanceComplianceStatus;
+//	@Column(name = "QUARTER_Attendance_Compliance_Status" ,length=2,nullable = false)
+	@OneToOne
+	@JoinColumn(name ="QUARTER_Attendance_Compliance_Status",referencedColumnName = "CODE" ,nullable = false)
+	private StudentCodeModel  attendanceComplianceStatus;
 	
 	@Column(name="QUARTER_Attendance_Comments",length = 25)
 	private String comments;
@@ -103,11 +106,13 @@ public class QuarterlyAttendanceReportModel {
 		this.totalApprovedSickdays = totalApprovedSickdays;
 	}
 
-	public String getAttendanceComplianceStatus() {
+
+
+	public StudentCodeModel getAttendanceComplianceStatus() {
 		return attendanceComplianceStatus;
 	}
 
-	public void setAttendanceComplianceStatus(String attendanceComplianceStatus) {
+	public void setAttendanceComplianceStatus(StudentCodeModel attendanceComplianceStatus) {
 		this.attendanceComplianceStatus = attendanceComplianceStatus;
 	}
 

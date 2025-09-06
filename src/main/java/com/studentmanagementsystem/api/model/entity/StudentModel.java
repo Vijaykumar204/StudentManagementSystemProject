@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -37,8 +37,9 @@ public class StudentModel {
 	@Column(name ="STU_Last_Name",nullable = false,length=5)
 	private String studentLastName;
 	
-	@Column(name = "STU_Gender",nullable = false)
-	private Character studentGender;
+	@OneToOne
+	@JoinColumn(name ="STU_Gender",referencedColumnName = "CODE" )
+	private StudentCodeModel studentGender;
 	
 	@Column(name ="STU_DOB",nullable = false)
 //	@DateTimeFormat(pattern = "dd-MM-yyyy")   // for input (e.g., from HTML form / RequestParam)
@@ -48,8 +49,11 @@ public class StudentModel {
 	@Column(name = "STU_Class",nullable = false)
 	private Integer studentClassOfStudy;
 	
-	@Column(name = "STU_Residing_Status",nullable = false)
-	private Character studentResidingStatus;
+	
+//	@Column(name = "STU_Residing_Status",nullable = false)
+	@OneToOne
+	@JoinColumn(name ="STU_Residing_Status",referencedColumnName = "CODE" )
+	private StudentCodeModel studentResidingStatus;
 	
 	@Column(name = "STU_Email",unique = true,length =25,nullable = false)
 	private String studentEmail;
@@ -72,8 +76,10 @@ public class StudentModel {
 	@Column(name = "STU_Postal_Code",nullable = false,length=6)
 	private String homePostalCode;
 	
-	@Column(name = "STU_Status", nullable = false,columnDefinition ="CHAR DEFAULT 'A'")
-	private Character studentActiveStatus = 'A';
+//	@Column(name = "STU_Status", nullable = false,columnDefinition ="CHAR DEFAULT 'A'")
+	@OneToOne
+	@JoinColumn(name ="STU_Status",referencedColumnName = "CODE" )
+	private StudentCodeModel studentActiveStatus;
 	
 	@Column(name = "STU_Last_Effective_Date")
 	private LocalDateTime lasteffectivedate;
@@ -148,11 +154,13 @@ public class StudentModel {
 		this.studentLastName = studentLastName;
 	}
 
-	public Character getStudentGender() {
+
+
+	public StudentCodeModel getStudentGender() {
 		return studentGender;
 	}
 
-	public void setStudentGender(Character studentGender) {
+	public void setStudentGender(StudentCodeModel studentGender) {
 		this.studentGender = studentGender;
 	}
 
@@ -172,13 +180,7 @@ public class StudentModel {
 		this.studentClassOfStudy = studentClassOfStudy;
 	}
 
-	public Character getStudentResidingStatus() {
-		return studentResidingStatus;
-	}
 
-	public void setStudentResidingStatus(Character studentResidingStatus) {
-		this.studentResidingStatus = studentResidingStatus;
-	}
 
 	public String getStudentEmail() {
 		return studentEmail;
@@ -236,13 +238,7 @@ public class StudentModel {
 		this.homePostalCode = homePostalCode;
 	}
 
-	public Character getStudentActiveStatus() {
-		return studentActiveStatus;
-	}
 
-	public void setStudentActiveStatus(Character studentActiveStatus) {
-		this.studentActiveStatus = studentActiveStatus;
-	}
 
 	public LocalDateTime getLasteffectivedate() {
 		return lasteffectivedate;
@@ -307,6 +303,24 @@ public class StudentModel {
 	public void setQuarterlyAttendanceReportModel(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel) {
 		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
 	}
+
+	public StudentCodeModel getStudentResidingStatus() {
+		return studentResidingStatus;
+	}
+
+	public void setStudentResidingStatus(StudentCodeModel studentResidingStatus) {
+		this.studentResidingStatus = studentResidingStatus;
+	}
+
+	public StudentCodeModel getStudentActiveStatus() {
+		return studentActiveStatus;
+	}
+
+	public void setStudentActiveStatus(StudentCodeModel studentActiveStatus) {
+		this.studentActiveStatus = studentActiveStatus;
+	}
+	
+	
 	
 
 	

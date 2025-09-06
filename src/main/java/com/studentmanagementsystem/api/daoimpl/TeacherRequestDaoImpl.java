@@ -1,9 +1,9 @@
 package com.studentmanagementsystem.api.daoimpl;
 
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,7 +12,6 @@ import com.studentmanagementsystem.api.dao.TeacherRequestDao;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
 
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
-import com.studentmanagementsystem.api.repository.TeacherRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -28,8 +27,7 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 	@Autowired
 	private EntityManager entityManager;
 	
-	@Autowired
-	private TeacherRepository teacherRepository;
+
 	
 	/**
 	 * Retrieve the list of all teacher details.
@@ -45,7 +43,7 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 		teacherLisyQuery.select(cb.construct(TeacherModelListDto.class,
 				teacherRoot.get("teacherId"),
 				teacherRoot.get("teacherName"),
-				teacherRoot.get("teacherRole"),
+				teacherRoot.get("teacherRole").get("description"),
 				teacherRoot.get("teacherDepartment"),
 				teacherRoot.get("teacherPhoneNumber")
 				));
@@ -67,7 +65,7 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 		 teacherFilter.select(cb.construct(TeacherModelListDto.class,
 				 teacherRoot.get("teacherId"),
 				 teacherRoot.get("teacherName"),
-				 teacherRoot.get("teacherRole"),
+				 teacherRoot.get("teacherRole").get("description"),
 				 teacherRoot.get("teacherDepartment"),
 				 teacherRoot.get("teacherPhoneNumber")
 				 ));

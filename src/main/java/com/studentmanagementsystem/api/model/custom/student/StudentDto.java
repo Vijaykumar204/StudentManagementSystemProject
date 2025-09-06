@@ -18,7 +18,7 @@ public class StudentDto {
 	
 	private String studentLastName;
 	
-	private Character studentGender;
+	private String studentGender;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
@@ -26,7 +26,7 @@ public class StudentDto {
 
 	private Integer studentClassOfStudy;
 
-	private Character studentResidingStatus;
+	private String studentResidingStatus;
 
 	private String studentPhoneNumber;
 
@@ -40,9 +40,11 @@ public class StudentDto {
 
 	private String homePostalCode;
 
-	private Character studentActiveStatus;
+	private String studentActiveStatus;
 	
 	private String studentEmail;
+	
+	private Long teacherId;
 
 	public Long getStudentId() {
 		return studentId;
@@ -76,13 +78,7 @@ public class StudentDto {
 		this.studentLastName = studentLastName;
 	}
 
-	public Character getStudentGender() {
-		return studentGender;
-	}
 
-	public void setStudentGender(Character studentGender) {
-		this.studentGender = studentGender;
-	}
 
 	public LocalDate getStudentDateOfBirth() {
 		return studentDateOfBirth;
@@ -100,13 +96,7 @@ public class StudentDto {
 		this.studentClassOfStudy = studentClassOfStudy;
 	}
 
-	public Character getStudentResidingStatus() {
-		return studentResidingStatus;
-	}
 
-	public void setStudentResidingStatus(Character studentResidingStatus) {
-		this.studentResidingStatus = studentResidingStatus;
-	}
 
 	public String getStudentPhoneNumber() {
 		return studentPhoneNumber;
@@ -156,13 +146,7 @@ public class StudentDto {
 		this.homePostalCode = homePostalCode;
 	}
 
-	public Character getStudentActiveStatus() {
-		return studentActiveStatus;
-	}
 
-	public void setStudentActiveStatus(Character studentActiveStatus) {
-		this.studentActiveStatus = studentActiveStatus;
-	}
 
 	public String getStudentEmail() {
 		return studentEmail;
@@ -171,13 +155,47 @@ public class StudentDto {
 	public void setStudentEmail(String studentEmail) {
 		this.studentEmail = studentEmail;
 	}
+	
+
+	public Long getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(Long teacherId) {
+		this.teacherId = teacherId;
+	}
+	
+
+	public String getStudentGender() {
+		return studentGender;
+	}
+
+	public void setStudentGender(String studentGender) {
+		this.studentGender = studentGender;
+	}
+
+	public String getStudentResidingStatus() {
+		return studentResidingStatus;
+	}
+
+	public void setStudentResidingStatus(String studentResidingStatus) {
+		this.studentResidingStatus = studentResidingStatus;
+	}
+
+	public String getStudentActiveStatus() {
+		return studentActiveStatus;
+	}
+
+	public void setStudentActiveStatus(String studentActiveStatus) {
+		this.studentActiveStatus = studentActiveStatus;
+	}
 
 	public StudentDto(Long studentId, String studentFirstName, String studentMiddleName,
-			String studentLastName, Character studentGender, LocalDate studentDateOfBirth, Integer studentClassOfStudy,
-			Character studentResidingStatus, String studentPhoneNumber, String emergencyContactPersonName,
+			String studentLastName, String studentGender, LocalDate studentDateOfBirth, Integer studentClassOfStudy,
+			String studentResidingStatus, String studentPhoneNumber, String emergencyContactPersonName,
 			String emergencyContactPhoneNumber, String homeStreetName, String homeCityName, String homePostalCode,
-			Character studentActiveStatus, String studentEmail) {
-		super();
+			String studentActiveStatus, String studentEmail) {
+		
 		this.studentId = studentId;
 		this.studentFirstName = studentFirstName;
 		this.studentMiddleName = studentMiddleName;
@@ -195,6 +213,8 @@ public class StudentDto {
 		this.studentActiveStatus = studentActiveStatus;
 		this.studentEmail = studentEmail;
 	}
+	  public StudentDto() {
+	    }
 
 		
 

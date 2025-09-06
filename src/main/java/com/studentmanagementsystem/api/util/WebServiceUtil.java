@@ -12,13 +12,13 @@ public final class WebServiceUtil {
 	public static final String TEACHER = "teacher";
 	
 //********************Student*********************************	
-	public static final Character MALE = 'M';
-	public static final Character FEMALE = 'F';
-	public static final Character UNKNOWN = 'U';
-	public static final Character HOSTEL = 'H';
-	public static final Character DAYSCHOLAR = 'D';
-	public static final Character ACTIVE ='A';
-	public static final Character DEACTIVE ='D';
+	public static final String MALE = "M";
+	public static final String FEMALE = "F";
+	public static final String UNKNOWN = "U";
+	public static final String HOSTEL = "H";
+	public static final String DAYSCHOLAR = "DS";
+	public static final String ACTIVE ="A";
+	public static final String DEACTIVE ="D";
 	
 //******************** Student Message *********************************
 	
@@ -27,24 +27,22 @@ public final class WebServiceUtil {
 	public static final String A_OR_D_STATUS="Student %s";
 	public static final String STUDENT_EXISTS ="Student name and DOB already exists";
 	
-//******************** SchoolHoliday *********************************
+//******************** SchoolHoliday Message *********************************
 	
 	public static final Boolean CANCEL_HOLIDAY=true;
 	public static final Boolean HOLIDAY=false;
 	public static final String EXTRA_CURRICULAR_ACTIVITIES = "approvedExtraCurricularActivitiesFlag";
 	public static final String SICK_LEAVE = "longApprovedSickLeaveFlag";
-	
-//******************** SchoolHoliday Message *********************************
 	public static final String SUCCESS_HOLIDAY_DECLARE="Successfully declare holiday";
 	public static final String SUCCESS_CANCEL_HOLIDAY = "Successfully cancel the  holiday";
 	
 //******************** DailyAttendance *********************************
 	
 
-	public static final Character PRESENT = 'P';
-	public static final Character ABSENT = 'A';	
-	public static final Character YES = 'Y';
-	public static final Character NO = 'N';
+	public static final String PRESENT = "P";
+	public static final String ABSENT = "AB";	
+	public static final String YES = "Y";
+	public static final String NO = "N";
 	public static final String COMPLIANCE = "C";
 	public static final String NON_COMPLIANCE = "NC";
 	public static final String COMPLIANCE_COMMENT ="Good";
@@ -66,13 +64,14 @@ public final class WebServiceUtil {
 	public static final String QUART_JUNE_AND_YEAR  = "06/2025";
 	public static final String QUART_SEP_AND_YEAR = "09/2025";
 	public static final String QUART_DEC_AND_YEAR  = "12/2025";
+	public static final Integer YEAR = 2025;
 
 //******************** QuarterlyAttendanceReport Message *********************************
 	
 //******************** StudentMarks *********************************
 	
-	public static final Character PASS = 'P';
-	public static final Character FAIL = 'F';
+	public static final String PASS = "PASS";
+	public static final String FAIL = "FAIL";
 	
 //******************** StudentMarks Message  *********************************	
 	
@@ -84,18 +83,18 @@ public final class WebServiceUtil {
 	
 //******************** Email Message *********************************	
 	
-	public static final String DEAR = "Dear ";
-	public static final String ABSENT_ALERT_SUBJECT = " Attendance alert";
-	
-	public static final String 	SICK_LEVAE_SUBJECT  = "Sick leave alert";
-	
-	public static final String 	EXTRA_CUR_ACTIVITIES_LEAVE_SUBJECT  = "Extra curricular activity leave alert";
-	
-	public static final String ABSENT_ALERT_MESSAGE = "Attendance marked Absent on";
-	
-	public static final String SICK_LEVAE_MESSAGE = "Sick leave request accepted,Attendance marked Absent on ";
-	
-	public static final String EXTRA_CUR_ACTIVITIES_LEAVE_MESSAGE = " Extra curricular activity leave request accepted,Attendance marked Absent on ";
+//	public static final String DEAR = "Dear ";
+////	public static final String ABSENT_ALERT_SUBJECT = " Attendance alert";
+//	
+//	public static final String 	SICK_LEVAE_SUBJECT  = "Sick leave alert";
+//	
+//	public static final String 	EXTRA_CUR_ACTIVITIES_LEAVE_SUBJECT  = "Extra curricular activity leave alert";
+//	
+//	public static final String ABSENT_ALERT_MESSAGE = "Attendance marked Absent on";
+//	
+//	public static final String SICK_LEVAE_MESSAGE = "Sick leave request accepted,Attendance marked Absent on ";
+//	
+//	public static final String EXTRA_CUR_ACTIVITIES_LEAVE_MESSAGE = " Extra curricular activity leave request accepted,Attendance marked Absent on ";
 	 
 
 	
@@ -152,7 +151,7 @@ public final class WebServiceUtil {
 	        <p>Dear Sir/Madam,</p>
 	        <p>   I am writing to share the academic progress report of your child, <b>%s</b>, for the quarter <b>%s</b>.</p>
 	        
-	        <h3>📌 Performance Summary</h3>
+	        <h3> Performance Summary</h3>
 	         <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 60%%;">
                     <tr style="background-color: #f2f2f2;">
                         <th align="left">Description</th>
@@ -197,6 +196,62 @@ public final class WebServiceUtil {
 	         Hum School, Chennai</p>
 	        """;	
 	
+	public static final String ABSENT_ALERT_SUBJECT = "Attendance Alert – Absence of %s on %s";
+	
+	public static final String ABSENT_ALERT_BODY = """
+            <p>Dear Sir/Madam,</p>
+
+            <p>This is to inform you that your child, <b>%s</b>, was marked as <b>Absent</b> on <b>%s</b>.</p>
+
+            <p>We kindly request you to ensure that %s attends classes regularly, as consistent attendance is important for academic performance and overall development.</p>
+
+            <p>If the absence was due to illness or any other valid reason, please provide a leave note or inform us accordingly.</p>
+
+            <br>
+            <p>Thank you for your support and cooperation.</p>
+
+            <p>
+            Warm regards,<br>
+            <b>Class Teacher</b><br>
+            Hum School, Chennai
+            </p>
+            """;
+	
+	public static final String SICK_LEAVE_ALERT_SUBJECT ="Sick Leave Approval for %s";
+	public static final String SICK_LEAVE_ALERT_BODY =  """
+			<p>Dear Sir/Madam,</p>
+            <p> This is to inform you that the sick leave request submitted for your ward, %s (Class %d), 
+            on %s has been approved.</p>
+            <p>  Please ensure your child takes proper rest and resumes school once fully recovered. 
+             If additional leave is required, kindly notify us in advance.</p>
+             <p>
+            Warm regards,<br>
+            <b>Class Teacher</b><br>
+            Hum School, Chennai
+            </p> """;
+	
+	public static final String EXTRA_CUR_ACTIVITY_ALERT_SUBJECT="Extra-Curricular Activity Leave Notification for %s";
+	public static final String EXTRA_CUR_ACTIVITY_ALERT_BODY = """ 
+			
+		<p>	Dear Sir/Madam,</p>
+			
+			<p>This is to inform you that your ward, %s, has been granted leave on %s to participate in an extra-curricular activity </p>
+			
+			<h5>Details:</h5>
+			<p>- Student Name: %s </p>
+			
+			<p>- Leave Date: %s </p>
+			<p>- Leave Type: Extra-Curricular Activity </p>
+			<p>- Status: Approved </p>
+			
+			<p> Please ensure that your child participates responsibly and returns to school on the following day. If there are any special requirements or questions, feel free to contact us.</p>
+			    <p>
+            Warm regards,<br>
+            <b>Class Teacher</b><br>
+            Hum School, Chennai
+            </p>
+			   """;
+	
 	//******************** Validation Message *********************************		
 	
 	public static final String NULL_ERROR = "%s is required";
@@ -217,8 +272,9 @@ public final class WebServiceUtil {
 
 	
 	
-	
-	
+	//******************** code error *********************************
+
+	public static final String INVAILD = " %s invalid";
 	
 
 //	public static final String NAME_ERROR = "Name is null";

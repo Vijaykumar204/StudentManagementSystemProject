@@ -1,6 +1,6 @@
 package com.studentmanagementsystem.api.restcontroller;
 
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.ComplianceAndNonComplianceReportDto;
 import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 
 
@@ -29,8 +28,7 @@ public class QuarterlyAttendanceReportController {
 	 * Author: Vijayakumar
 	 * @param quarterAndYear The quarter and year to fetch records for (e.g., 03/2025)
 	 * @return List of non-compliance student records
-	 */
-	
+	 */	
 	@GetMapping("/noncompliance")
 	ResponseEntity<?> getNonComplianceStudents(@RequestParam String quarterAndYear){
 		return new ResponseEntity<>(quarterlyAttendanceReportService.getNonComplianceStudents(quarterAndYear),HttpStatus.OK);
@@ -43,7 +41,6 @@ public class QuarterlyAttendanceReportController {
 	 * @param quarterAndYear The quarter and year to fetch records for (e.g., 03/2025)
 	 * @return List of compliance student records
 	 */
-	
 	@GetMapping("/compliance")
 	ResponseEntity<?> getComplianceStudents(@RequestParam String quarterAndYear){
 		return new ResponseEntity<>(quarterlyAttendanceReportService.getComplianceStudents(quarterAndYear),HttpStatus.OK);

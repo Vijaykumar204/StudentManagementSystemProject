@@ -29,8 +29,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	
 	/**
 	 * Retrieve the attendance summary report to update the quarterly attendance report.
-	 */
-	 
+	 */	 
 //     SELECT 
 //    d.Student_Id AS studentId,
 //    SUM(CASE WHEN d.AT_Status = 'P' THEN 1 ELSE 0 END) AS totalDaysOfPresent,
@@ -42,7 +41,6 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 //	WHERE MONTH(d.AT_Date) IN (1,2,3)
 //	  AND YEAR(d.AT_Date) = 2025
 //	GROUP BY d.Student_Id;
-
 	@Override
 	public List<QuarterlyAttendanceReportDto> getAttendanceSummary(List<Integer> quarterMonth) {
 		
@@ -52,7 +50,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		Root<DailyAttendanceModel> dailyAttendanceRoot = totakWorkingDaysQuery.from(DailyAttendanceModel.class);
 
 		Predicate monthPredicate = cb.function("MONTH", Integer.class, dailyAttendanceRoot.get("attendanceDate")).in(quarterMonth);
-		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceRoot.get("attendanceDate")), 2025);
+		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceRoot.get("attendanceDate")), WebServiceUtil.YEAR);
 
 		totakWorkingDaysQuery.select(
 				cb.countDistinct(dailyAttendanceRoot.get("attendanceDate")
@@ -101,8 +99,6 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	 * Retrieve the list of compliance students for a given quarter and year.
 	 *
 	 */
-	
-	
 //	SELECT 
 //    s.student_id,
 //    qar.quarter_and_year,
@@ -114,7 +110,6 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 //   INNER JOIN student s ON qar.student_id = s.student_id
 //  WHERE qar.quarter_and_year = :quarterAndYear
 //  AND qar.attendance_compliance_status = :complianceStatus;
-
 	@Override
 	public List<ComplianceAndNonComplianceReportDto> getNonComplianceStudents(String quarterAndYear,
 			String complianceStatus) {
@@ -125,14 +120,14 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		Join<QuarterlyAttendanceReportModel,StudentModel> quarterlyAttendanceReporAndStudentJoin = QuarterlyAttendanceReportRoot.join("studentModel");
 		
 		Predicate quarterAndYearCondition=cb.equal(QuarterlyAttendanceReportRoot.get("quarterAndYear"), quarterAndYear);
-		Predicate statusCondition=cb.equal(QuarterlyAttendanceReportRoot.get("attendanceComplianceStatus"),complianceStatus);
+		Predicate statusCondition=cb.equal(QuarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("code"),complianceStatus);
 		complianceAndNonComplianceQuery.select(cb.construct(ComplianceAndNonComplianceReportDto.class,
 				quarterlyAttendanceReporAndStudentJoin.get("studentId"),
 				QuarterlyAttendanceReportRoot.get("quarterAndYear"),
 				quarterlyAttendanceReporAndStudentJoin.get("studentFirstName"),
 				quarterlyAttendanceReporAndStudentJoin.get("studentMiddleName"),
 				quarterlyAttendanceReporAndStudentJoin.get("studentLastName"),
-				QuarterlyAttendanceReportRoot.get("attendanceComplianceStatus")		
+				QuarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("desdescription")	
 				
 				)).where(quarterAndYearCondition,statusCondition);
 		
@@ -141,23 +136,9 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		return entityManager.createQuery(complianceAndNonComplianceQuery).getResultList();
 	}
 	
-	//select attendanceComplianceStatus from QuarterlyAttendanceReportModel where studentId = studentId && quarterAndYear=quarterAndYear;
-
-	@Override
-	public String getComplianceStatus(Long studentId, String quarterAndYear) {
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<String> complianceStatusQuery = cb.createQuery(String.class);
-		Root<QuarterlyAttendanceReportModel> quarterlyAttendancReportRoot = complianceStatusQuery.from(QuarterlyAttendanceReportModel.class);
-		
-		Predicate stuCondition = cb.equal(quarterlyAttendancReportRoot.get("studentModel").get("studentId"),studentId );
-		Predicate quarterandYearCondition = cb.equal(quarterlyAttendancReportRoot.get("quarterAndYear"),quarterAndYear);
-			
-		complianceStatusQuery.select(
-				quarterlyAttendancReportRoot.get("attendanceComplianceStatus")
-				).where(stuCondition,quarterandYearCondition);
-		
-		return entityManager.createQuery(complianceStatusQuery).getSingleResult();
-	}
+	/*
+	 *send mail to quarterly report 
+	 */
 
 	@Override
 	public List<QuarterlyAttendanceReportDto> getQuarterlyAttendanceReport(String quarterAndYear) {
@@ -173,7 +154,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 				quarterlyAttendanceReportRoot.get("totalDaysOfAbsents"),				
 				quarterlyAttendanceReportRoot.get("totalApprovedActivitiesPermissionDays"),
 				quarterlyAttendanceReportRoot.get("totalApprovedSickdays"),
-				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus")
+				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("description")
 				
 				)).where(quarterandYearCondition)	;	
 		
