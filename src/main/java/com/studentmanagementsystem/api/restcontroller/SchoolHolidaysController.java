@@ -25,12 +25,10 @@ public class SchoolHolidaysController {
 	/**
 	 * Declare multiple holidays.
 	 *
-	 * Author: Vijayakumar
 	 * @param schoolHolidaysDto The list of holidays to be declared( from request body)
 	 * @return  Confirmation message 
+	 * @author Vijiyakumar
 	 */
-
-	
 	@PostMapping("/multipledeclare")
 	ResponseEntity<?> declareMultipleHolidays(@RequestBody List<SchoolHolidaysDto> schoolHolidaysDto){
 		return new ResponseEntity<>(schoolHolidaysService.declareMultipleHolidays(schoolHolidaysDto),HttpStatus.OK);
@@ -39,9 +37,9 @@ public class SchoolHolidaysController {
 	/**
 	 * Declare a  holiday.
 	 *
-	 * Author: Vijayakumar
 	 * @param schoolHolidayDto The holiday details to be declared (from request body)
 	 * @return  Confirmation message 
+	 * @author Vijiyakumar
 	 */
 
 	@PostMapping("/declare")
@@ -52,13 +50,10 @@ public class SchoolHolidaysController {
 	/**
 	 * Cancel a declared holiday.
 	 *
-	 * Author: Vijayakumar
 	 * @param schoolHolidayDto The holiday date and reason to be canceled(from request body)
 	 * @return Confirmation message 
+	 * @author Vijiyakumar
 	 */
-
-	
-	
 	@PostMapping("/cancel")
 	ResponseEntity<?> cancelHolidayByDate(@RequestBody SchoolHolidaysDto schoolHolidaysDto){
 		return new ResponseEntity<>(schoolHolidaysService.cancelHolidayByDate(schoolHolidaysDto),HttpStatus.OK);
@@ -67,12 +62,10 @@ public class SchoolHolidaysController {
 	/**
 	 * Cancel multilple declared holiday.
 	 *
-	 * Author: Vijayakumar
 	 * @param schoolHolidayDto The list of holiday date and reason to be canceled(from request body)
 	 * @return Confirmation message 
+	 * @author Vijiyakumar
 	 */
-	
-	
 	@PostMapping("multiplecancel")
 	ResponseEntity<?> cancelMultipleHoliday(@RequestBody List<SchoolHolidaysDto> schoolHolidaysDto){
 		return new ResponseEntity<>(schoolHolidaysService.cancelMultipleHoliday(schoolHolidaysDto),HttpStatus.OK);
@@ -81,11 +74,9 @@ public class SchoolHolidaysController {
 	/**
 	 *  Retrieve the list of declared holidays.
 	 *
-	 * Author: Vijayakumar
-
 	 * @return List of declared holidays
-	 */
-	
+	 * @author Vijiyakumar
+	 */	
 	@GetMapping
 	ResponseEntity<?> getHolidays(){
 		return new ResponseEntity<>(schoolHolidaysService.getHolidays(),HttpStatus.OK);
@@ -94,17 +85,11 @@ public class SchoolHolidaysController {
 	/**
 	 *  Retrieve the list of cancel holidays.
 	 *
-	 * Author: Vijayakumar
-
 	 * @return List of cancel holidays
-	 */
-	
+	 * @author Vijiyakumar
+	 */	
 	@GetMapping("/cancelHolidays")
 	ResponseEntity<?> getCancelHolidays(){
 		return new ResponseEntity<>(schoolHolidaysService.getCancelHolidays(),HttpStatus.OK);
 	}
-
-	
-	
-
 }

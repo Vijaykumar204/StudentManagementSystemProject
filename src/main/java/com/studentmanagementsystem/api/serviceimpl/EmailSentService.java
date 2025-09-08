@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
@@ -49,35 +48,7 @@ public class EmailSentService {
 	 
 	  @Autowired
 	  private QuarterlyAttendanceReportDao quarterlyAttendanceReportDao;
-//
-//	public void sendEmailAlert(Long studentId, LocalDate attendanceDate, String absentAlertSubject,
-//			String absentAlertMessage) {
-//		
-//		StudentModel student = studentModelRepository.findStudentByStudentId(studentId);
-//		
-//		 SimpleMailMessage message = new SimpleMailMessage();
-//	       
-//	        message.setTo(student.getStudentEmail());
-//	        message.setSubject(absentAlertSubject);
-//	        message.setText(WebServiceUtil.DEAR+student.getStudentFirstName()+"\n"+absentAlertMessage + attendanceDate);
-//
-//	        mailSender.send(message);
-//	        
-//	        
-//	        LocalDateTime today = LocalDateTime.now();
-//	        
-//	        EmailSentHistory email = new EmailSentHistory();
-//	        
-//	        email.setStudentId(studentId);
-//	        email.setStudentEmail(student.getStudentEmail());
-//	        email.setEmailSubject(absentAlertSubject);
-//	        email.setEmailMessage(WebServiceUtil.DEAR+student.getStudentFirstName()+"\n"+absentAlertMessage + attendanceDate);
-//	        email.setMailSentDate(today);
-//	        
-//	        emailSentHistoryRepository.save(email);
-//	        
-//		
-//	}
+
 	
 
 	 /*
@@ -89,7 +60,7 @@ public class EmailSentService {
 			sendQuarterlyAttendanceRport(quarterAndResult);
 			sendQuarterlyMarkResult(quarterAndResult);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 			
@@ -103,9 +74,7 @@ public class EmailSentService {
 	public void sendQuarterlyAttendanceRport(String quarterAndResult) throws MessagingException {
 		
 //		List<StudentMarksDto> studentMarklist = studentMarksDao.getAllStudentMarks(quarterAndResult);
-		
 
-		
 		 List<QuarterlyAttendanceReportDto> quarterAttendanceList = quarterlyAttendanceReportDao.getQuarterlyAttendanceReport(quarterAndResult);
 		
 		
@@ -241,14 +210,14 @@ public class EmailSentService {
 	}
 
 	}
+	
 	/**
 	 * Scheduled task that send Absent Alert message.
 	 * This method is executed automatically by a Cron job 
 	 * every day at 12:00 AM.
 	 *
 	 * Author: Vijayakumar
-	 */
-	
+	 */	
 //	@Scheduled(cron = "0 0 12 * * ?") // Every day at 12 AM
     public Response runAbsentAlertMessage() throws MessagingException{
     	Response response = new Response();
@@ -303,132 +272,6 @@ public class EmailSentService {
 		return response ;
 	}
 	
-//	
-//	 /*
-//	   * send mail to student parent's approved Extra-Curricular Activities Alert message
-//	   */
-//	
-//	private void approvedExtraCurricularActivitiesAlert(Long studentId) throws MessagingException {
-//		LocalDate attendanceDate = LocalDate.now();
-//		StudentModel studentModel = studentModelRepository.findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(studentId);
-//		String name;
-//
-//		if(studentModel.getStudentMiddleName()!=null) {
-//        name =studentModel.getStudentFirstName()+" "+studentModel.getStudentMiddleName()+" "+studentModel.getStudentLastName();
-//		}
-//		else {
-//		 name =studentModel.getStudentFirstName()+" "+studentModel.getStudentLastName();
-//		}
-//		
-//        MimeMessage message = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-//	       
-//        String subject = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_BODY,name);
-//        helper.setTo(studentModel.getStudentEmail());
-//        helper.setSubject(subject);
-//        String body = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_BODY,name,attendanceDate,name,attendanceDate);
-//        helper.setText(body, true);
-//        mailSender.send(message);
-//        
-//        LocalDateTime today = LocalDateTime.now();
-//        
-//        // String plainTextBody = Jsoup.parse(body).text();
-//  	        
-//  	        EmailSentHistory email = new EmailSentHistory();	        
-//  	        email.setStudentId(studentModel.getStudentId());
-//  	        email.setStudentEmail(studentModel.getStudentEmail());
-//  	        email.setEmailSubject(subject);
-//  	        email.setEmailMessage(body);
-//  	        email.setMailSentDate(today);
-//  	        
-//  	        emailSentHistoryRepository.save(email);
-//		
-//	}
-//
-//	 /*
-//	   * send mail to student parent's approved sick leave alertmessage
-//	   */
-//	public void approvedSickLeaveAlertMessage(Long studentId) throws MessagingException {
-//		
-//		LocalDate attendanceDate = LocalDate.now();
-//		StudentModel studentModel = studentModelRepository.findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(studentId);
-//		String name;
-//
-//		if(studentModel.getStudentMiddleName()!=null) {
-//        name =studentModel.getStudentFirstName()+" "+studentModel.getStudentMiddleName()+" "+studentModel.getStudentLastName();
-//		}
-//		else {
-//		 name =studentModel.getStudentFirstName()+" "+studentModel.getStudentLastName();
-//		}
-//		
-//        MimeMessage message = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-//	       
-//        String subject = String.format(WebServiceUtil.SICK_LEAVE_ALERT_SUBJECT,name);
-//        helper.setTo(studentModel.getStudentEmail());
-//        helper.setSubject(subject);
-//        String body = String.format(WebServiceUtil.SICK_LEAVE_ALERT_BODY,name,attendanceDate);
-//        helper.setText(body, true);
-//        mailSender.send(message);
-//        
-//        LocalDateTime today = LocalDateTime.now();
-//        
-//        // String plainTextBody = Jsoup.parse(body).text();
-//  	        
-//  	        EmailSentHistory email = new EmailSentHistory();	        
-//  	        email.setStudentId(studentModel.getStudentId());
-//  	        email.setStudentEmail(studentModel.getStudentEmail());
-//  	        email.setEmailSubject(subject);
-//  	        email.setEmailMessage(body);
-//  	        email.setMailSentDate(today);
-//  	        
-//  	        emailSentHistoryRepository.save(email);
-//  	
-//	}
-//			
-//
-//
-//	 /*
-//	   * send mail to student parent's absent alert message
-//	   */
-//
-//	public void absentAlertMessage(Long studentId) throws MessagingException {
-//		
-//		LocalDate attendanceDate = LocalDate.now();
-//		StudentModel studentModel = studentModelRepository.findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(studentId);
-//		String name;
-//
-//		if(studentModel.getStudentMiddleName()!=null) {
-//        name =studentModel.getStudentFirstName()+" "+studentModel.getStudentMiddleName()+" "+studentModel.getStudentLastName();
-//		}
-//		else {
-//		 name =studentModel.getStudentFirstName()+" "+studentModel.getStudentLastName();
-//		}
-//		
-//        MimeMessage message = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-//	       
-//        String subject = String.format(WebServiceUtil.ABSENT_ALERT_SUBJECT,name,attendanceDate);
-//        helper.setTo(studentModel.getStudentEmail());
-//        helper.setSubject(subject);
-//        String body = String.format(WebServiceUtil.ABSENT_ALERT_BODY,name,attendanceDate,studentModel.getStudentFirstName());
-//        helper.setText(body, true);
-//        mailSender.send(message);
-//        
-//        LocalDateTime today = LocalDateTime.now();
-//        
-//        // String plainTextBody = Jsoup.parse(body).text();
-//  	        
-//  	        EmailSentHistory email = new EmailSentHistory();
-//  	        
-//  	        email.setStudentId(studentModel.getStudentId());
-//  	        email.setStudentEmail(studentModel.getStudentEmail());
-//  	        email.setEmailSubject(subject);
-//  	        email.setEmailMessage(body);
-//  	        email.setMailSentDate(today);
-//  	        
-//  	        emailSentHistoryRepository.save(email);
-//  	
-//  		}
+
 	
 }

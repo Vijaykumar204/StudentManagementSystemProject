@@ -264,6 +264,7 @@ public final class WebServiceUtil {
 	
 	public static final String SUCCESS ="Success";
 	public static final String SAVE ="Successfully saved";
+	public static final String UPDATE = "Successfully update";
 	public static final String MARK_ATTENDANCE = "Attendance marked successfully";
 	public static final String FAILURE = "Failure";
 	public static final String DECLARE_MARK="Successfully declared mark";

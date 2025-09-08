@@ -33,6 +33,8 @@ public class StudentDto {
 	private String  emergencyContactPersonName;
 
 	private String emergencyContactPhoneNumber;
+	
+	private String contactEmail;
 
 	private String homeStreetName;
 
@@ -189,12 +191,23 @@ public class StudentDto {
 	public void setStudentActiveStatus(String studentActiveStatus) {
 		this.studentActiveStatus = studentActiveStatus;
 	}
+	
+
+
+
+	public String getContactEmail() {
+		return contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
 
 	public StudentDto(Long studentId, String studentFirstName, String studentMiddleName,
 			String studentLastName, String studentGender, LocalDate studentDateOfBirth, Integer studentClassOfStudy,
 			String studentResidingStatus, String studentPhoneNumber, String emergencyContactPersonName,
 			String emergencyContactPhoneNumber, String homeStreetName, String homeCityName, String homePostalCode,
-			String studentActiveStatus, String studentEmail) {
+			String studentActiveStatus, String studentEmail,String contactEmail) {
 		
 		this.studentId = studentId;
 		this.studentFirstName = studentFirstName;
@@ -212,6 +225,8 @@ public class StudentDto {
 		this.homePostalCode = homePostalCode;
 		this.studentActiveStatus = studentActiveStatus;
 		this.studentEmail = studentEmail;
+		this.contactEmail = contactEmail;
+		
 	}
 	  public StudentDto() {
 	    }

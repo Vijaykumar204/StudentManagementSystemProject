@@ -98,6 +98,20 @@ public class FieldValidation {
 		else if(!EMAIL_PATTERN.matcher(studentDto.getStudentEmail()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR,"studentEmail"));
 		}
+		if (studentDto.getEmergencyContactPersonName() == null) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"emergencyContactPersonName"));
+			
+		 }
+		else if (!NAME_PATTERN.matcher(studentDto.getEmergencyContactPersonName()).matches()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR,"emergencyContactPersonName"));
+		}
+		if (studentDto.getContactEmail() == null) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"contactEmail"));
+			
+		}
+		else if(!EMAIL_PATTERN.matcher(studentDto.getContactEmail()).matches()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR,"contactEmail"));
+		}
 		
 		if (studentDto.getHomeStreetName() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR,"homeStreetNamel"));

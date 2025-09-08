@@ -61,11 +61,14 @@ public class StudentModel {
 	@Column(name = "STU_Ph_No", unique = true, nullable = false,length=10)
 	private String studentPhoneNumber;
 	
-	@Column(name = "STU_Contact_Person_Name",length=25)
+	@Column(name = "STU_Contact_Person_Name",length=25,nullable = false)
 	private String  emergencyContactPersonName;
 	
 	@Column(name = "STU_Contact_Ph_No",length =10)
 	private String emergencyContactPhoneNumber;
+	
+	@Column(name = "STU_Contact_Email",length =25,nullable = false)
+	private String contactEmail;
 	
 	@Column(name = "STU_Street_Name",length =25)
 	private String homeStreetName;
@@ -319,6 +322,16 @@ public class StudentModel {
 	public void setStudentActiveStatus(StudentCodeModel studentActiveStatus) {
 		this.studentActiveStatus = studentActiveStatus;
 	}
+
+	public String getContactEmail() {
+		return contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
+
+
 	
 	
 	

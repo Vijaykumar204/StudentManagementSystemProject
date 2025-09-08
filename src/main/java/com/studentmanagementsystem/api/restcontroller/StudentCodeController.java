@@ -21,8 +21,13 @@ public class StudentCodeController {
 @Autowired
 private StudentCodeService studentCodeService;
 
-
-
+/**
+ * Declare code.
+ *
+ * @param studentCodeDto The list of code to be declared( from request body)
+ * @return  Confirmation message 
+ * @author Vijiyakumar
+ */
 @PostMapping("/code")
 public ResponseEntity<?> addStudentCode(@RequestBody List<StudentCodeDto> studentCodeDto){
 	return new ResponseEntity<>(studentCodeService.addStudentCode(studentCodeDto),HttpStatus.OK);

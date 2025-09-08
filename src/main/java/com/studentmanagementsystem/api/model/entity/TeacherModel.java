@@ -76,7 +76,6 @@ public class TeacherModel {
 	public void setTeacherName(String teacherName) {
 		this.teacherName = teacherName;
 	}
-
 	public StudentCodeModel getTeacherRole() {
 		return teacherRole;
 	}

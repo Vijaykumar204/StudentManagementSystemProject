@@ -8,18 +8,16 @@ import com.studentmanagementsystem.api.model.custom.schoolholidays.response.Scho
 
 public interface SchoolHolidaysService {
 
-	
+	SchoolHolidayListResponse getHolidays();
 
-SchoolHolidayListResponse getHolidays();
+	Response cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto);
 
-Response cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto);
+	Response declareMultipleHolidays(List<SchoolHolidaysDto> schoolHolidaysDto);
 
-Response declareMultipleHolidays(List<SchoolHolidaysDto> schoolHolidaysDto);
+	Response cancelMultipleHoliday(List<SchoolHolidaysDto> schoolHolidaysDto);
 
-Response cancelMultipleHoliday(List<SchoolHolidaysDto> schoolHolidaysDto);
+	Response declareHoliday(SchoolHolidaysDto schoolHolidaysDto);
 
-Response declareHoliday(SchoolHolidaysDto schoolHolidaysDto);
-
-SchoolHolidayListResponse getCancelHolidays();
+	SchoolHolidayListResponse getCancelHolidays();
 
 }

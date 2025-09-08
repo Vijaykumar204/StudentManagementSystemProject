@@ -26,9 +26,9 @@ public class StudentMarksController {
 	/**
 	 * Declare the marks of a student.
 	 *
-	 * Author: Vijiyakumar
 	 * @param studentMarksDto The student marks details (from request body)
 	 * @return Confirmation message indicating that the marks were successfully declared
+	 * @author Vijiyakumar
 	 */
 	
 	@PostMapping("/add")
@@ -40,9 +40,9 @@ public class StudentMarksController {
 	 * Retrieve the list of students with their result status (pass or fail) 
 	 * for a given quarter and year.
 	 *
-	 * Author: Vijiyakumar
 	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
 	 * @return List of students with their result status
+	 * @author Vijiyakumar
 	 */
 	
 	@GetMapping("/listCompilance")
@@ -53,11 +53,10 @@ public class StudentMarksController {
 	/**
 	 * Retrieve the list of all student marks for a given quarter and year.
 	 *
-	 * Author: Vijiyakumar
 	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
 	 * @return List of all student marks
-	 */
-	
+	 * @author Vijiyakumar
+	 */	
 	@GetMapping("/list")
 	ResponseEntity<?> getAllStudentMarks(@RequestParam String quarterAndYear){
 		return new ResponseEntity<>(studentMarksService.getAllStudentMarks(quarterAndYear),HttpStatus.OK);
@@ -67,13 +66,10 @@ public class StudentMarksController {
 	/**
 	 * Retrieve the overall result summary for students in a given quarter and year.
 	 *
-	 * Author: Vijayakumar
 	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
 	 * @return A summary report of student results
+	 * @author Vijiyakumar
 	 */
-
-	
-	
 	@GetMapping("/totalList")
 	ResponseEntity<?> getToatalResultCount(@RequestParam String quarterAndYear){
 		return new ResponseEntity<>(studentMarksService.getToatalResultCount(quarterAndYear),HttpStatus.OK);
@@ -82,9 +78,9 @@ public class StudentMarksController {
 	/**
 	 * Retrieve the class topper in agiven quarter and Year.
 	 *
-	 * Author: Vijayakumar
 	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
 	 * @return Display the class topper
+	 * @author Vijiyakumar
 	 */
 	@GetMapping("/classTopper")
 	ResponseEntity<?> getClassTopper(@RequestParam String quarterAndYear){

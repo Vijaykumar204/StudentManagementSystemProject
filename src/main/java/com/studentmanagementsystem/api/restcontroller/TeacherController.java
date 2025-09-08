@@ -1,6 +1,6 @@
 package com.studentmanagementsystem.api.restcontroller;
 
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,10 +26,9 @@ public class TeacherController {
 	/**
 	 * Retrieve the list of all teacher details.
 	 *
-	 * Author: Vijiyakumar
 	 * @return List of all teachers
-	 */
-	
+	 * @author Vijiyakumar
+	 */	
 	@GetMapping("/list")
 	public ResponseEntity<?>  listAllTeachers() {
 		return new ResponseEntity<>( teacherService.listAllTeachers(),HttpStatus.OK);
@@ -38,12 +37,11 @@ public class TeacherController {
 	/**
 	 * Save or update teacher details.
 	 *
-	 * Author: Vijayakumar
 	 * @param teacherModelListDto The teacher details to be saved or updated (from request body)
 	 * @param teacherId The ID of the teacher who created or updated the record
 	 * @return Confirmation message indicating that the teacher details were successfully saved or updated
-	*/
-	
+	 * @author Vijiyakumar
+	*/	
 	@PostMapping("/save/{teacherId}")
 	public ResponseEntity<?>  saveTeacher(@RequestBody TeacherModelListDto teacherModelListDto,@PathVariable Long teacherId ) {
 		return new ResponseEntity<>( teacherService.saveTeacher(teacherModelListDto,teacherId),HttpStatus.OK);
@@ -53,13 +51,12 @@ public class TeacherController {
 	/**
 	 * Filter teacher by ID, email, or phone number.
 	 *
-	 * Author: Vijayakumar
 	 * @param teacherId (optional) The unique ID of the teacher
 	 * @param teacherName (optional) The email address of the teacher
 	 * @param teacherPhoneNumber (optional) The phone number of the teacher
 	 * @return List of teacher that match the given filter criteria
+	 * @author Vijiyakumar
 	 */
-	
 	@GetMapping("/filter")
 	public ResponseEntity<?>  filterTeacher(@RequestParam(required = false) Long teacherId,@RequestParam(required = false) String teacherName,@RequestParam(required = false) String teacherPhoneNumber){
 		return new ResponseEntity<>( teacherService.filterTeacher(teacherId,teacherName,teacherPhoneNumber),HttpStatus.OK);

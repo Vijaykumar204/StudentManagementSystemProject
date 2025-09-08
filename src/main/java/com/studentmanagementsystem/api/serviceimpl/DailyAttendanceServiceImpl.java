@@ -28,7 +28,6 @@ import com.studentmanagementsystem.api.service.DailyAttendanceService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
 
-import jakarta.mail.MessagingException;
 
 @Service
 public class DailyAttendanceServiceImpl implements DailyAttendanceService {
@@ -36,10 +35,6 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	@Autowired
 	private DailyAttendanceDao dailyAttendanceDao;
 	
-
-	
-	@Autowired
-	private EmailSentService emailSentService;
 	
 	@Autowired
 	private SchoolHolidaysDao schoolHolidaysDao; 

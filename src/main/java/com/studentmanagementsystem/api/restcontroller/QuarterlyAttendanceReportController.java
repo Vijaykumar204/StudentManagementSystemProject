@@ -25,9 +25,9 @@ public class QuarterlyAttendanceReportController {
 	/**
 	 * Retrieve the list of non-compliance students for a given quarter and year.
 	 *
-	 * Author: Vijayakumar
 	 * @param quarterAndYear The quarter and year to fetch records for (e.g., 03/2025)
 	 * @return List of non-compliance student records
+	 * @author Vijiyakumar
 	 */	
 	@GetMapping("/noncompliance")
 	ResponseEntity<?> getNonComplianceStudents(@RequestParam String quarterAndYear){
@@ -37,9 +37,9 @@ public class QuarterlyAttendanceReportController {
 	/**
 	 * Retrieve the list of compliance students for a given quarter and year.
 	 *
-	 * Author: Vijayakumar
 	 * @param quarterAndYear The quarter and year to fetch records for (e.g., 03/2025)
 	 * @return List of compliance student records
+	 * @author Vijiyakumar
 	 */
 	@GetMapping("/compliance")
 	ResponseEntity<?> getComplianceStudents(@RequestParam String quarterAndYear){

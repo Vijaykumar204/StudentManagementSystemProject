@@ -54,7 +54,8 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 				studentListRoot.get("homeCityName"),
 				studentListRoot.get("homePostalCode"),
 				studentListRoot.get("studentActiveStatus").get("description"),
-				studentListRoot.get("studentEmail")
+				studentListRoot.get("studentEmail"),
+				studentListRoot.get("contactEmail")
 			
 				);
 		
@@ -92,7 +93,8 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 	    		   studentListRoot.get("homeCityName"),
 	    		   studentListRoot.get("homePostalCode"),
 	    		   studentListRoot.get("studentActiveStatus").get("description"),
-	    		   studentListRoot.get("studentEmail")
+	    		   studentListRoot.get("studentEmail"),
+	    		   studentListRoot.get("contactEmail")
 				
 					).where(cb.and(residingStatus, activeStatus,lastEffectiveDateCondition));
 		
@@ -126,7 +128,8 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 				 studentListRoot.get("homeCityName"),
 				 studentListRoot.get("homePostalCode"),
 				 studentListRoot.get("studentActiveStatus").get("description"),
-				 studentListRoot.get("studentEmail")
+				 studentListRoot.get("studentEmail"),
+				 studentListRoot.get("contactEmail")
 			
 				).where(lastEffectiveDateCondition);
 		
@@ -178,7 +181,8 @@ public class StudentModelDaoImpl  implements StudentModelDao{
 				studentListRoot.get("homeCityName"),
 				studentListRoot.get("homePostalCode"),
 				studentListRoot.get("studentActiveStatus").get("description"),
-				studentListRoot.get("studentEmail")
+				studentListRoot.get("studentEmail"),
+				studentListRoot.get("contactEmail")
 			
 				).where(studentActiveCondition);
 		

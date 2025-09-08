@@ -62,6 +62,7 @@ public class StudentServiceImpl implements StudentService {
 		LocalDateTime today = LocalDateTime.now();
 
 		StudentModel studentModel;
+		int updateVariable = 0;
 
 		List<String> requestMissedFieldList= fieldValidation.checkValidationStudentSaveMethod(studentDto);
 
@@ -111,6 +112,8 @@ public class StudentServiceImpl implements StudentService {
 			}
 			studentModel.setUpdateTeacher(teacher.getTeacherId());
 			studentModel.setUpdateDate(today);
+			updateVariable = 1;
+			
 
 		}
 		studentModel.setStudentFirstName(studentDto.getStudentFirstName());
@@ -149,7 +152,12 @@ public class StudentServiceImpl implements StudentService {
 		studentModelRepository.save(studentModel);
 		
 		response.setStatus(WebServiceUtil.SUCCESS);	
-		response.setData(WebServiceUtil.SAVE);
+		if(updateVariable == 0) {
+		    response.setData(WebServiceUtil.SAVE);
+		}
+		else {
+			 response.setData(WebServiceUtil.UPDATE);
+		}
 		
 		return response;
 	}

@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 @Repository
-public interface StudentModelRepository extends JpaRepository<StudentModel, Long>{
-
-   // StudentModel getStudentByStudentId(Long studentId);
+public interface StudentModelRepository extends JpaRepository<StudentModel, Long> {
 
 	StudentModel findStudentEmailByStudentId(Long studentId);
 
@@ -21,9 +19,5 @@ public interface StudentModelRepository extends JpaRepository<StudentModel, Long
 	StudentModel findStudentByStudentId(Long teacherId);
 
 	StudentModel findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(Long studentId);
-
-//	String findStudentEmailByStudentId(Long studentId);
-
-	
 
 }
