@@ -11,13 +11,15 @@ import com.studentmanagementsystem.api.model.entity.StudentModel;
 @Repository
 public interface StudentModelRepository extends JpaRepository<StudentModel, Long> {
 
-	StudentModel findStudentEmailByStudentId(Long studentId);
+	//StudentModel findEmailByStudentId(Long studentId);
 
-	StudentModel findByStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentDateOfBirth(
+	StudentModel findByFirstNameAndMiddleNameAndLastNameAndDateOfBirth(
 			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth);
 
 	StudentModel findStudentByStudentId(Long teacherId);
 
-	StudentModel findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(Long studentId);
+	StudentModel findFirstNameAndMiddleNameAndLastNameAndEmailByStudentId(Long studentId);
+
+	StudentModel findFirstNameAndMiddleNameAndLastNameAndParentsEmailByStudentId(Long studentId);
 
 }

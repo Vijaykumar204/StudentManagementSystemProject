@@ -22,7 +22,7 @@ public class EmailSentHistory {
 	@Column(name = "Student_Id",nullable = false)
     private Long studentId;
 	
-	@Column(name = "Student_Email" ,nullable = false,length = 30)
+	@Column(name = "Parents_Email" ,nullable = false,length = 30)
     private String studentEmail;
 	
 	@Column(name = "Email_Subject",nullable = false,length = 100)
@@ -33,7 +33,11 @@ public class EmailSentHistory {
 	
 	@Column(name = "Email_Sent_Date",nullable = false)
     private LocalDateTime mailSentDate;
-
+	
+	@Column(name = "Email_send_By")
+	 private Long teacherId;
+	
+	
 	public Long getEmailId() {
 		return emailId;
 	}

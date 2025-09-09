@@ -38,7 +38,7 @@ public class SchoolHolidaysModel {
 	@Column(name = "HOL_Create_Teacher",nullable = false)
 	private Long createTeacher;
 	
-	@Column(name = "HOL_Create_Date_Time")
+	@Column(name = "HOL_Create_Date_Time",nullable=false)
 	private LocalDateTime createDate;
 	
 	@Column(name = "HOL_Update_Teacher")

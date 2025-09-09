@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -26,7 +25,7 @@ public class JpaConfiguration {
 	    public DataSource dataSource() {
 	        DriverManagerDataSource ds = new DriverManagerDataSource();
 	        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-	        ds.setUrl("jdbc:mysql://localhost:3306/studentmanagementsystem");
+	        ds.setUrl("jdbc:mysql://localhost:3306/studentmanagementsystemproject");
 	        ds.setUsername("root");
 	        ds.setPassword("Vijay@204");
 	        return ds;
@@ -39,7 +38,7 @@ public class JpaConfiguration {
 	        emf.setPackagesToScan("com.studentmanagementsystem.api.model.entity");
 	        emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 	        Properties jpaProps = new Properties();
-	        jpaProps.setProperty("hibernate.hbm2ddl.auto", "update");
+	        jpaProps.setProperty("hibernate.hbm2ddl.auto", "none");
 	        jpaProps.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
 	        jpaProps.setProperty("hibernate.show_sql", "true");
 
@@ -54,10 +53,6 @@ public class JpaConfiguration {
 	        return txManager;
 	    }
 
-//	    @Bean
-//	    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
-//	        return new PersistenceExceptionTranslationPostProcessor();
-//	    }
 	    
 	    @Bean
 	    public JavaMailSender mailSender() {

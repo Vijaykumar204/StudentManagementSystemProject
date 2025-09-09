@@ -35,19 +35,21 @@ public class StudentCodeServiceImpl implements StudentCodeService {
 		for(StudentCodeDto code : studentCodeDto ) {
 			
 			StudentCodeModel studentCode = studentCodeRespository.findStudentCodeByCode(code.getCode());
-			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(code.getTeacherId());
-			if(teacher == null) {
-				response.setStatus(WebServiceUtil.WARNING);
-				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
-			}
+//			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(code.getTeacherId());
+//			if(teacher == null) {
+//				response.setStatus(WebServiceUtil.WARNING);
+//				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
+//				return response;
+//			}
+
 			if(studentCode == null) {
 				studentCode = new StudentCodeModel();
 				
-				studentCode.setCreateUser(teacher.getTeacherId());
+				studentCode.setCreateUser(code.getTeacherId());
 				studentCode.setCreateDate(today);			
 			}
 			else {
-				studentCode.setUpdateUser(teacher.getTeacherId());
+				studentCode.setUpdateUser(code.getTeacherId());
 				studentCode.setUpdatdDate(today);
 			}
 			

@@ -7,17 +7,18 @@ import com.studentmanagementsystem.api.model.custom.student.response.StudentMode
 
 public interface StudentService {
 
-	StudentModelListResponse listAllDetailsStudent();
+//	StudentModelListResponse listAllDetailsStudent();
 
 	Response saveStudent(StudentDto studentDto);
 
-	StudentModelListResponse getAllHostelStudents(String studentActiveStatus);
+//	StudentModelListResponse getAllHostelStudents(String studentActiveStatus);
 
-	StudentModelListResponse getAllDaysStudents(String studentActiveStatus);
+//	StudentModelListResponse getAllDaysStudents(String studentActiveStatus);
 
-	StudentModelListResponse getStudentsBy(Long studentId, String studentEmail, String studentPhoneNumber);
+	StudentModelListResponse getStudentsBy(Long studentId, String email, String phoneNumber, String residingStatus,
+			String status, Integer classOfStudy);
 
-	StudentModelListResponse getByStudentStatus(String studentActiveStatus);
+//	StudentModelListResponse getByStudentStatus(String studentActiveStatus);
 
 	Response activeOrDeactiveByStudentId(String studentActiveStatus, Long studentId, Long teacherId);
 

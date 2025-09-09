@@ -3,7 +3,9 @@ package com.studentmanagementsystem.api.model.custom.student;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
@@ -12,29 +14,30 @@ public class StudentDto {
 
 	private Long studentId;
 	
-	private String studentFirstName;
+	private String firstName;
 	
-	private String studentMiddleName;
+	private String middleName;
 	
-	private String studentLastName;
+	private String lastName;
 	
-	private String studentGender;
+	private String gender;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
-	private LocalDate studentDateOfBirth;
+	private LocalDate dateOfBirth;
 
-	private Integer studentClassOfStudy;
+	private Integer classOfStudy;
 
-	private String studentResidingStatus;
+	private String residingStatus;
 
-	private String studentPhoneNumber;
+	private String phoneNumber;
 
-	private String  emergencyContactPersonName;
+	private String  parentsName;
 
-	private String emergencyContactPhoneNumber;
+//	private String emergencyContactPhoneNumber;
 	
-	private String contactEmail;
+	private String parentsEmail;
 
 	private String homeStreetName;
 
@@ -42,193 +45,142 @@ public class StudentDto {
 
 	private String homePostalCode;
 
-	private String studentActiveStatus;
+	private String status;
 	
-	private String studentEmail;
+	private String email;
 	
 	private Long teacherId;
+
+
 
 	public Long getStudentId() {
 		return studentId;
 	}
-
 	public void setStudentId(Long studentId) {
 		this.studentId = studentId;
 	}
-
-	public String getStudentFirstName() {
-		return studentFirstName;
+	public String getFirstName() {
+		return firstName;
 	}
-
-	public void setStudentFirstName(String studentFirstName) {
-		this.studentFirstName = studentFirstName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
-
-	public String getStudentMiddleName() {
-		return studentMiddleName;
+	public String getMiddleName() {
+		return middleName;
 	}
-
-	public void setStudentMiddleName(String studentMiddleName) {
-		this.studentMiddleName = studentMiddleName;
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
 	}
-
-	public String getStudentLastName() {
-		return studentLastName;
+	public String getLastName() {
+		return lastName;
 	}
-
-	public void setStudentLastName(String studentLastName) {
-		this.studentLastName = studentLastName;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
-
-
-
-	public LocalDate getStudentDateOfBirth() {
-		return studentDateOfBirth;
+	public String getGender() {
+		return gender;
 	}
-
-	public void setStudentDateOfBirth(LocalDate studentDateOfBirth) {
-		this.studentDateOfBirth = studentDateOfBirth;
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
-
-	public Integer getStudentClassOfStudy() {
-		return studentClassOfStudy;
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
 	}
-
-	public void setStudentClassOfStudy(Integer studentClassOfStudy) {
-		this.studentClassOfStudy = studentClassOfStudy;
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
-
-
-
-	public String getStudentPhoneNumber() {
-		return studentPhoneNumber;
+	public Integer getClassOfStudy() {
+		return classOfStudy;
 	}
-
-	public void setStudentPhoneNumber(String studentPhoneNumber) {
-		this.studentPhoneNumber = studentPhoneNumber;
+	public void setClassOfStudy(Integer classOfStudy) {
+		this.classOfStudy = classOfStudy;
 	}
-
-	public String getEmergencyContactPersonName() {
-		return emergencyContactPersonName;
+	public String getResidingStatus() {
+		return residingStatus;
 	}
-
-	public void setEmergencyContactPersonName(String emergencyContactPersonName) {
-		this.emergencyContactPersonName = emergencyContactPersonName;
+	public void setResidingStatus(String residingStatus) {
+		this.residingStatus = residingStatus;
 	}
-
-	public String getEmergencyContactPhoneNumber() {
-		return emergencyContactPhoneNumber;
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
-
-	public void setEmergencyContactPhoneNumber(String emergencyContactPhoneNumber) {
-		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
-
+	public String getParentsName() {
+		return parentsName;
+	}
+	public void setParentsName(String parentsName) {
+		this.parentsName = parentsName;
+	}
+	public String getParentsEmail() {
+		return parentsEmail;
+	}
+	public void setParentsEmail(String parentsEmail) {
+		this.parentsEmail = parentsEmail;
+	}
 	public String getHomeStreetName() {
 		return homeStreetName;
 	}
-
 	public void setHomeStreetName(String homeStreetName) {
 		this.homeStreetName = homeStreetName;
 	}
-
 	public String getHomeCityName() {
 		return homeCityName;
 	}
-
 	public void setHomeCityName(String homeCityName) {
 		this.homeCityName = homeCityName;
 	}
-
 	public String getHomePostalCode() {
 		return homePostalCode;
 	}
-
 	public void setHomePostalCode(String homePostalCode) {
 		this.homePostalCode = homePostalCode;
 	}
-
-
-
-	public String getStudentEmail() {
-		return studentEmail;
+	public String getStatus() {
+		return status;
 	}
-
-	public void setStudentEmail(String studentEmail) {
-		this.studentEmail = studentEmail;
+	public void setStatus(String status) {
+		this.status = status;
 	}
-	
-
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public Long getTeacherId() {
 		return teacherId;
 	}
-
 	public void setTeacherId(Long teacherId) {
 		this.teacherId = teacherId;
 	}
 	
+	  public StudentDto(Long studentId, String firstName, String middleName, String lastName, String gender,
+			LocalDate dateOfBirth, Integer classOfStudy, String residingStatus, String phoneNumber, String parentsName,
+			 String homeStreetName, String homeCityName, String homePostalCode, String status,
+			String email,String parentsEmail) {
 
-	public String getStudentGender() {
-		return studentGender;
-	}
-
-	public void setStudentGender(String studentGender) {
-		this.studentGender = studentGender;
-	}
-
-	public String getStudentResidingStatus() {
-		return studentResidingStatus;
-	}
-
-	public void setStudentResidingStatus(String studentResidingStatus) {
-		this.studentResidingStatus = studentResidingStatus;
-	}
-
-	public String getStudentActiveStatus() {
-		return studentActiveStatus;
-	}
-
-	public void setStudentActiveStatus(String studentActiveStatus) {
-		this.studentActiveStatus = studentActiveStatus;
-	}
-	
-
-
-
-	public String getContactEmail() {
-		return contactEmail;
-	}
-
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
-	}
-
-	public StudentDto(Long studentId, String studentFirstName, String studentMiddleName,
-			String studentLastName, String studentGender, LocalDate studentDateOfBirth, Integer studentClassOfStudy,
-			String studentResidingStatus, String studentPhoneNumber, String emergencyContactPersonName,
-			String emergencyContactPhoneNumber, String homeStreetName, String homeCityName, String homePostalCode,
-			String studentActiveStatus, String studentEmail,String contactEmail) {
-		
 		this.studentId = studentId;
-		this.studentFirstName = studentFirstName;
-		this.studentMiddleName = studentMiddleName;
-		this.studentLastName = studentLastName;
-		this.studentGender = studentGender;
-		this.studentDateOfBirth = studentDateOfBirth;
-		this.studentClassOfStudy = studentClassOfStudy;
-		this.studentResidingStatus = studentResidingStatus;
-		this.studentPhoneNumber = studentPhoneNumber;
-		this.emergencyContactPersonName = emergencyContactPersonName;
-		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
+		this.gender = gender;
+		this.dateOfBirth = dateOfBirth;
+		this.classOfStudy = classOfStudy;
+		this.residingStatus = residingStatus;
+		this.phoneNumber = phoneNumber;
+		this.parentsName = parentsName;
+		
 		this.homeStreetName = homeStreetName;
 		this.homeCityName = homeCityName;
 		this.homePostalCode = homePostalCode;
-		this.studentActiveStatus = studentActiveStatus;
-		this.studentEmail = studentEmail;
-		this.contactEmail = contactEmail;
-		
+		this.status = status;
+		this.email = email;
+		this.parentsEmail = parentsEmail;
+
 	}
-	  public StudentDto() {
+	public StudentDto() {
 	    }
 
 		

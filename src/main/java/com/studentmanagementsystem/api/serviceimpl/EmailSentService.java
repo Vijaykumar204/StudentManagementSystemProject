@@ -80,14 +80,14 @@ public class EmailSentService {
 		
 		 for(QuarterlyAttendanceReportDto quarter : quarterAttendanceList) {
 				
-			StudentModel student = studentModelRepository.findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(quarter.getStudentId());
+			StudentModel student = studentModelRepository.findFirstNameAndMiddleNameAndLastNameAndEmailByStudentId(quarter.getStudentId());
 			String name;
 			String attendanceStatus;
-			if(student.getStudentMiddleName()!=null) {
-	        name =student.getStudentFirstName()+" "+student.getStudentMiddleName()+" "+student.getStudentLastName();
+			if(student.getMiddleName()!=null) {
+	        name =student.getFirstName()+" "+student.getMiddleName()+" "+student.getLastName();
 			}
 			else {
-			 name =student.getStudentFirstName()+" "+student.getStudentLastName();
+			 name =student.getFirstName()+" "+student.getLastName();
 			}
 			
 			if(quarter.getAttendanceComplianceStatus() == WebServiceUtil.COMPLIANCE){
@@ -101,7 +101,7 @@ public class EmailSentService {
 
 	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-	        helper.setTo(student.getStudentEmail());
+	        helper.setTo(student.getEmail());
 	      String subject= WebServiceUtil.QUARTERLY_ATTENDANCE_REPORT_SUBJECT+ name +" " +quarterAndResult;
 	    		  helper.setSubject(subject);
 	
@@ -124,14 +124,12 @@ public class EmailSentService {
  
       // String plainTextBody = Jsoup.parse(body).text();
 	        
-	        EmailSentHistory email = new EmailSentHistory();
-	        
+	        EmailSentHistory email = new EmailSentHistory();        
 	        email.setStudentId(quarter.getStudentId());
-	        email.setStudentEmail(student.getStudentEmail());
+	        email.setStudentEmail(student.getEmail());
 	        email.setEmailSubject(subject);
 	        email.setEmailMessage(body);
-	        email.setMailSentDate(today);
-	        
+	        email.setMailSentDate(today);        
 	        emailSentHistoryRepository.save(email);
 	
 		}
@@ -150,14 +148,14 @@ public class EmailSentService {
 	
 	 for(StudentMarksDto mark : studentMarklist) {
 			
-			StudentModel student = studentModelRepository.findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(mark.getStudentId());
+			StudentModel student = studentModelRepository.findFirstNameAndMiddleNameAndLastNameAndParentsEmailByStudentId(mark.getStudentId());
 			String name;
 			String resultStatus;
-			if(student.getStudentMiddleName()!=null) {
-	        name =student.getStudentFirstName()+" "+student.getStudentMiddleName()+" "+student.getStudentLastName();
+			if(student.getMiddleName()!=null) {
+	        name =student.getFirstName()+" "+student.getMiddleName()+" "+student.getLastName();
 			}
 			else {
-			 name =student.getStudentFirstName()+" "+student.getStudentLastName();
+			 name =student.getFirstName()+" "+student.getLastName();
 			}
 			
 			if(mark.getResult() == WebServiceUtil.PASS){
@@ -171,7 +169,7 @@ public class EmailSentService {
 
 	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 	        
-	        helper.setTo(student.getStudentEmail());
+	        helper.setTo(student.getParentsEmail());
 		      String subject= WebServiceUtil.QUARTERLY_MARK_REPORT_SUBJECT+ name +" " +quarterAndResult;
 		    		  helper.setSubject(subject);
 		    		  
@@ -199,7 +197,7 @@ public class EmailSentService {
 			        EmailSentHistory email = new EmailSentHistory();
 			        
 			        email.setStudentId(mark.getStudentId());
-			        email.setStudentEmail(student.getStudentEmail());
+			        email.setStudentEmail(student.getParentsEmail());
 			        email.setEmailSubject(subject);
 			        email.setEmailMessage(body);
 			        email.setMailSentDate(today);
@@ -227,10 +225,10 @@ public class EmailSentService {
 		for(DailyAttendanceModel absent : todayAbsentList) {
 			
 
-			StudentModel studentModel = studentModelRepository.findStudentFirstNameAndStudentMiddleNameAndStudentLastNameAndStudentEmailByStudentId(absent.getStudentModel().getStudentId());
-	        String name = studentModel.getStudentMiddleName() != null
-	                ? studentModel.getStudentFirstName() + " " + studentModel.getStudentMiddleName() + " " + studentModel.getStudentLastName()
-	                : studentModel.getStudentFirstName() + " " + studentModel.getStudentLastName();
+			StudentModel studentModel = studentModelRepository.findFirstNameAndMiddleNameAndLastNameAndEmailByStudentId(absent.getStudentModel().getStudentId());
+	        String name = studentModel.getMiddleName() != null
+	                ? studentModel.getFirstName() + " " + studentModel.getMiddleName() + " " + studentModel.getLastName()
+	                : studentModel.getFirstName() + " " + studentModel.getLastName();
 			
 	        MimeMessage message = mailSender.createMimeMessage();
 	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -241,7 +239,7 @@ public class EmailSentService {
 	            WebServiceUtil.NO.equals(absent.getApprovedExtraCurricularActivitiesFlag())) {
 
 	            subject = String.format(WebServiceUtil.ABSENT_ALERT_SUBJECT, name, attendanceDate);
-	            body = String.format(WebServiceUtil.ABSENT_ALERT_BODY, name, attendanceDate, studentModel.getStudentFirstName());
+	            body = String.format(WebServiceUtil.ABSENT_ALERT_BODY, name, attendanceDate, studentModel.getFirstName());
 
 	        } else if (WebServiceUtil.YES.equals(absent.getLongApprovedSickLeaveFlag())) {
 	            subject = String.format(WebServiceUtil.SICK_LEAVE_ALERT_SUBJECT, name);
@@ -251,7 +249,7 @@ public class EmailSentService {
 	            subject = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_SUBJECT, name);
 	            body = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_BODY,name,attendanceDate,name,attendanceDate);
 	        }
-			    helper.setTo(studentModel.getStudentEmail());
+			    helper.setTo(studentModel.getEmail());
 		        helper.setSubject(subject);
 		        helper.setText(body, true);
 		        mailSender.send(message);
@@ -260,7 +258,7 @@ public class EmailSentService {
 		  	        EmailSentHistory email = new EmailSentHistory();
 		  	        
 		  	        email.setStudentId(studentModel.getStudentId());
-		  	        email.setStudentEmail(studentModel.getStudentEmail());
+		  	        email.setStudentEmail(studentModel.getEmail());
 		  	        email.setEmailSubject(subject);
 		  	        email.setEmailMessage(body);
 		  	        email.setMailSentDate(today);

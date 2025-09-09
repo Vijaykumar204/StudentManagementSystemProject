@@ -1,8 +1,6 @@
 package com.studentmanagementsystem.api.model.entity;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +10,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "daily_attendance_registration")
 public class DailyAttendanceModel {
@@ -30,11 +27,11 @@ public class DailyAttendanceModel {
 	@JoinColumn(name = "AT_Status", referencedColumnName = "CODE")
 	private StudentCodeModel attendanceStatus;
 
-	@Column(name = "AT_Approved_SickLeave", columnDefinition = "CHAR DEFAULT N", length = 1)
-	private String longApprovedSickLeaveFlag = "N";
+	@Column(name = "AT_Approved_SickLeave", length = 1,columnDefinition ="CHAR DEFAULT 'N'")
+	private String longApprovedSickLeaveFlag;
 
-	@Column(name = "AT_Approved_Extra_Cur_Activities", columnDefinition = "CHAR DEFAULT N", length = 1)
-	private String approvedExtraCurricularActivitiesFlag = "N";
+	@Column(name = "AT_Approved_Extra_Cur_Activities", length = 1,columnDefinition ="CHAR DEFAULT 'N'")
+	private String approvedExtraCurricularActivitiesFlag;
 
 	@Column(name = "AT_Create_Teacher", nullable = false)
 	private Long createTeacher;

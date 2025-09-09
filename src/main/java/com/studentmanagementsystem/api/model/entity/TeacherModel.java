@@ -30,7 +30,7 @@ public class TeacherModel {
 	
 //	@Column(name = "TEACH_Role",nullable = false,length=2)
 	@OneToOne
-	@JoinColumn(name ="TEACH_Role",referencedColumnName = "CODE" )
+	@JoinColumn(name ="TEACH_Role",referencedColumnName = "CODE" ,nullable = false)
 	private StudentCodeModel teacherRole;
 	
 	@Column(name = "TEACH_Department",length=15,nullable = false)
@@ -39,13 +39,13 @@ public class TeacherModel {
 	@Column(name = "TEACH_Create_User",nullable = false)
 	private Long createUser;
 	
-	@Column(name = "TEACH_Create_Time")
+	@Column(name = "TEACH_Create_Date_Time",nullable = false)
 	private LocalDateTime createTime;
 	
 	@Column(name = "TEACH_Update_User")
 	private Long updateUser;
 	
-	@Column(name = "TEACH_Update_Time")
+	@Column(name = "TEACH_Update_Date_Time")
 	private LocalDateTime updateTime;
 	
 	@OneToMany(mappedBy = "teacherModel")

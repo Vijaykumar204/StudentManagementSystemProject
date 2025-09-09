@@ -32,8 +32,10 @@ public class DailyAttendanceController {
 	 * @author Vijiyakumar
 	 */
 	@PostMapping("/single")
+	
 	ResponseEntity<?> setAttendanceToSingleStudent(@RequestBody DailyAttendanceDto dailyAttendanceDto ){
 		return new ResponseEntity<>(dailyAttendanceService.setAttendanceToSingleStudent(dailyAttendanceDto),HttpStatus.OK);
+		
 	}
 	
 	/**

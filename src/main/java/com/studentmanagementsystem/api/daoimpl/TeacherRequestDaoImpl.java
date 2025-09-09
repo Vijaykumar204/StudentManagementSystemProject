@@ -50,9 +50,6 @@ public class TeacherRequestDaoImpl  implements TeacherRequestDao{
 		return entityManager.createQuery(teacherLisyQuery).getResultList();
 	}
 
-
-	
-	
 	/**
 	 * Filter teacher by ID, email, or phone number.
 	 */

@@ -1,12 +1,8 @@
 package com.studentmanagementsystem.api.model.entity;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,46 +25,39 @@ public class StudentModel {
 	private Long studentId;
 	
 	@Column(name = "STU_First_Name",nullable=false,length =25)
-	private String studentFirstName;
+	private String firstName;
 	
 	@Column(name = "STU_Middle_Name",length=25)
-	private String studentMiddleName;
+	private String middleName;
 	
 	@Column(name ="STU_Last_Name",nullable = false,length=5)
-	private String studentLastName;
-	
-	@OneToOne
-	@JoinColumn(name ="STU_Gender",referencedColumnName = "CODE" )
-	private StudentCodeModel studentGender;
+	private String lastName;
 	
 	@Column(name ="STU_DOB",nullable = false)
-//	@DateTimeFormat(pattern = "dd-MM-yyyy")   // for input (e.g., from HTML form / RequestParam)
-//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-	private LocalDate studentDateOfBirth;
+	private LocalDate dateOfBirth;
 	
 	@Column(name = "STU_Class",nullable = false)
-	private Integer studentClassOfStudy;
+	private Integer classOfStudy;
 	
-	
-//	@Column(name = "STU_Residing_Status",nullable = false)
 	@OneToOne
-	@JoinColumn(name ="STU_Residing_Status",referencedColumnName = "CODE" )
-	private StudentCodeModel studentResidingStatus;
-	
-	@Column(name = "STU_Email",unique = true,length =25,nullable = false)
-	private String studentEmail;
+	@JoinColumn(name ="STU_Gender",referencedColumnName = "CODE",nullable = false )
+	private StudentCodeModel gender;
+
+	@OneToOne
+	@JoinColumn(name ="STU_Residing_Status",referencedColumnName = "CODE",nullable = false )
+	private StudentCodeModel residingStatus;
 	
 	@Column(name = "STU_Ph_No", unique = true, nullable = false,length=10)
-	private String studentPhoneNumber;
+	private String phoneNumber;
 	
-	@Column(name = "STU_Contact_Person_Name",length=25,nullable = false)
-	private String  emergencyContactPersonName;
+	@Column(name = "STU_Email",unique = true,length =25,nullable = false)
+	private String email;
 	
-	@Column(name = "STU_Contact_Ph_No",length =10)
-	private String emergencyContactPhoneNumber;
+	@Column(name = "STU_Parents_Name",length=25,nullable = false)
+	private String  parentsName;
 	
-	@Column(name = "STU_Contact_Email",length =25,nullable = false)
-	private String contactEmail;
+	@Column(name = "STU_Parents_Email",length =25,nullable = false)
+	private String parentsEmail;
 	
 	@Column(name = "STU_Street_Name",length =25)
 	private String homeStreetName;
@@ -78,25 +67,22 @@ public class StudentModel {
 	
 	@Column(name = "STU_Postal_Code",nullable = false,length=6)
 	private String homePostalCode;
-	
-//	@Column(name = "STU_Status", nullable = false,columnDefinition ="CHAR DEFAULT 'A'")
+
 	@OneToOne
-	@JoinColumn(name ="STU_Status",referencedColumnName = "CODE" )
-	private StudentCodeModel studentActiveStatus;
+	@JoinColumn(name ="STU_Status",referencedColumnName = "CODE" ,columnDefinition ="CHAR DEFAULT 'A'")
+	private StudentCodeModel status;
 	
 	@Column(name = "STU_Last_Effective_Date")
 	private LocalDateTime lasteffectivedate;
 	
 	@Column(name = "STU_Create_Date_Time",nullable = false)
-	private LocalDateTime studentCreateDate;
+	private LocalDateTime createDate;
 	
 	@Column(name = "STU_Update_Teacher")
 	private Long updateTeacher;
 	
 	@Column(name = "STU_Update_Date_Time")
 	private LocalDateTime updateDate;
-	
-
 	
 	@ManyToOne
 	@JoinColumn(name ="STU_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
@@ -105,7 +91,6 @@ public class StudentModel {
 	
 	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
 	@JsonIgnore
-//	@JsonManagedReference
 	List<DailyAttendanceModel> dailyAttendanceModel;
 	
 	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
@@ -125,96 +110,99 @@ public class StudentModel {
 	}
 
 	public String getFirstName() {
-		return getStudentFirstName();
+		return firstName;
 	}
 
-	public String getStudentFirstName() {
-		return studentFirstName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-
-	public void setFirstName(String studentFirstName) {
-		setStudentFirstName(studentFirstName);
+	public String getMiddleName() {
+		return middleName;
 	}
 
-	public void setStudentFirstName(String studentFirstName) {
-		this.studentFirstName = studentFirstName;
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
 	}
 
-	public String getStudentMiddleName() {
-		return studentMiddleName;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setStudentMiddleName(String studentMiddleName) {
-		this.studentMiddleName = studentMiddleName;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public String getStudentLastName() {
-		return studentLastName;
+	public StudentCodeModel getGender() {
+		return gender;
 	}
 
-	public void setStudentLastName(String studentLastName) {
-		this.studentLastName = studentLastName;
+	public void setGender(StudentCodeModel gender) {
+		this.gender = gender;
 	}
 
-
-
-	public StudentCodeModel getStudentGender() {
-		return studentGender;
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
 	}
 
-	public void setStudentGender(StudentCodeModel studentGender) {
-		this.studentGender = studentGender;
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
-	public LocalDate getStudentDateOfBirth() {
-		return studentDateOfBirth;
+	public Integer getClassOfStudy() {
+		return classOfStudy;
 	}
 
-	public void setStudentDateOfBirth(LocalDate studentDateOfBirth) {
-		this.studentDateOfBirth = studentDateOfBirth;
+	public void setClassOfStudy(Integer classOfStudy) {
+		this.classOfStudy = classOfStudy;
 	}
 
-	public Integer getStudentClassOfStudy() {
-		return studentClassOfStudy;
+	public StudentCodeModel getResidingStatus() {
+		return residingStatus;
 	}
 
-	public void setStudentClassOfStudy(Integer studentClassOfStudy) {
-		this.studentClassOfStudy = studentClassOfStudy;
+	public void setResidingStatus(StudentCodeModel residingStatus) {
+		this.residingStatus = residingStatus;
 	}
 
-
-
-	public String getStudentEmail() {
-		return studentEmail;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setStudentEmail(String studentEmail) {
-		this.studentEmail = studentEmail;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	public String getStudentPhoneNumber() {
-		return studentPhoneNumber;
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public void setStudentPhoneNumber(String studentPhoneNumber) {
-		this.studentPhoneNumber = studentPhoneNumber;
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
-	public String getEmergencyContactPersonName() {
-		return emergencyContactPersonName;
+	public String getParentsName() {
+		return parentsName;
 	}
 
-	public void setEmergencyContactPersonName(String emergencyContactPersonName) {
-		this.emergencyContactPersonName = emergencyContactPersonName;
+	public void setParentsName(String parentsName) {
+		this.parentsName = parentsName;
 	}
 
-	public String getEmergencyContactPhoneNumber() {
-		return emergencyContactPhoneNumber;
+//	public String getEmergencyContactPhoneNumber() {
+//		return emergencyContactPhoneNumber;
+//	}
+//
+//	public void setEmergencyContactPhoneNumber(String emergencyContactPhoneNumber) {
+//		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
+//	}
+
+	public String getParentsEmail() {
+		return parentsEmail;
 	}
 
-	public void setEmergencyContactPhoneNumber(String emergencyContactPhoneNumber) {
-		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
+	public void setParentsEmail(String parentsEmail) {
+		this.parentsEmail = parentsEmail;
 	}
 
 	public String getHomeStreetName() {
@@ -241,7 +229,13 @@ public class StudentModel {
 		this.homePostalCode = homePostalCode;
 	}
 
+	public StudentCodeModel getStatus() {
+		return status;
+	}
 
+	public void setStatus(StudentCodeModel status) {
+		this.status = status;
+	}
 
 	public LocalDateTime getLasteffectivedate() {
 		return lasteffectivedate;
@@ -251,12 +245,12 @@ public class StudentModel {
 		this.lasteffectivedate = lasteffectivedate;
 	}
 
-	public LocalDateTime getStudentCreateDate() {
-		return studentCreateDate;
+	public LocalDateTime getCreateDate() {
+		return createDate;
 	}
 
-	public void setStudentCreateDate(LocalDateTime studentCreateDate) {
-		this.studentCreateDate = studentCreateDate;
+	public void setCreateDate(LocalDateTime createDate) {
+		this.createDate = createDate;
 	}
 
 	public Long getUpdateTeacher() {
@@ -307,32 +301,6 @@ public class StudentModel {
 		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
 	}
 
-	public StudentCodeModel getStudentResidingStatus() {
-		return studentResidingStatus;
-	}
-
-	public void setStudentResidingStatus(StudentCodeModel studentResidingStatus) {
-		this.studentResidingStatus = studentResidingStatus;
-	}
-
-	public StudentCodeModel getStudentActiveStatus() {
-		return studentActiveStatus;
-	}
-
-	public void setStudentActiveStatus(StudentCodeModel studentActiveStatus) {
-		this.studentActiveStatus = studentActiveStatus;
-	}
-
-	public String getContactEmail() {
-		return contactEmail;
-	}
-
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
-	}
-
-
-	
 	
 	
 

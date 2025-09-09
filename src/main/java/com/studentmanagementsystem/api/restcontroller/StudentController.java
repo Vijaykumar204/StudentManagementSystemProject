@@ -1,8 +1,4 @@
 package com.studentmanagementsystem.api.restcontroller;
-
-
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +28,10 @@ public class StudentController {
 	 * @return List of all students
 	 * @author Vijiyakumar
 	 */	
-	@GetMapping("/list")
-   ResponseEntity<?> listAllDetailsStudent(){
-	   return new ResponseEntity<>(studentService.listAllDetailsStudent(),HttpStatus.OK);
-   }
+//	@GetMapping("/list")
+//   ResponseEntity<?> listAllDetailsStudent(){
+//	   return new ResponseEntity<>(studentService.listAllDetailsStudent(),HttpStatus.OK);
+//   }
 	
 	/**
 	 * Save or update student details.
@@ -56,10 +52,10 @@ public class StudentController {
 	 * @return List of all hostel students
 	 * @author Vijiyakumar
 	 */
-	@GetMapping("/hostel")
-	public ResponseEntity<?> getAllHostelStudents(@RequestParam String studentActiveStatus){
-		return new ResponseEntity<>( studentService.getAllHostelStudents(studentActiveStatus),HttpStatus.OK);
-	}
+//	@GetMapping("/hostel")
+//	public ResponseEntity<?> getAllHostelStudents(@RequestParam String studentActiveStatus){
+//		return new ResponseEntity<>( studentService.getAllHostelStudents(studentActiveStatus),HttpStatus.OK);
+//	}
 	
 	/**
 	 * Retrive all dayscholar students
@@ -68,24 +64,29 @@ public class StudentController {
 	 * @return List os all dayscholar students
 	 * @author Vijiyakumar
 	 */
-	@GetMapping("/dayscholars")
-	public ResponseEntity<?> getAllDaysStudents(@RequestParam String studentActiveStatus){
-		return new ResponseEntity<>( studentService.getAllDaysStudents(studentActiveStatus),HttpStatus.OK);
-	}
+//	@GetMapping("/dayscholars")
+//	public ResponseEntity<?> getAllDaysStudents(@RequestParam String studentActiveStatus){
+//		return new ResponseEntity<>( studentService.getAllDaysStudents(studentActiveStatus),HttpStatus.OK);
+//	}
 	
 	/**
 	 * Filter students by ID, email, or phone number.
 	 *
 	 * @param studentId (optional) The unique ID of the student
-	 * @param studentEmail (optional) The email address of the student
-	 * @param studentPhoneNumber (optional) The phone number of the student
+	 * @param email (optional) The email address of the student
+	 * @param phoneNumber (optional) The phone number of the student
+	 * @param residingStatus (optional) The residential status of the student (H -> hostel,DS->Dayscholar)
+	 * @param status (optional)  The status of the student (A -> Active ,D->deactive)
+	 * @param classOfStudy (optional) The class of study  of the student (6-9)
 	 * @return List of students that match the given filter criteria
 	 * @author Vijiyakumar
 	 */
 	@GetMapping
-	public ResponseEntity<?> getStudentsBy(@RequestParam(required = false) Long studentId ,  @RequestParam(required = false) String studentEmail,@RequestParam(required = false) String studentPhoneNumber){
-		return new ResponseEntity<>( studentService.getStudentsBy(studentId,studentEmail,studentPhoneNumber),HttpStatus.OK);
+	public ResponseEntity<?> getStudentsBy(@RequestParam(required = false) Long studentId ,  @RequestParam(required = false) String email,@RequestParam(required = false) String phoneNumber,@RequestParam(required = false) String residingStatus,@RequestParam(required = false) String status,@RequestParam(required = false) Integer classOfStudy){
+		return new ResponseEntity<>( studentService.getStudentsBy(studentId,email,phoneNumber,residingStatus,status,classOfStudy),HttpStatus.OK);
 	}
+	
+	
 	
 	/**
 	 * Retrieve the list of students based on active or deactive status.
@@ -94,11 +95,11 @@ public class StudentController {
 	 * @return List of students matching the given status
 	 * @author Vijiyakumar
 	 */
-	@GetMapping("/getbystatus")
-	public ResponseEntity<?> getByStudentStatus(@RequestParam String studentActiveStatus){
-		return new ResponseEntity<>( studentService.getByStudentStatus(studentActiveStatus),HttpStatus.OK);
-	}
-	
+//	@GetMapping("/getbystatus")
+//	public ResponseEntity<?> getByStudentStatus(@RequestParam String studentActiveStatus){
+//		return new ResponseEntity<>( studentService.getByStudentStatus(studentActiveStatus),HttpStatus.OK);
+//	}
+//	
 	/**
 	 * Activate or deactivate a student by ID.
 	 *
