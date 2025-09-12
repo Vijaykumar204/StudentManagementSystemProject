@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.ComplianceAndNonComplianceReportDto;
 
-public class ComplianceAndNonComplianceListResponse {
+public class QuarterlyAttendanceListResponse {
 	
 	
 	private String status;

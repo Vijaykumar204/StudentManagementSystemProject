@@ -19,6 +19,7 @@ import com.studentmanagementsystem.api.model.entity.EmailSentHistory;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.repository.DailyAttendanceRepository;
 import com.studentmanagementsystem.api.repository.EmailSentHistoryRepository;
+import com.studentmanagementsystem.api.repository.StudentMarksRepository;
 import com.studentmanagementsystem.api.repository.StudentModelRepository;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
@@ -39,8 +40,6 @@ public class EmailSentService {
 	  @Autowired
 	  private EmailSentHistoryRepository emailSentHistoryRepository;
 	  
-	  @Autowired
-	  private StudentMarksDao studentMarksDao;
 	  
 	  @Autowired
 	  private DailyAttendanceRepository dailyAttendanceRepository;
@@ -48,6 +47,9 @@ public class EmailSentService {
 	 
 	  @Autowired
 	  private QuarterlyAttendanceReportDao quarterlyAttendanceReportDao;
+	  
+	  @Autowired
+	  private StudentMarksRepository studentMarksRepository;
 
 	
 
@@ -144,8 +146,8 @@ public class EmailSentService {
 	   */
 	public void sendQuarterlyMarkResult(String quarterAndResult) throws MessagingException {
 		
-	List<StudentMarksDto> studentMarklist = studentMarksDao.getAllStudentMarks(quarterAndResult);
-	
+	//List<StudentMarksDto> studentMarklist = studentMarksDao.getAllStudentMarks(quarterAndResult);
+	List<StudentMarksDto> studentMarklist = studentMarksRepository.findMarkByQuarterAndYear(quarterAndResult);
 	 for(StudentMarksDto mark : studentMarklist) {
 			
 			StudentModel student = studentModelRepository.findFirstNameAndMiddleNameAndLastNameAndParentsEmailByStudentId(mark.getStudentId());

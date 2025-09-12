@@ -75,19 +75,20 @@ public class StudentModel {
 	@Column(name = "STU_Last_Effective_Date")
 	private LocalDateTime lasteffectivedate;
 	
+	@ManyToOne
+	@JoinColumn(name ="STU_Create_Teacher",referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel createTeacher;
+	
 	@Column(name = "STU_Create_Date_Time",nullable = false)
 	private LocalDateTime createDate;
 	
-	@Column(name = "STU_Update_Teacher")
-	private Long updateTeacher;
+//	@Column(name = "STU_Update_Teacher")
+	@ManyToOne
+	@JoinColumn(name ="STU_Update_Teacher",referencedColumnName = "TEACH_Id")
+	private TeacherModel updateTeacher;
 	
 	@Column(name = "STU_Update_Date_Time")
 	private LocalDateTime updateDate;
-	
-	@ManyToOne
-	@JoinColumn(name ="STU_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
-	private TeacherModel teacherModel;
-	
 	
 	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -253,11 +254,11 @@ public class StudentModel {
 		this.createDate = createDate;
 	}
 
-	public Long getUpdateTeacher() {
+	public TeacherModel getUpdateTeacher() {
 		return updateTeacher;
 	}
 
-	public void setUpdateTeacher(Long updateTeacher) {
+	public void setUpdateTeacher(TeacherModel updateTeacher) {
 		this.updateTeacher = updateTeacher;
 	}
 
@@ -268,13 +269,12 @@ public class StudentModel {
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
-
-	public TeacherModel getTeacherModel() {
-		return teacherModel;
+	public TeacherModel getCreateTeacher() {
+		return createTeacher;
 	}
 
-	public void setTeacherModel(TeacherModel teacherModel) {
-		this.teacherModel = teacherModel;
+	public void setCreateTeacher(TeacherModel createTeacher) {
+		this.createTeacher = createTeacher;
 	}
 
 	public List<DailyAttendanceModel> getDailyAttendanceModel() {

@@ -58,13 +58,13 @@ public class StudentMarksController {
 	 * @author Vijiyakumar
 	 */	
 	@GetMapping("/list")
-	ResponseEntity<?> getAllStudentMarks(@RequestParam String quarterAndYear){
-		return new ResponseEntity<>(studentMarksService.getAllStudentMarks(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> getAllStudentMarks(@RequestParam String quarterAndYear,@RequestParam(required = false) Boolean resultStatus,@RequestParam int classOfStudy){
+		return new ResponseEntity<>(studentMarksService.getAllStudentMarks(quarterAndYear,resultStatus,classOfStudy),HttpStatus.OK);
 	}
 	
 	
 	/**
-	 * Retrieve the overall result summary for students in a given quarter and year.
+	 * Retrieve the overall result summary report for students in a given quarter and year.
 	 *
 	 * @param quarterAndYear The quarter and year to fetch results for (e.g., 03/2025)
 	 * @return A summary report of student results

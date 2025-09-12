@@ -4,14 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
-import com.studentmanagementsystem.api.dao.SchoolHolidaysDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.response.DailyAttendanceListResponse;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.response.ExceedingDaysLeaveListResponse;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.response.MonthlyAbsenceListResponse;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
@@ -19,26 +21,23 @@ import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.DailyAttendanceRepository;
+import com.studentmanagementsystem.api.repository.SchoolHolidaysRepository;
 import com.studentmanagementsystem.api.repository.StudentCodeRespository;
 import com.studentmanagementsystem.api.repository.StudentModelRepository;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
-
-
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
 
-
 @Service
 public class DailyAttendanceServiceImpl implements DailyAttendanceService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DailyAttendanceServiceImpl.class);
+
 
 	@Autowired
 	private DailyAttendanceDao dailyAttendanceDao;
-	
-	
-	@Autowired
-	private SchoolHolidaysDao schoolHolidaysDao; 
-	
+	 
 	@Autowired
 	private FieldValidation fieldValidation;
 	
@@ -53,115 +52,24 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	
 	@Autowired
 	private StudentCodeRespository studentCodeRespository;
+	
+	@Autowired
+	private SchoolHolidaysRepository schoolHolidaysRepository;
+
 
 	/**
-	 * Mark attendance for a single student.
-	 */
-	@Override
-	public Response setAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto) {
-		
-		Response response = new Response();
-		List<String> requestMissedFieldList = fieldValidation.checkValidationSetAttendanceToSingleStudent(dailyAttendanceDto);
-
-		if (!requestMissedFieldList.isEmpty()) {
-			response.setStatus(WebServiceUtil.WARNING);	
-			response.setData(requestMissedFieldList);		
-			return response;
-		}
-		
-	
-		LocalDateTime today = LocalDateTime.now();
-
-		SchoolHolidaysModel schoolHolidayModel = schoolHolidaysDao.getHolidayByHolidayDate(dailyAttendanceDto.getAttendanceDate());
-	
-		if(schoolHolidayModel != null && Boolean.FALSE.equals(schoolHolidayModel.getIsHolidayCancelled())) {
-			
-			 response.setStatus(WebServiceUtil.WARNING);	
-			 response.setData(dailyAttendanceDto.getAttendanceDate() + WebServiceUtil.DO_NOT_MARK_ATTENDANCE);
-			
-		}
-		
-		DailyAttendanceModel dailyAttendanceModel;
-//    	dailyAttendance = dailyAttendanceDao.findAttendanceById(dailyAttendanceDto.getAttendanceId());
-		dailyAttendanceModel = dailyAttendanceRepository.findStudentIdAndAttendanceDate(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate());
-		if(dailyAttendanceModel == null) {
-		//	dailyAttendance = dailyAttendanceDao.createNewAttendance(dailyAttendanceDto.getStudentId());
-          dailyAttendanceModel = new DailyAttendanceModel();
-          StudentModel student = studentModelRepository.findStudentByStudentId(dailyAttendanceDto.getStudentId());
-          dailyAttendanceModel.setStudentModel(student);
-			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(dailyAttendanceDto.getTeacherId());
-			if(teacher==null) {
-				response.setStatus(WebServiceUtil.WARNING);	
-				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
-				return response;
-			}
-
-			dailyAttendanceModel.setCreateTeacher(teacher.getTeacherId());
-			dailyAttendanceModel.setCreateDate(today);
-			dailyAttendanceModel.setAttendanceDate(dailyAttendanceDto.getAttendanceDate());
-		}
-		else {
-			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(dailyAttendanceDto.getTeacherId());
-			if(teacher==null) {
-				response.setStatus(WebServiceUtil.WARNING);	
-				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
-				return response;
-			}
-			dailyAttendanceModel.setUpdateTeacher(teacher.getTeacherId());
-			dailyAttendanceModel.setUpdateTime(today);
-		}
-		StudentCodeModel attendanceStatus = studentCodeRespository.findStudentCodeByCode(dailyAttendanceDto.getAttendanceStatus());
-		if(attendanceStatus == null) {
-			response.setStatus(WebServiceUtil.WARNING);	
-			response.setData(String.format(WebServiceUtil.INVAILD, "attendanceStatus"));
-		}
-		dailyAttendanceModel.setAttendanceStatus(attendanceStatus);
-		
-		if (WebServiceUtil.ABSENT.equals(dailyAttendanceDto.getAttendanceStatus())) {
-			dailyAttendanceModel.setLongApprovedSickLeaveFlag(dailyAttendanceDto.getLongApprovedSickLeaveFlag());
-			dailyAttendanceModel.setApprovedExtraCurricularActivitiesFlag(
-					dailyAttendanceDto.getApprovedExtraCurricularActivitiesFlag());
-		} else {
-			dailyAttendanceModel.setLongApprovedSickLeaveFlag(WebServiceUtil.NO);
-			dailyAttendanceModel.setApprovedExtraCurricularActivitiesFlag(WebServiceUtil.NO);
-		}
-		    dailyAttendanceRepository.save(dailyAttendanceModel);
-		    
-		    
-//		    quartlyAttendanceReportService.monthEndCheck(dailyAttendanceDto.getAttendanceDate());
-		    
-//		    if(dailyAttendanceDto.getAttendanceStatus() == WebServiceUtil.ABSENT && dailyAttendanceDto.getLongApprovedSickLeaveFlag() == WebServiceUtil.NO && dailyAttendanceDto.getApprovedExtraCurricularActivitiesFlag() == WebServiceUtil.NO) {
-//		    	try {
-//					emailSentService.absentAlertMessage(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate());
-//				} catch (MessagingException e) {					
-//					e.printStackTrace();
-//				}
-//		    }
-//		    else if(dailyAttendanceDto.getAttendanceStatus() == WebServiceUtil.ABSENT && dailyAttendanceDto.getLongApprovedSickLeaveFlag() == WebServiceUtil.YES) {
-//		    	emailSentService.sendEmailAlert(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate(),WebServiceUtil.SICK_LEVAE_SUBJECT,WebServiceUtil.SICK_LEVAE_MESSAGE);
-//		    }
-//		    else if (dailyAttendanceDto.getAttendanceStatus() == WebServiceUtil.ABSENT && dailyAttendanceDto.getApprovedExtraCurricularActivitiesFlag() == WebServiceUtil.YES) {
-//		    	emailSentService.sendEmailAlert(dailyAttendanceDto.getStudentId(),dailyAttendanceDto.getAttendanceDate(),WebServiceUtil.EXTRA_CUR_ACTIVITIES_LEAVE_SUBJECT,WebServiceUtil.EXTRA_CUR_ACTIVITIES_LEAVE_MESSAGE);
-//		    }
-		    response.setStatus(WebServiceUtil.SUCCESS);	
-			response.setData(WebServiceUtil.MARK_ATTENDANCE);
-
-		return response;
-	}
-
-	/**
-	 * Mark attendance for multliple students.
+	 * Mark attendance for students.
 	 */
 
 	@Override
 	public Response setAttandanceMultiStudents(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
-		
+
 		Response response = new Response();
 		
 		List<DailyAttendanceModel> dailyAttendanceModelList = new ArrayList<>();
 		LocalDateTime today = LocalDateTime.now();
 		for (DailyAttendanceDto attendance : dailyAttendanceDto) {
-			
+			logger.info("Before setAttandanceMultiStudents - Attempting to mark attendance StudentId : {}  for TeacherId: {}",attendance.getStudentId(), attendance.getTeacherId());
 			List<String> requestMissedFieldList = fieldValidation.checkValidationSetAttendanceToSingleStudent(attendance);
 
 			if (!requestMissedFieldList.isEmpty()) {
@@ -170,7 +78,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 				return response;
 			}
 			
-			SchoolHolidaysModel schoolHolidayModel = schoolHolidaysDao.getHolidayByHolidayDate(attendance.getAttendanceDate());
+			SchoolHolidaysModel schoolHolidayModel = schoolHolidaysRepository.getHolidayByHolidayDate(attendance.getAttendanceDate());
 			
 			if(schoolHolidayModel != null && Boolean.FALSE.equals(schoolHolidayModel.getIsHolidayCancelled())) {
 				 response.setStatus(WebServiceUtil.WARNING);	
@@ -183,14 +91,15 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 				dailyAttendanceModel = new DailyAttendanceModel();
 		          StudentModel student = studentModelRepository.findStudentByStudentId(attendance.getStudentId());
 		          dailyAttendanceModel.setStudentModel(student);
-				TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(attendance.getTeacherId());
+				TeacherModel teacher = teacherRepository.findTeacherByTeacherId(attendance.getTeacherId());
 				if(teacher==null) {
 					response.setStatus(WebServiceUtil.WARNING);	
 					response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 					return response;
 				}
 				
-				dailyAttendanceModel.setCreateTeacher(teacher.getTeacherId());
+//				dailyAttendanceModel.setCreateTeacher(teacher.getTeacherId());
+				dailyAttendanceModel.setTeacherModel(teacher);
 				dailyAttendanceModel.setCreateDate(today);
 				if (attendanceDate != null) {
 					dailyAttendanceModel.setAttendanceDate(attendanceDate);
@@ -232,106 +141,53 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 			
 
 		dailyAttendanceRepository.saveAll(dailyAttendanceModelList);
-
-		
-//		if(attendanceDate == null) {
-//	    quartlyAttendanceReportService.monthEndCheck(dailyAttendanceDto.get(0).getAttendanceDate());
-//		}
-//		else {
-//			 quartlyAttendanceReportService.monthEndCheck(attendanceDate);
-//		}
 		
 		 response.setStatus(WebServiceUtil.SUCCESS);	
 		 response.setData(WebServiceUtil.MARK_ATTENDANCE);
-		
+		 
+			logger.info("After setAttandanceMultiStudents - Attendace Maeked successfully");
 
 		return response ;
 	}
-	
-	/**
-	 * Retrieve student attendance.
-	 * By default, retrieves today's attendance. If a date is provided, retrieves attendance for that particular date.
-	 */
 
-	@Override
-	public DailyAttendanceListResponse getStudentAttendanceByToday(LocalDate attendanceDate) {
-		
-		DailyAttendanceListResponse response = new DailyAttendanceListResponse();
-		
-		if (attendanceDate == null) {
-			LocalDate today = LocalDate.now();
-			response.setStatus(WebServiceUtil.SUCCESS);	
-			response.setData(dailyAttendanceDao.getStudentAttendance(today));
-			return response;
-		} else {
-			response.setStatus(WebServiceUtil.SUCCESS);	
-			response.setData(dailyAttendanceDao.getStudentAttendance(attendanceDate));
-			
-			return response ;
-		}
-	}
-	
 	/**
-	 * Retrieve students with no attendance marked.
-	 * By default, retrieves students without attendance for today. 
-	 * If a date is provided, retrieves students without attendance for that particular date.
+	 * Retrieve student attendance for a particular date to check whether given filter.
+	 *
 	 */
 	@Override
-	public DailyAttendanceListResponse getStudentAttendanceNotTakeByToday(LocalDate attendanceDate) {
-		DailyAttendanceListResponse response = new DailyAttendanceListResponse();
-		if (attendanceDate == null) {
-			LocalDate today = LocalDate.now();
-			response.setStatus(WebServiceUtil.SUCCESS);	
-			response.setData(dailyAttendanceDao.getStudentAttendanceNotTakeByToday(today));
-			
-			return response;
-		} else {
-			response.setStatus(WebServiceUtil.SUCCESS);	
-			response.setData(dailyAttendanceDao.getStudentAttendanceNotTakeByToday(attendanceDate));
-			return response;
+	public DailyAttendanceListResponse getStudentAttendanceByDate(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+		logger.info("Before getStudentAttendanceByDate - Attempting to retrive the student attendance");
 
-		}
+	    DailyAttendanceListResponse response = new DailyAttendanceListResponse();
+	    response.setStatus(WebServiceUtil.SUCCESS);
+
+	    if (Boolean.TRUE.equals(dailyAttendanceFilterDto.getAttendanceMark())) {
+	        response.setData(dailyAttendanceDao.getStudentAttendanceTaken(dailyAttendanceFilterDto));
+	    } else {
+	        response.setData(dailyAttendanceDao.getStudentAttendanceNotTaken(dailyAttendanceFilterDto));
+	    }
+		logger.info("After getStudentAttendanceByDate - Successfully retrived student attendance");
+	    return response;
 	}
-
+ 
 	/**
-	 * Retrieve students who have taken extra-curricular activity leave 
-	 * for more than 3 days in a given month.
-	 */	
+	 * Retrieve students' attendance records for a given month and year, based on the type of absence:
+	 * 
+	 *   Extra-curricular activity leave → more than 3 days in the given month</li>
+	 *   Sick leave → more than 6 days in the given month</li>
+	 *   Monthly absence → students absent during the given month</li>
+	 */
 	@Override
-	public  ExceedingDaysLeaveListResponse getStudentleaveForExtraActivities(int month, int year) {
-//		List<ExceedingDaysLeaveDto> exceedingDaysLeaveDto = dailyAttendanceDao.getStudentleaveForExtraActivitiesd(month,year,WebServiceUtil.EXTRA_CURRICULAR_ACTIVITIES,3);
-		ExceedingDaysLeaveListResponse response = new ExceedingDaysLeaveListResponse();
-		response.setStatus(WebServiceUtil.SUCCESS);	
-		response.setData( dailyAttendanceDao.getStudentleaveForExtraActivitiesd(month,year,WebServiceUtil.EXTRA_CURRICULAR_ACTIVITIES,3));
-		
-		return response;
-	}
+	public MonthlyAbsenceListResponse getMonthlyAbsenceReport(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+		logger.info("Before getMonthlyAbsenceReport - Attempting to retrive the monthly absence studenet list");
+		MonthlyAbsenceListResponse response =  new MonthlyAbsenceListResponse();
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData( dailyAttendanceDao.getMonthlyAbsenceStudents(dailyAttendanceFilterDto));
+		logger.info("After getMonthlyAbsenceReport - Successfully retrived monthly absence list");
 
-	/**
-	 * Retrieve students who have taken sick leave 
-	 * for more than 6 days in a given month.
-	 */	
-	@Override
-	public ExceedingDaysLeaveListResponse getStudentleaveForSickLeave(int month, int year) {
-		
-		
-		ExceedingDaysLeaveListResponse response = new ExceedingDaysLeaveListResponse();
-		response.setStatus(WebServiceUtil.SUCCESS);	
-		response.setData( dailyAttendanceDao.getStudentleaveForExtraActivitiesd(month,year,WebServiceUtil.SICK_LEAVE,6));
-		
 		return response;
 	}
 	
-	/**
-	 * Retrieve students who were absent in a given month.
-	 */
-	@Override
-	public MonthlyAbsenceListResponse getMonthlyAbsenceStudents(int month, int year) {
-		MonthlyAbsenceListResponse response = new MonthlyAbsenceListResponse();
-		response.setStatus(WebServiceUtil.SUCCESS);	
-		response.setData( dailyAttendanceDao.getMonthlyAbsenceStudents(month,year));
-		return response;
-	}
-
-
+	
+	
 }

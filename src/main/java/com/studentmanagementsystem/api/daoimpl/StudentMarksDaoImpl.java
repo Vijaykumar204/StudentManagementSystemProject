@@ -1,5 +1,6 @@
 package com.studentmanagementsystem.api.daoimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 	 */
 	
 	@Override
-	public List<StudentMarksDto> getAllStudentMarks(String quarterAndYear) {
+	public List<StudentMarksDto> getAllStudentMarks(String quarterAndYear,Boolean resultStatus, int classOfStudy) {
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<StudentMarksDto> studentMarksQuery = cb.createQuery(StudentMarksDto.class);
@@ -99,6 +100,20 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 				studentMarksRoot.get("result").get("description")
 
 		).where(quarterCondition);
+		 
+		
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		predicates.add(cb.equal(studentMarksRoot.get("quarterAndYear"), quarterAndYear));
+		predicates.add(cb.equal(studentMarksRoot.get("studentModel").get("classOfStudy"), classOfStudy));
+		if (Boolean.TRUE.equals(resultStatus)) {
+			predicates.add(cb.equal(studentMarksRoot.get("result"), WebServiceUtil.PASS));
+		}
+		if(Boolean.FALSE.equals(resultStatus)) {
+			predicates.add(cb.equal(studentMarksRoot.get("result"), WebServiceUtil.FAIL));
+		}
+		if (!predicates.isEmpty()) {
+			studentMarksQuery.where(cb.and(predicates.toArray(new Predicate[0])));
+		}
 
 		return entityManager.createQuery(studentMarksQuery).getResultList();
 	}
@@ -206,7 +221,7 @@ public class StudentMarksDaoImpl implements StudentMarksDao {
 		     classTopperQuery.select(cb.construct(
 		            ClassTopperDto.class,
 //		            studentMarksAndStudentJoin.get("studentId"),
-		            studentMark.get("studentM dodel").get("studentId"),
+		            studentMark.get("studentModel").get("studentId"),
 		            studentMark.get("quarterAndYear"),
 		        //    studentMarksAndStudentJoin.get("firstName"),
 		            studentMark.get("studentModel").get("firstName"),

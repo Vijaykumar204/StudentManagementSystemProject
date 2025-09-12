@@ -1,15 +1,12 @@
 package com.studentmanagementsystem.api.service;
 
-import java.util.List;
-
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.response.ComplianceAndNonComplianceListResponse;
+import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
+import com.studentmanagementsystem.api.model.custom.quarterlyreport.response.QuarterlyAttendanceListResponse;
 
 public interface QuarterlyAttendanceReportService {
 
-	void updateQuarterlyAttendanceReport(String quarterAndYear, List<Integer> marchend);
+	QuarterlyAttendanceListResponse getQuarterlyAttendanceByStatus(QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto);
 
-	ComplianceAndNonComplianceListResponse getNonComplianceStudents(String quarterAndYear);
-
-	ComplianceAndNonComplianceListResponse getComplianceStudents(String quarterAndYear);
+	void runQuarterlyAttendanceUpdate();
 
 }

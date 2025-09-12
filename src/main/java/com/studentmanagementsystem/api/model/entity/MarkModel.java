@@ -48,8 +48,8 @@ public class MarkModel {
 	@JoinColumn(name ="Result_Status",referencedColumnName = "CODE" )
 	private StudentCodeModel result;
 	
-	@Column(name = "Mark_Create_Teacher",nullable = false)
-	private Long createTeacher;
+//	@Column(name = "Mark_Create_Teacher",nullable = false)
+//	private Long createTeacher;
 	
 	@Column(name = "Mark_Create_Date_Time")
 	private LocalDateTime createDate;
@@ -66,6 +66,10 @@ public class MarkModel {
 	@ManyToOne
 	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id")
 	private StudentModel studentModel;
+	
+	@ManyToOne
+	@JoinColumn(name ="Mark_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel teacherModel;
 
 	public Long getMarkId() {
 		return markId;
@@ -141,12 +145,14 @@ public class MarkModel {
 		this.result = result;
 	}
 
-	public Long getCreateTeacher() {
-		return createTeacher;
+
+
+	public TeacherModel getTeacherModel() {
+		return teacherModel;
 	}
 
-	public void setCreateTeacher(Long createTeacher) {
-		this.createTeacher = createTeacher;
+	public void setTeacherModel(TeacherModel teacherModel) {
+		this.teacherModel = teacherModel;
 	}
 
 	public LocalDateTime getCreateDate() {

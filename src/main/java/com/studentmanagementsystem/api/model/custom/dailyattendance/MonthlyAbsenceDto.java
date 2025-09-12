@@ -8,12 +8,13 @@ public class MonthlyAbsenceDto {
     private String firstName;
     private String middleName;
     private String lastName;
-    private Integer totalWorkingDays;
+    private Long totalWorkingDays;
     private Integer absentCount;
     private List<LocalDate> attendanceDate;
 
     public MonthlyAbsenceDto(Long studentId, String firstName, String middleName, String lastName,
-    		Integer totalWorkingDays, Integer absentCount, List<LocalDate> attendanceDate) {
+    		 Long  totalWorkingDays,
+    		 Integer absentCount, List<LocalDate> attendanceDate) {
         this.studentId = studentId;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -23,6 +24,16 @@ public class MonthlyAbsenceDto {
         this.attendanceDate = attendanceDate;
     }
 
+	public MonthlyAbsenceDto(Long studentId, String firstName, String middleName, String lastName,
+			List<LocalDate> attendanceDate) {
+		
+		this.studentId = studentId;
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
+		this.attendanceDate = attendanceDate;
+	}
+    
 	public Long getStudentId() {
 		return studentId;
 	}
@@ -54,17 +65,26 @@ public class MonthlyAbsenceDto {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+//
+//	public Integer getTotalWorkingDays() {
+//		return totalWorkingDays;
+//	}
+//
+//	public void setTotalWorkingDays(Integer totalWorkingDays) {
+//		this.totalWorkingDays = totalWorkingDays;
+//	}
 
-	public Integer getTotalWorkingDays() {
+	
+	public Integer getAbsentCount() {
+		return absentCount;
+	}
+
+	public Long getTotalWorkingDays() {
 		return totalWorkingDays;
 	}
 
-	public void setTotalWorkingDays(Integer totalWorkingDays) {
+	public void setTotalWorkingDays(Long totalWorkingDays) {
 		this.totalWorkingDays = totalWorkingDays;
-	}
-
-	public Integer getAbsentCount() {
-		return absentCount;
 	}
 
 	public void setAbsentCount(Integer absentCount) {

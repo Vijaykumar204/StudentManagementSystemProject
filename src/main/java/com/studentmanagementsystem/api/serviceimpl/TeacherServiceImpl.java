@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 
 import java.util.List;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,11 @@ import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.TeacherService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
+
 @Service
 public class TeacherServiceImpl implements TeacherService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(TeacherServiceImpl.class);
 
 	@Autowired
 	private TeacherRequestDao teacherRequestDao;
@@ -41,9 +45,11 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Override
 	public TeacherModelListResponseDto listAllTeachers() {
+		logger.info("List teacher details");
 		TeacherModelListResponseDto response = new TeacherModelListResponseDto();
 		response.setStatus(WebServiceUtil.SUCCESS);
 		response.setData(teacherRequestDao.listAllTeachers());
+		logger.info("Successfully list teacher details");
 		return response;
 	}
 	
@@ -54,7 +60,7 @@ public class TeacherServiceImpl implements TeacherService {
 	@Override
 	public Response saveTeacher(TeacherModelListDto teacherModelListDto,Long teacherId) {
 		
-
+		logger.info("Saving teacher details for {}",teacherId);
 		Response response = new Response();
 		List<String> requestMissedFieldList = fieldValidation.checkValidationTeacherSave(teacherModelListDto,teacherId);
 		

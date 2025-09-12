@@ -48,9 +48,12 @@ public class TeacherModel {
 	@Column(name = "TEACH_Update_Date_Time")
 	private LocalDateTime updateTime;
 	
-	@OneToMany(mappedBy = "teacherModel")
-	List<StudentModel> studentModel;
-	
+//	@OneToMany(mappedBy = "createTeacher")
+//	List<StudentModel> studentModel;
+//	
+//	@OneToMany(mappedBy = "updateTeacher")
+//	List<StudentModel> studentModel;
+
 //	@OneToMany(mappedBy = "teacherModel")
 //	List<SchoolHolidaysModel> schoolHolidaysModel;
 //	
@@ -82,12 +85,7 @@ public class TeacherModel {
 	public void setTeacherRole(StudentCodeModel teacherRole) {
 		this.teacherRole = teacherRole;
 	}
-	public List<StudentModel> getStudentModel() {
-		return studentModel;
-	}
-	public void setStudentModel(List<StudentModel> studentModel) {
-		this.studentModel = studentModel;
-	}
+
 	public String getTeacherDepartment() {
 		return teacherDepartment;
 	}

@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
+import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceReportDto;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.response.ComplianceAndNonComplianceListResponse;
+import com.studentmanagementsystem.api.model.custom.quarterlyreport.response.QuarterlyAttendanceListResponse;
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
@@ -21,6 +22,9 @@ import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 @Service
 public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendanceReportService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(QuarterlyAttendanceReportServiceImpl.class);
+
 
 	@Autowired
 	private QuarterlyAttendanceReportDao quartlyAttendanceReportDao;
@@ -33,29 +37,8 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	
 	@Autowired
 	private StudentCodeRespository studentCodeRespository;
-	/**
-	 * Find the quarter and update the quarterly attendance report.
-	 *
-	 * Author: Vijayakumar
-	 * @param quarter The quarter to be updated (e.g., Q1, Q2, Q3, Q4)
-	 * @param year The year for which the report is to be updated
-	 * @return 
-	 */
-//	@Override
-//	public void monthEndCheck(LocalDate attendanceDate) {
-//		int monthNumber = attendanceDate.getMonthValue();
-//
-//		if (monthNumber == 1 || monthNumber == 2 || monthNumber == 3) {
-//			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_MARCH_AND_YEAR, WebServiceUtil.MARCH_END);
-//		} else if (monthNumber == 4 || monthNumber == 5 || monthNumber == 6) {
-//			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_JUNE_AND_YEAR, WebServiceUtil.JUNE_END);
-//		} else if (monthNumber == 7 || monthNumber == 8 || monthNumber == 9) {
-//			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_SEP_AND_YEAR, WebServiceUtil.SEP_END);
-//		} else if (monthNumber == 10 || monthNumber == 11 || monthNumber == 12) {
-//			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_DEC_AND_YEAR, WebServiceUtil.DEC_END);
-//		}
-//	}
-	
+
+
 	/**
 	 * Scheduled task that updates the quarterly attendance report.
 	 * This method is executed automatically by a Cron job 
@@ -63,8 +46,11 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	 *
 	 * Author: Vijayakumar
 	 */
-	  @Scheduled(cron = "0 0 17 * * ?") // Every day at 5 PM
+	 // @Scheduled(cron = "0 0 17 * * ?") // Every day at 5 PM
 	    public void runQuarterlyAttendanceUpdate() {
+	    	
+			logger.info("Before runQuarterlyAttendanceUpdate - Update the quarterly Attendance ");
+
 	        
 	        List<String> quarterAndYear = new ArrayList<>(
 	                Arrays.asList(WebServiceUtil.QUART_MARCH_AND_YEAR,
@@ -84,6 +70,8 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	    			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_DEC_AND_YEAR, WebServiceUtil.DEC_END);
 	    		}
 	        }
+			logger.info("After runQuarterlyAttendanceUpdate -Successfully updated the quarterly Attendance ");
+
 	       
 	  }
 	  
@@ -94,16 +82,18 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	   * extra-curricular leave) for the given quarter and persists the results 
 	   * into the quarterly report table.
 	   */
-	@Override
+//	@Override
 	public void updateQuarterlyAttendanceReport(String quarterAndYear, List<Integer> quarterMonthEnd) {
+		
+		
 
 		List<QuarterlyAttendanceReportDto> quarterlyAttendanceList = quartlyAttendanceReportDao
 				.getAttendanceSummary(quarterMonthEnd);
+		
+		Long totalWorkingDays = quartlyAttendanceReportDao.getTotalWorkingDays( quarterMonthEnd);
 
 		for (QuarterlyAttendanceReportDto quarterlyAttendance : quarterlyAttendanceList) {
 			
-		
-		//QuarterlyAttendanceReportModel	 quarterlyAttendanceReportModel = quartlyAttendanceReportDao.getStudentIdUpdateReport(singleQuarterlyAttendance.getStudentId(),quarterAndYear);
      	QuarterlyAttendanceReportModel	 quarterlyAttendanceReportModel = quarterlyAttendanceModelRepository.findByStudentAndQuarterAndYear(quarterlyAttendance.getStudentId(),quarterAndYear);
 			
 			if(quarterlyAttendanceReportModel == null) {
@@ -115,7 +105,7 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 
 			quarterlyAttendanceReportModel.setQuarterAndYear(quarterAndYear);
 			quarterlyAttendanceReportModel
-					.setTotalSchoolWorkingDays(quarterlyAttendance.getTotalSchoolWorkingDays());
+					.setTotalSchoolWorkingDays(totalWorkingDays);
 			quarterlyAttendanceReportModel.setTotalDaysOfPresent(quarterlyAttendance.getTotalDaysOfPresent());
 			quarterlyAttendanceReportModel.setTotalDaysOfAbsents(quarterlyAttendance.getTotalDaysOfAbsents());
 			quarterlyAttendanceReportModel.setTotalApprovedActivitiesPermissionDays(
@@ -124,10 +114,9 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 					.setTotalApprovedSickdays(quarterlyAttendance.getTotalApprovedSickdays());
 			Long present = quarterlyAttendance.getTotalDaysOfPresent();
 			Long activities = quarterlyAttendance.getTotalApprovedActivitiesPermissionDays();
-			Long sick = quarterlyAttendance.getTotalApprovedSickdays();
-			Long totalWorking = quarterlyAttendance.getTotalSchoolWorkingDays();
+			Long sick = quarterlyAttendance.getTotalApprovedSickdays();			
 
-	       int percentageOfPresent =  (int) Math.ceil((((present + activities + sick) / totalWorking) * 100));
+	       int percentageOfPresent =  (int) Math.ceil((((present + activities + sick) / totalWorkingDays) * 100));
 	
 
 			if (percentageOfPresent < 75) {
@@ -147,25 +136,23 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	}
 	
 	/**
-	 * Retrieve the list of non-compliance students for a given quarter and year.
+	 * Retrieve the list of compliance or non-compliance students for a given quarter and year.
 	 */
 	@Override
-	public ComplianceAndNonComplianceListResponse getNonComplianceStudents(String quarterAndYear) {
-		
-		ComplianceAndNonComplianceListResponse response = new ComplianceAndNonComplianceListResponse();
+	public QuarterlyAttendanceListResponse getQuarterlyAttendanceByStatus(QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto) {
+		QuarterlyAttendanceListResponse response = new QuarterlyAttendanceListResponse();
 		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setData(quartlyAttendanceReportDao.getNonComplianceStudents(quarterAndYear,WebServiceUtil.NON_COMPLIANCE_COMMENT));	
-		return response;
-	}
-	
-	/**
-	 * Retrieve the list of compliance students for a given quarter and year.
-	 */
-	@Override
-	public ComplianceAndNonComplianceListResponse getComplianceStudents(String quarterAndYear) {
-		ComplianceAndNonComplianceListResponse response = new ComplianceAndNonComplianceListResponse();
-		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setData( quartlyAttendanceReportDao.getNonComplianceStudents(quarterAndYear,WebServiceUtil.COMPLIANCE) );	
+
+//	if(Boolean.TRUE.equals(attendanceComplianceStatus)) {
+//			response.setData( quartlyAttendanceReportDao. getQuarterlyAttendanceByStatus(quarterAndYear,WebServiceUtil.COMPLIANCE,classOfStudy) );	
+//		}
+//		else if(Boolean.FALSE.equals(attendanceComplianceStatus)){
+//			response.setData(quartlyAttendanceReportDao. getQuarterlyAttendanceByStatus(quarterAndYear,WebServiceUtil.NON_COMPLIANCE,classOfStudy));	
+//		}
+//		else {
+//			response.setData(quartlyAttendanceReportDao. getQuarterlyAttendanceByStatus(quarterAndYear,WebServiceUtil.NON_COMPLIANCE,classOfStudy));
+//		}
+		response.setData(quartlyAttendanceReportDao. getQuarterlyAttendanceList(quarterlyAttendanceFilterDto));
 		return response;
 	}
 

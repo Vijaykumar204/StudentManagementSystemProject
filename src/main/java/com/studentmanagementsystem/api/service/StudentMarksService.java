@@ -14,7 +14,7 @@ public interface StudentMarksService {
 
 	StudentWithPassOrFailListResponse getAllComplianceStudentPassOrFail(String quarterAndYear);
 
-	StudentMarkListResponse getAllStudentMarks(String quarterAndYear);
+	StudentMarkListResponse getAllStudentMarks(String quarterAndYear,Boolean resultStatus,int classOfStudy);
 
 	TotalResultCountListResponse getToatalResultCount(String quarterAndYear);
 

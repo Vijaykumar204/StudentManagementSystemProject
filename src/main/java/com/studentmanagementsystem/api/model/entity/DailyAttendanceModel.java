@@ -22,7 +22,6 @@ public class DailyAttendanceModel {
 	@Column(name = "AT_Date", nullable = false)
 	private LocalDate attendanceDate;
 
-//	@Column(name = "AT_Status",nullable = false)
 	@OneToOne
 	@JoinColumn(name = "AT_Status", referencedColumnName = "CODE")
 	private StudentCodeModel attendanceStatus;
@@ -32,9 +31,6 @@ public class DailyAttendanceModel {
 
 	@Column(name = "AT_Approved_Extra_Cur_Activities", length = 1,columnDefinition ="CHAR DEFAULT 'N'")
 	private String approvedExtraCurricularActivitiesFlag;
-
-	@Column(name = "AT_Create_Teacher", nullable = false)
-	private Long createTeacher;
 
 	@Column(name = "AT_Create_Date_Time")
 	private LocalDateTime createDate;
@@ -47,8 +43,11 @@ public class DailyAttendanceModel {
 
 	@ManyToOne
 	@JoinColumn(name = "student_Id", referencedColumnName = "STU_Id", nullable = false)
-//	@JsonBackReference
 	private StudentModel studentModel;
+	
+	@ManyToOne
+	@JoinColumn(name ="AT_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel teacherModel;
 
 	public Long getAttendanceId() {
 		return attendanceId;
@@ -98,12 +97,14 @@ public class DailyAttendanceModel {
 		this.studentModel = studentModel;
 	}
 
-	public Long getCreateTeacher() {
-		return createTeacher;
+
+
+	public TeacherModel getTeacherModel() {
+		return teacherModel;
 	}
 
-	public void setCreateTeacher(Long createTeacher) {
-		this.createTeacher = createTeacher;
+	public void setTeacherModel(TeacherModel teacherModel) {
+		this.teacherModel = teacherModel;
 	}
 
 	public LocalDateTime getCreateDate() {

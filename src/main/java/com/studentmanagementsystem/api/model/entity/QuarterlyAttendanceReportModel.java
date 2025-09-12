@@ -16,7 +16,6 @@ public class QuarterlyAttendanceReportModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
 	@Column(name = "QUARTER_Id")
 	private Long quarterlyAttendanceId;
 	

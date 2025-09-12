@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -16,7 +18,6 @@ public class SchoolHolidaysModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
 	@Column(name = "HOL_ID")
 	private Long holidayId;
 	
@@ -26,23 +27,22 @@ public class SchoolHolidaysModel {
 	@Column(name = "HOL_Reason",nullable = false,length=100)
 	private String holidayReason;
 	
-	
 	@Column(name = "Hol_Cancelled", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
 	private Boolean isHolidayCancelled = false;
-	
 	
 	@Column(name = "HOL_Cancel_Reason",length = 100)
 	private String holidayCancelledReason;
 	
-	
-	@Column(name = "HOL_Create_Teacher",nullable = false)
-	private Long createTeacher;
+	@ManyToOne
+	@JoinColumn(name ="HOL_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel createTeacher;
 	
 	@Column(name = "HOL_Create_Date_Time",nullable=false)
 	private LocalDateTime createDate;
 	
-	@Column(name = "HOL_Update_Teacher")
-	private Long updateTeacher;
+	@ManyToOne
+	@JoinColumn(name ="HOL_Update_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel updateTeacher;
 	
 	@Column(name = "HOL_Update_Date_Time")
 	private LocalDateTime updateDate;
@@ -84,19 +84,9 @@ public class SchoolHolidaysModel {
 	public String getHolidayCancelledReason() {
 		return holidayCancelledReason;
 	}
-
 	public void setHolidayCancelledReason(String holidayCancelledReason) {
 		this.holidayCancelledReason = holidayCancelledReason;
 	}
-
-	public Long getCreateTeacher() {
-		return createTeacher;
-	}
-
-	public void setCreateTeacher(Long createTeacher) {
-		this.createTeacher = createTeacher;
-	}
-
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
@@ -105,11 +95,19 @@ public class SchoolHolidaysModel {
 		this.createDate = createDate;
 	}
 
-	public Long getUpdateTeacher() {
+	public TeacherModel getCreateTeacher() {
+		return createTeacher;
+	}
+
+	public void setCreateTeacher(TeacherModel createTeacher) {
+		this.createTeacher = createTeacher;
+	}
+
+	public TeacherModel getUpdateTeacher() {
 		return updateTeacher;
 	}
 
-	public void setUpdateTeacher(Long updateTeacher) {
+	public void setUpdateTeacher(TeacherModel updateTeacher) {
 		this.updateTeacher = updateTeacher;
 	}
 
@@ -120,7 +118,6 @@ public class SchoolHolidaysModel {
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
-	
 	
 }
 

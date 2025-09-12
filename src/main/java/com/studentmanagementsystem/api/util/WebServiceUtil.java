@@ -12,19 +12,19 @@ public final class WebServiceUtil {
 	public static final String TEACHER = "teacher";
 	
 //********************Student*********************************	
-	public static final String MALE = "M";
-	public static final String FEMALE = "F";
-	public static final String UNKNOWN = "U";
-	public static final String HOSTEL = "H";
-	public static final String DAYSCHOLAR = "DS";
-	public static final String ACTIVE ="A";
-	public static final String DEACTIVE ="D";
+	public static final String MALE = "MALE";
+	public static final String FEMALE = "FEMALE";
+	public static final String UNKNOWN = "UNKNOWN";
+	public static final String HOSTEL = "HOSTEL";
+	public static final String DAYSCHOLAR = "DAYSCHOLAR";
+	public static final String ACTIVE ="ACTIVE";
+	public static final String DEACTIVE ="DEACTIVATE";
 	
 //******************** Student Message *********************************
 	
-	public static final String STUDENT_NOT_FOUND ="Student ID not found";
+	public static final String STUDENT_NOT_FOUND ="Student ID not found ";
 	public static final String NO_CHANGES = "No need to change already have %s status";
-	public static final String A_OR_D_STATUS="Student %s";
+	public static final String A_OR_D_STATUS="Student %sd successfully";
 	public static final String STUDENT_EXISTS ="Student name and DOB already exists";
 	
 //******************** SchoolHoliday Message *********************************
@@ -33,14 +33,14 @@ public final class WebServiceUtil {
 	public static final Boolean HOLIDAY=false;
 	public static final String EXTRA_CURRICULAR_ACTIVITIES = "approvedExtraCurricularActivitiesFlag";
 	public static final String SICK_LEAVE = "longApprovedSickLeaveFlag";
-	public static final String SUCCESS_HOLIDAY_DECLARE="Successfully declare holiday";
-	public static final String SUCCESS_CANCEL_HOLIDAY = "Successfully cancel the  holiday";
+	public static final String SUCCESS_HOLIDAY_DECLARE="Holidays declared successfully";
+	public static final String SUCCESS_CANCEL_HOLIDAY = "Holidays cancelled successfully";
 	
 //******************** DailyAttendance *********************************
 	
 
-	public static final String PRESENT = "P";
-	public static final String ABSENT = "AB";	
+	public static final String PRESENT = "PRESENT";
+	public static final String ABSENT = "ABSENT";	
 	public static final String YES = "Y";
 	public static final String NO = "N";
 	public static final String COMPLIANCE = "C";
@@ -263,8 +263,8 @@ public final class WebServiceUtil {
 	public static final String WARNING = "Warning";
 	
 	public static final String SUCCESS ="Success";
-	public static final String SAVE ="Successfully saved";
-	public static final String UPDATE = "Successfully update";
+	public static final String SAVE ="%s saved successfully";
+	public static final String UPDATE = "%s updated successfully";
 	public static final String MARK_ATTENDANCE = "Attendance marked successfully";
 	public static final String FAILURE = "Failure";
 	public static final String DECLARE_MARK="Successfully declared mark";

@@ -2,121 +2,107 @@ package com.studentmanagementsystem.api.restcontroller;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
 
 @RestController
 @RequestMapping(value = "attendance")
 public class DailyAttendanceController {
-	
+
 	@Autowired
 	private DailyAttendanceService dailyAttendanceService;
-	
+
+//	/**
+//	 * Mark attendance for a single student.
+//	 *
+//	 * @param dailyAttendanceDto The attendance details of the student (from request body)
+//	 * @return Confirmation message indicating successful attendance marking
+//	 * @author Vijiyakumar
+//	 */
+//	@PostMapping("/single")
+//	
+//	ResponseEntity<?> setAttendanceToSingleStudent(@RequestBody DailyAttendanceDto dailyAttendanceDto ){
+//		return new ResponseEntity<>(dailyAttendanceService.setAttendanceToSingleStudent(dailyAttendanceDto),HttpStatus.OK);
+//		
+//	}
+
 	/**
-	 * Mark attendance for a single student.
+	 * Mark attendance for students.
 	 *
-	 * @param dailyAttendanceDto The attendance details of the student (from request body)
+	 * @param dailyAttendanceDto The list of attendance details of the student (from
+	 *                           request body)
 	 * @return Confirmation message indicating successful attendance marking
 	 * @author Vijiyakumar
 	 */
-	@PostMapping("/single")
-	
-	ResponseEntity<?> setAttendanceToSingleStudent(@RequestBody DailyAttendanceDto dailyAttendanceDto ){
-		return new ResponseEntity<>(dailyAttendanceService.setAttendanceToSingleStudent(dailyAttendanceDto),HttpStatus.OK);
-		
+	@PostMapping
+	ResponseEntity<?> setAttandanceMultiStudents(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,
+			@RequestParam(required = false) LocalDate attendanceDate) {
+		return new ResponseEntity<>(
+				dailyAttendanceService.setAttandanceMultiStudents(dailyAttendanceDto, attendanceDate), HttpStatus.OK);
 	}
-	
-	/**
-	 * Mark attendance for multliple students.
-	 *
-	 * @param dailyAttendanceDto The list of  attendance details of the student (from request body)
-	 * @return Confirmation message indicating successful attendance marking
-	 * @author Vijiyakumar
-	 */
-	@PostMapping("/mulstu")
-	ResponseEntity<?> setAttandanceMultiStudents(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,@RequestParam(required = false) LocalDate attendanceDate){
-		return new ResponseEntity<>(dailyAttendanceService.setAttandanceMultiStudents(dailyAttendanceDto,attendanceDate),HttpStatus.OK);		
-	}
-	
-	/**
-	 * Retrieve student attendance.
-	 * By default, retrieves today's attendance. If a date is provided, retrieves attendance for that particular date.
-	 *
-	 * @param attendanceDate (optional) The date for which to retrieve attendance
-	 * @return List of student attendance records
-	 * @author Vijiyakumar
-	 */	
-	@GetMapping("/todayAttendance")
-	ResponseEntity<?> getStudentAttendanceByToday(@RequestParam(required = false) LocalDate attendanceDate){
-		return new ResponseEntity<>(dailyAttendanceService.getStudentAttendanceByToday(attendanceDate),HttpStatus.OK);
-	}
-	
-	/**
-	 * Retrieve students with no attendance marked.
-	 * By default, retrieves students without attendance for today. 
-	 * If a date is provided, retrieves students without attendance for that particular date.
-	 *
-	 * @param attendanceDate (optional) The date for which to retrieve students without attendance
-	 * @return List of student records without attendance
-	 * @author Vijiyakumar
-	 */
-	@GetMapping("/todaynotAttendance")
-	ResponseEntity<?> getStudentAttendanceNotTakeByToday(@RequestParam(required = false) LocalDate attendanceDate){
-		return new ResponseEntity<>(dailyAttendanceService.getStudentAttendanceNotTakeByToday(attendanceDate),HttpStatus.OK);
-	}
-	
-	/**
-	 * Retrieve students who have taken extra-curricular activity leave 
-	 * for more than 3 days in a given month.
-	 *
 
-	 * @param month The month for which to check leave records(path variable)
-	 * @param year The year for which to check leave records(path variable)
-	 * @return List of student records exceeding 3 days of extra-curricular leave
-	 * @author Vijiyakumar
-	 */
-	@GetMapping("/activities/{month}/{year}")
-	ResponseEntity<?> getStudentleaveForExtraActivities(@PathVariable int month,@PathVariable int year){
-		return new ResponseEntity<>(dailyAttendanceService.getStudentleaveForExtraActivities(month,year),HttpStatus.OK);
-	}
-	
 	/**
-	 * Retrieve students who have taken sick leave 
-	 * for more than 3 days in a given month.
+	 * Retrieve student attendance for a particular date to check whether it was
+	 * taken or not.
 	 *
-	 * @param month The month for which to check leave records(path variable)
-	 * @param year The year for which to check leave records(path variable)
-	 * @return List of student records exceeding 3 days of sick leave
-	 * @author Vijiyakumar
+	 *@param dailyAttendanceFilterDto  
+	 *  attendanceMark     The attendanceMark value: 
+	 * 								 true →  attendance marked,
+	 * 								 false → attendance not marked 
+	 *  attendanceStatus   The attendanceStatus value :
+	 * 								 PRESENT -> present students , 
+	 * 								 ABSENT -> absent students , 
+	 * 								 null ->all attendance list
+	 *  attendanceDate     The specific date for which to retrieve attendance
+	 *                     records
+	 *  classOfStudy       The class of study for which attendance needs to be
+	 *                     retrieved
+	 *  (from Request body)                         
+	 *  
+	 * @return List of students with attendance status (marked or not marked) on the
+	 *         given date
+	 * @author Vijayakumar
 	 */
-	@GetMapping("/sickLeave/{month}/{year}")
-	ResponseEntity<?> getStudentleaveForSickLeave(@PathVariable int month,@PathVariable int year){
-		return new ResponseEntity<>(dailyAttendanceService.getStudentleaveForSickLeave(month,year),HttpStatus.OK);
+	@GetMapping("/filter")
+	ResponseEntity<?> getStudentAttendanceByDate(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+		return new ResponseEntity<>(
+				dailyAttendanceService.getStudentAttendanceByDate(dailyAttendanceFilterDto),
+				HttpStatus.OK);
 	}
-	
-	/**
-	 * Retrieve students who were absent in a given month.
-	 *
 
-	 * @param month The month for which to retrieve absence records (path variable)
-	 * @param year The year for which to retrieve absence records (path variable)
-	 * @return List of student absence records for the specified month and year
-	 * @author Vijiyakumar
+
+	/**
+	 * Retrieve students' attendance records for a given month and year, based on the type of absence:
+	 * 
+	 *   Extra-curricular activity leave → more than 3 days in the given month</li>
+	 *   Sick leave → more than 6 days in the given month</li>
+	 *   Monthly absence → students absent during the given month</li>
+	 *
+	 * @param attendanceFlag  The attendance type: 
+	 *                        null → Monthly absence, 
+	 *                        true → Sick leave, 
+	 *                        false → Extra-curricular activity leave
+	 * @param month           The month for which to check leave records 
+	 * @param year            The year for which to check leave records 
+	 * @param classOfStudy    The class of study for which attendance records need to be retrieved
+	 * @return                List of student absence records
+	 * @author Vijayakumar
 	 */
-	@GetMapping("/monthAbsent/{month}/{year}")	
-	ResponseEntity<?> getMonthlyAbsenceStudents(@PathVariable int month,@PathVariable int year){
-		return new ResponseEntity<>(dailyAttendanceService.getMonthlyAbsenceStudents(month,year),HttpStatus.OK);
+	@GetMapping("/monthreport")
+	ResponseEntity<?> getMonthlyAbsenceReport(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+		return new ResponseEntity<>(
+				dailyAttendanceService.getMonthlyAbsenceReport(dailyAttendanceFilterDto),
+				HttpStatus.OK);
 	}
+
 }

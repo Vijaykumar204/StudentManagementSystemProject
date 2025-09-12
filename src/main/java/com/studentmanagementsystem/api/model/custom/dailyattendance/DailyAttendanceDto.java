@@ -9,10 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
-
-
 public class DailyAttendanceDto {
-	
 	
 	private Long attendanceId;
 	
@@ -169,7 +166,6 @@ public class DailyAttendanceDto {
 
 	public DailyAttendanceDto(LocalDate attendanceDate, Long studentId, String studentFirstName,
 			String studentMiddleName, String studentLastName) {
-		super();
 		this.attendanceDate = attendanceDate;
 		this.studentId = studentId;
 		this.firstName = studentFirstName;
@@ -181,14 +177,6 @@ public class DailyAttendanceDto {
 		
 		this.attendanceDate = attendanceDate;
 	}
-	
-	
-	
-	
-
-	
-
-	
-	
+		
 
 }

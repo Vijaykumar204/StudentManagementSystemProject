@@ -12,6 +12,11 @@ import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 public class StudentDto {
 
+  
+    private Integer size = 0;
+    
+    private Integer length =3;
+    
 	private Long studentId;
 	
 	private String firstName;
@@ -156,7 +161,19 @@ public class StudentDto {
 		this.teacherId = teacherId;
 	}
 	
-	  public StudentDto(Long studentId, String firstName, String middleName, String lastName, String gender,
+	  public Integer getSize() {
+		return size;
+	}
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+	public Integer getLength() {
+		return length;
+	}
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+	public StudentDto(Long studentId, String firstName, String middleName, String lastName, String gender,
 			LocalDate dateOfBirth, Integer classOfStudy, String residingStatus, String phoneNumber, String parentsName,
 			 String homeStreetName, String homeCityName, String homePostalCode, String status,
 			String email,String parentsEmail) {
@@ -170,8 +187,7 @@ public class StudentDto {
 		this.classOfStudy = classOfStudy;
 		this.residingStatus = residingStatus;
 		this.phoneNumber = phoneNumber;
-		this.parentsName = parentsName;
-		
+		this.parentsName = parentsName;		
 		this.homeStreetName = homeStreetName;
 		this.homeCityName = homeCityName;
 		this.homePostalCode = homePostalCode;

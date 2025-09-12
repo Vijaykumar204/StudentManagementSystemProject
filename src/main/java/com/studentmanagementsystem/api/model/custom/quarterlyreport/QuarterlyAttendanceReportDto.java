@@ -117,7 +117,20 @@ public class QuarterlyAttendanceReportDto {
 		this.attendanceComplianceStatus = attendanceComplianceStatus;
 		
 	}
+
 	
+	public QuarterlyAttendanceReportDto(Long studentId, Long totalDaysOfPresent, Long totalDaysOfAbsents,
+			Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays
+			) {
+		this.studentId = studentId;
+		
+		this.totalDaysOfPresent = totalDaysOfPresent;
+		this.totalDaysOfAbsents = totalDaysOfAbsents;
+		this.totalApprovedActivitiesPermissionDays = totalApprovedActivitiesPermissionDays;
+		this.totalApprovedSickdays = totalApprovedSickdays;
+//		this.attendanceComplianceStatus = attendanceComplianceStatus;
+		
+	}
 	
 	
 

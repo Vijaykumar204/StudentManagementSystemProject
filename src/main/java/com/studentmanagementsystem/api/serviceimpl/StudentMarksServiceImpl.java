@@ -82,7 +82,7 @@ private StudentModelRepository studentModelRepository;
 			
 			studentMark = studentMarksRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(),
 					mark.getQuarterAndYear());
-			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(mark.getTeacherId());
+			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(mark.getTeacherId());
 			if(teacher==null) {
 				response.setStatus(WebServiceUtil.WARNING);	
 				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
@@ -98,7 +98,8 @@ private StudentModelRepository studentModelRepository;
 				studentMark.setQuarterAndYear(mark.getQuarterAndYear());
 
 				studentMark.setCreateDate(today);
-				studentMark.setCreateTeacher(teacher.getTeacherId());
+//				studentMark.setCreateTeacher(teacher.getTeacherId());
+				studentMark.setTeacherModel(teacher);
 			} else {
 				
 				studentMark.setUpdateTeacher(teacher.getTeacherId());
@@ -163,10 +164,10 @@ private StudentModelRepository studentModelRepository;
 	 * Retrieve the list of all student marks for a given quarter and year.
 	 */
 	@Override
-	public StudentMarkListResponse getAllStudentMarks(String quarterAndYear) {
+	public StudentMarkListResponse getAllStudentMarks(String quarterAndYear,Boolean resultStatus, int classOfStudy) {
 		StudentMarkListResponse response = new StudentMarkListResponse();
 		response.setStatus(WebServiceUtil.SUCCESS);	
-		response.setData(studentMarksDao.getAllStudentMarks(quarterAndYear));
+		response.setData(studentMarksDao.getAllStudentMarks(quarterAndYear,resultStatus,classOfStudy));
 		
 
 		return response;

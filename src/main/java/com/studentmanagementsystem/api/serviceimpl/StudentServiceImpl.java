@@ -25,273 +25,231 @@ import com.studentmanagementsystem.api.validation.FieldValidation;
 @Service
 public class StudentServiceImpl implements StudentService {
 
+	private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
+
 	@Autowired
 	private StudentModelDao studentRequestDao;
 
 	@Autowired
 	private FieldValidation fieldValidation;
-	
+
 	@Autowired
 	private StudentModelRepository studentModelRepository;
-	
+
 	@Autowired
 	private TeacherRepository teacherRepository;
-	
+
 	@Autowired
 	private StudentCodeRespository studentCodeRespository;
-	
-	private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
-	
-	/**
-	 * Retrieve the list of all student details.
-	 */
-//	@Override
-//	public StudentModelListResponse listAllDetailsStudent() {
-//		
-//		List<StudentDto> studentDto = studentRequestDao.listAllDetailsStudent();
-//		StudentModelListResponse response = new StudentModelListResponse();
-//		response.setStatus(WebServiceUtil.SUCCESS);	
-//		response.setData(studentDto);
-//
-//		return response;
-//	}
 
 	/**
 	 * Save or update student details.
 	 */
 	@Override
 	public Response saveStudent(StudentDto studentDto) {
-		
-		logger.info("Saving student for TeacherId: ({})",studentDto.getTeacherId());
-		
-		Response response = new Response();
+
+		//Logger
+		logger.info("Before saveStudent - Attempting to saving the student for TeacherId: {}", studentDto.getTeacherId());
 
 		LocalDateTime today = LocalDateTime.now();
-
+		// Declaration
 		StudentModel studentModel;
-		int updateVariable = 0;
-
-		List<String> requestMissedFieldList= fieldValidation.checkValidationStudentSaveMethod(studentDto);
-
+		int updateFlag = 0;
+		
+		//Field validation
+		Response response = new Response();
+		List<String> requestMissedFieldList = fieldValidation.checkValidationStudentSaveMethod(studentDto);
 		if (!requestMissedFieldList.isEmpty()) {
-			response.setStatus(WebServiceUtil.WARNING);	
-			response.setData(requestMissedFieldList);		
-			return response;
-		}
-		//isstudentUnique 
-		StudentModel isstudentUniqueCheck = studentModelRepository.findByFirstNameAndMiddleNameAndLastNameAndDateOfBirth(studentDto.getFirstName(),studentDto.getMiddleName(),studentDto.getLastName(),studentDto.getDateOfBirth());
-		
-		if(isstudentUniqueCheck!=null) {
-			
-			response.setStatus(WebServiceUtil.WARNING);	
-			response.setData(WebServiceUtil.STUDENT_EXISTS);
-			
+			response.setStatus(WebServiceUtil.WARNING);
+			response.setData(requestMissedFieldList);
 			return response;
 		}
 		
+		//Check whether the teacher ID exists or not
+		TeacherModel teacher = teacherRepository.findTeacherByTeacherId(studentDto.getTeacherId());
+		if (teacher == null) {
+			response.setStatus(WebServiceUtil.WARNING);
+			response.setData(WebServiceUtil.TEACHER_ID_ERROR);
+			return response;
+		}
+		
+		//Create new student
 		if (studentDto.getStudentId() == null) {
+			
+			// isstudentUnique
+			StudentModel isstudentUniqueCheck = studentModelRepository
+					.findByFirstNameAndMiddleNameAndLastNameAndDateOfBirth(studentDto.getFirstName(),
+							studentDto.getMiddleName(), studentDto.getLastName(), studentDto.getDateOfBirth());
+
+			if (isstudentUniqueCheck != null) {
+
+				response.setStatus(WebServiceUtil.WARNING);
+				response.setData(WebServiceUtil.STUDENT_EXISTS);
+
+				return response;
+			}
 			studentModel = new StudentModel();
 			studentModel.setCreateDate(today);
-			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(studentDto.getTeacherId());
-			if(teacher == null) {
-				response.setStatus(WebServiceUtil.WARNING);	
-				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
-				return response;
+			studentModel.setCreateTeacher(teacher);		
 			}
-			studentModel.setTeacherModel(teacher);
-		}
-
+		
+		// Update the exists student
 		else {
-		    studentModel = studentModelRepository.findStudentByStudentId(studentDto.getStudentId());
-		    
-		    if(studentModel == null) {
-		    	response.setStatus(WebServiceUtil.FAILURE);	
-				response.setData(String.format(WebServiceUtil.STUDENT_NOT_FOUND,studentDto.getStudentId()));
-				return response;
-		    }
-			
-			
-		    TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(studentDto.getTeacherId());
-			if(teacher==null) {
-				response.setStatus(WebServiceUtil.WARNING);	
-				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
+			//Check whether the student ID exists or not
+			studentModel = studentModelRepository.findStudentByStudentId(studentDto.getStudentId());
+			if (studentModel == null) {
+				response.setStatus(WebServiceUtil.FAILURE);
+				response.setData(String.format(WebServiceUtil.STUDENT_NOT_FOUND, studentDto.getStudentId()));
 				return response;
 			}
-			studentModel.setUpdateTeacher(teacher.getTeacherId());
+
+			studentModel.setUpdateTeacher(teacher);
 			studentModel.setUpdateDate(today);
-			updateVariable = 1;
-			
+			updateFlag = 1;
 
 		}
 		studentModel.setFirstName(studentDto.getFirstName());
 		studentModel.setMiddleName(studentDto.getMiddleName());
 		studentModel.setLastName(studentDto.getLastName());
 		studentModel.setDateOfBirth(studentDto.getDateOfBirth());
-		
+
 		StudentCodeModel gender = studentCodeRespository.findStudentCodeByCode(studentDto.getGender());
-		if(gender == null) {
-			response.setStatus(WebServiceUtil.WARNING);	
+		if (gender == null) {
+			response.setStatus(WebServiceUtil.WARNING);
 			response.setData("invalid");
 		}
 		studentModel.setGender(gender);
-		
 		studentModel.setClassOfStudy(studentDto.getClassOfStudy());
-		
 		StudentCodeModel residingStatus = studentCodeRespository.findStudentCodeByCode(studentDto.getResidingStatus());
+		System.out.println("Residing status : residingStatus ");
 		studentModel.setResidingStatus(residingStatus);
 		studentModel.setPhoneNumber(studentDto.getPhoneNumber());
 		studentModel.setParentsName(studentDto.getParentsName());
-
 		studentModel.setHomeStreetName(studentDto.getHomeStreetName());
 		studentModel.setHomeCityName(studentDto.getHomeCityName());
 		studentModel.setHomePostalCode(studentDto.getHomePostalCode());
 		studentModel.setEmail(studentDto.getEmail());
 		studentModel.setParentsEmail(studentDto.getParentsEmail());
-		
+
 		String studentActiveStatus;
-		if(studentDto.getStatus() == null) {
-			 studentActiveStatus = WebServiceUtil.PRESENT;
-		}
-		else {
-			 studentActiveStatus =studentDto.getStatus();
+		if (studentDto.getStatus() == null) {
+			studentActiveStatus = WebServiceUtil.PRESENT;
+		} else {
+			studentActiveStatus = studentDto.getStatus();
 		}
 		StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentActiveStatus);
-
 		studentModel.setStatus(isStatus);
 		
 		studentModelRepository.save(studentModel);
-		
-		response.setStatus(WebServiceUtil.SUCCESS);	
-		if(updateVariable == 0) {
-		    response.setData(WebServiceUtil.SAVE);
+
+		response.setStatus(WebServiceUtil.SUCCESS);
+		if (updateFlag == 0) {
+			response.setData( String.format(WebServiceUtil.SAVE ,"Student"));
+		} else {
+			response.setData(String.format(WebServiceUtil.UPDATE,"Student"));
 		}
-		else {
-			 response.setData(WebServiceUtil.UPDATE);
-		}
-		logger.info("Student succeccfully saved");
+
+		logger.info("After saveStudent - Succeccfully saved StudentId: {}", studentDto.getStudentId());
 		return response;
 	}
 
 	/**
-	 * Retrive all hostel students
+	 * Filter students by id or email or phone number or
+	 * residingStatus,status,classOfStudy
 	 */
-//	@Override
-//	public StudentModelListResponse getAllHostelStudents(String studentActiveStatus) {
-//		 List<StudentDto> studentListRequestDto =studentRequestDao.getAllHostelStudents(studentActiveStatus, WebServiceUtil.HOSTEL);
-//		 StudentModelListResponse response = new StudentModelListResponse();
-//		 response.setStatus(WebServiceUtil.SUCCESS);	
-//		 response.setData(studentListRequestDto);
-//		return response;
-//	}
-
-	/**
-	 * Retrive all dayscholar students
-	 */	
-//	@Override
-//	public StudentModelListResponse getAllDaysStudents(String studentActiveStatus) {
-//		
-//	List<StudentDto> studentListRequestDto = studentRequestDao.getAllHostelStudents(studentActiveStatus, WebServiceUtil.DAYSCHOLAR);
-//		StudentModelListResponse response = new StudentModelListResponse();
-//		response.setStatus(WebServiceUtil.SUCCESS);	
-//		response.setData(studentListRequestDto);		
-//		return response;
-//	}
-
-	/**
-	 * Filter students by id or email or phone number or residingStatus,status,classOfStudy
-	 */	
 	@Override
-	public StudentModelListResponse getStudentsBy(Long studentId, String email, String phoneNumber,String residingStatus,String status, Integer classOfStudy) {
-		logger.info("Saving student for TeacherId: ({})",studentId);
+	public StudentModelListResponse  getStudentsList(StudentDto studentDto) {
 		
-		List<StudentDto> studentListRequestDto = studentRequestDao.getStudentsBy(studentId, email, phoneNumber,residingStatus,status,classOfStudy);
+		logger.info("Before getStudentsList - Attempting to retrive student details ");
+		
+		List<StudentDto> studentListRequestDto = studentRequestDao. getStudentsList(studentDto);
+		
 		StudentModelListResponse response = new StudentModelListResponse();
-		response.setStatus(WebServiceUtil.SUCCESS);	
-		response.setData(studentListRequestDto);		
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(studentListRequestDto);
+		
+		logger.info("After getStudentsList :  Successfully retrived the student details");
+		
 		return response;
-	}	
-
-	/**
-	 * Retrieve the list of students based on active or deactive status.
-	 */	
-//	@Override
-//	public StudentModelListResponse getByStudentStatus(String studentActiveStatus) {
-//		List<StudentDto> studentListRequestDto = studentRequestDao.getByStudentStatus(studentActiveStatus);
-//		StudentModelListResponse response = new StudentModelListResponse();
-//		response.setStatus(WebServiceUtil.SUCCESS);	
-//		response.setData(studentListRequestDto);	
-//		
-//		return response;
-//	}
+	}
 
 	/**
 	 * Activate or deactivate a student by ID.
-	 */	
+	 */
 	@Override
-	public Response activeOrDeactiveByStudentId(String studentActiveStatus, Long studentId,Long teacherId) {
+	public Response activeOrDeactiveByStudentId(String studentActiveStatus, Long studentId, Long teacherId) {
 		
+		//Logger
+		if (studentActiveStatus == WebServiceUtil.ACTIVE)
+			logger.info("Before activeOrDeactiveByStudentId : Activate the StudentId : '{}' for TeacherId :{} ", studentId, teacherId);
+		else
+			logger.info("Before activeOrDeactiveByStudentId : Deactive the StudentId : '{}' for TeacherId :{} ", studentId, teacherId);
 		
+		// Field validation
 		Response response = new Response();
-		
-		List<String> requestMissedFieldList = fieldValidation.checkValidationActiveOrDeactiveByStudentId(studentActiveStatus,studentId,teacherId);
-
+		List<String> requestMissedFieldList = fieldValidation
+				.checkValidationActiveOrDeactiveByStudentId(studentActiveStatus, studentId, teacherId);
 		if (!requestMissedFieldList.isEmpty()) {
-			response.setStatus(WebServiceUtil.WARNING);	
+			response.setStatus(WebServiceUtil.WARNING);
 			response.setData(requestMissedFieldList);
-					
 			return response;
 		}
 
 		LocalDateTime today = LocalDateTime.now();
-	    StudentModel  student = studentModelRepository.findStudentByStudentId(studentId);
-
-
-		if (student==null) {
-			response.setStatus(WebServiceUtil.WARNING);	
-			response.setData(WebServiceUtil.STUDENT_NOT_FOUND + studentId );
-			
+		//Check whether the student ID exists or not
+		StudentModel student = studentModelRepository.findStudentByStudentId(studentId);
+		if (student == null) {
+			response.setStatus(WebServiceUtil.WARNING);
+			response.setData(WebServiceUtil.STUDENT_NOT_FOUND + studentId);
 			return response;
-			
 		}
-		TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(teacherId);
-		if(teacher==null) {
-			response.setStatus(WebServiceUtil.WARNING);	
+		
+		//Check whether the teacher ID exists or not
+		TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+		if (teacher == null) {
+			response.setStatus(WebServiceUtil.WARNING);
 			response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 			return response;
 		}
 
-		if (studentActiveStatus == WebServiceUtil.ACTIVE &&  !studentActiveStatus.equals(student.getStatus().getCode())) {
+		//Active student
+		if (!studentActiveStatus.equals(WebServiceUtil.ACTIVE)
+				&& !studentActiveStatus.equals(student.getStatus().getCode())) {
 			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentActiveStatus);
 
 			student.setStatus(isStatus);
 			student.setLasteffectivedate(null);
 
-			student.setUpdateTeacher(teacher.getTeacherId());
+			student.setUpdateTeacher(teacher);
 			student.setUpdateDate(today);
 
-			
-		} else if (studentActiveStatus == WebServiceUtil.DEACTIVE
-				&&  !studentActiveStatus.equals(student.getStatus().getCode())) {
-			
+		// Deactivate student
+		} else if (!studentActiveStatus.equals(WebServiceUtil.DEACTIVE)
+				&& !studentActiveStatus.equals(student.getStatus().getCode())) {
+
 			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentActiveStatus);
 			student.setStatus(isStatus);
 			student.setLasteffectivedate(today);
 
-			student.setUpdateTeacher(teacher.getTeacherId());
+			student.setUpdateTeacher(teacher);
 			student.setUpdateDate(today);
-			
 		} else {
-			response.setStatus(WebServiceUtil.WARNING);	
-			response.setData(String.format(WebServiceUtil.NO_CHANGES , studentActiveStatus ));			
+			response.setStatus(WebServiceUtil.WARNING);
+			response.setData(String.format(WebServiceUtil.NO_CHANGES, studentActiveStatus));
 			return response;
 
 		}
-		
-		studentModelRepository.save(student);
-		
-		response.setStatus(WebServiceUtil.SUCCESS);	
-		response.setData(String.format(WebServiceUtil.A_OR_D_STATUS,studentActiveStatus));
 
+		studentModelRepository.save(student);
+
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(String.format(WebServiceUtil.A_OR_D_STATUS, studentActiveStatus));
+		
+		if (studentActiveStatus == WebServiceUtil.ACTIVE)
+			logger.info("After activeOrDeactiveByStudentId : Successfully activated  StudentId : '{}' for TeacherId :{} ", studentId, teacherId);
+		else
+			logger.info("After activeOrDeactiveByStudentId :Successfully activated  StudentId : '{}' for TeacherId :{} ", studentId, teacherId);
+		
 		return response;
 	}
 

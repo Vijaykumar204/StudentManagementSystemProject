@@ -21,18 +21,6 @@ public class StudentController {
 	@Autowired
 	private StudentService studentService;
 	
-	
-	/**
-	 * Retrieve the list of all student details.
-	 *
-	 * @return List of all students
-	 * @author Vijiyakumar
-	 */	
-//	@GetMapping("/list")
-//   ResponseEntity<?> listAllDetailsStudent(){
-//	   return new ResponseEntity<>(studentService.listAllDetailsStudent(),HttpStatus.OK);
-//   }
-	
 	/**
 	 * Save or update student details.
 	 *
@@ -46,33 +34,9 @@ public class StudentController {
 	}
 	
 	/**
-	 * Retrive all hostel students
-	 *
-	 * @param studentActiveStatus
-	 * @return List of all hostel students
-	 * @author Vijiyakumar
-	 */
-//	@GetMapping("/hostel")
-//	public ResponseEntity<?> getAllHostelStudents(@RequestParam String studentActiveStatus){
-//		return new ResponseEntity<>( studentService.getAllHostelStudents(studentActiveStatus),HttpStatus.OK);
-//	}
-	
-	/**
-	 * Retrive all dayscholar students
-	 *
-	 * @param studentActiveStatus
-	 * @return List os all dayscholar students
-	 * @author Vijiyakumar
-	 */
-//	@GetMapping("/dayscholars")
-//	public ResponseEntity<?> getAllDaysStudents(@RequestParam String studentActiveStatus){
-//		return new ResponseEntity<>( studentService.getAllDaysStudents(studentActiveStatus),HttpStatus.OK);
-//	}
-	
-	/**
 	 * Filter students by ID, email, or phone number.
 	 *
-	 * @param studentId (optional) The unique ID of the student
+	 * 
 	 * @param email (optional) The email address of the student
 	 * @param phoneNumber (optional) The phone number of the student
 	 * @param residingStatus (optional) The residential status of the student (H -> hostel,DS->Dayscholar)
@@ -82,24 +46,10 @@ public class StudentController {
 	 * @author Vijiyakumar
 	 */
 	@GetMapping
-	public ResponseEntity<?> getStudentsBy(@RequestParam(required = false) Long studentId ,  @RequestParam(required = false) String email,@RequestParam(required = false) String phoneNumber,@RequestParam(required = false) String residingStatus,@RequestParam(required = false) String status,@RequestParam(required = false) Integer classOfStudy){
-		return new ResponseEntity<>( studentService.getStudentsBy(studentId,email,phoneNumber,residingStatus,status,classOfStudy),HttpStatus.OK);
+	public ResponseEntity<?> getStudentsList(@RequestBody StudentDto studentDto){
+		return new ResponseEntity<>( studentService.getStudentsList(studentDto),HttpStatus.OK);
 	}
 	
-	
-	
-	/**
-	 * Retrieve the list of students based on active or deactive status.
-	 *
-	 * @param studentActiveStatus (The status filter to determine active or inactive students)
-	 * @return List of students matching the given status
-	 * @author Vijiyakumar
-	 */
-//	@GetMapping("/getbystatus")
-//	public ResponseEntity<?> getByStudentStatus(@RequestParam String studentActiveStatus){
-//		return new ResponseEntity<>( studentService.getByStudentStatus(studentActiveStatus),HttpStatus.OK);
-//	}
-//	
 	/**
 	 * Activate or deactivate a student by ID.
 	 *

@@ -1,21 +1,22 @@
 package com.studentmanagementsystem.api.dao;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.ExceedingDaysLeaveDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
 
 public interface DailyAttendanceDao {
 
-	List<DailyAttendanceDto> getStudentAttendance(LocalDate today);
+	List<DailyAttendanceDto> getStudentAttendanceTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
-	List<DailyAttendanceDto> getStudentAttendanceNotTakeByToday(LocalDate today);
+	List<DailyAttendanceDto> getStudentAttendanceNotTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
-	List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(int month, int year);
+	List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
-	List<ExceedingDaysLeaveDto> getStudentleaveForExtraActivitiesd(int month, int year, String leaveStatus,
-			int leaveCount);
+	//List<ExceedingDaysLeaveDto> getStudentleaveForExtraActivitiesd(int month, int year, String leaveStatus,
+	//		int leaveCount);
+
+	//List<MonthlyAbsenceDto> getStudentleave(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
 }

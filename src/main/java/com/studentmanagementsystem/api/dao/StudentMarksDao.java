@@ -11,7 +11,7 @@ public interface StudentMarksDao {
 
 	List<StudentWithPassOrFail> getAllComplianceStudentPassOrFail(String quarterAndYear);
 
-	List<StudentMarksDto> getAllStudentMarks(String quarterAndYear);
+	List<StudentMarksDto> getAllStudentMarks(String quarterAndYear,Boolean resultStatus, int classOfStudy);
 
 	List<TotalResultCountdto> getToatalResultCount(String quarterAndYear);
 
