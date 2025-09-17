@@ -1,9 +1,12 @@
 package com.studentmanagementsystem.api.restcontroller;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,9 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.itextpdf.io.exceptions.IOException;
+import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
+
 
 @RestController
 @RequestMapping(value = "attendance")
@@ -21,6 +29,11 @@ public class DailyAttendanceController {
 
 	@Autowired
 	private DailyAttendanceService dailyAttendanceService;
+	
+
+	
+	@Autowired
+	private DailyAttendanceDao dailyAttendanceDao;
 
 //	/**
 //	 * Mark attendance for a single student.
@@ -45,10 +58,10 @@ public class DailyAttendanceController {
 	 * @author Vijiyakumar
 	 */
 	@PostMapping
-	ResponseEntity<?> setAttandanceMultiStudents(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,
+	ResponseEntity<?> markStudentAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,
 			@RequestParam(required = false) LocalDate attendanceDate) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.setAttandanceMultiStudents(dailyAttendanceDto, attendanceDate), HttpStatus.OK);
+				dailyAttendanceService.markStudentAttendance(dailyAttendanceDto, attendanceDate), HttpStatus.OK);
 	}
 
 	/**
@@ -71,12 +84,12 @@ public class DailyAttendanceController {
 	 *  
 	 * @return List of students with attendance status (marked or not marked) on the
 	 *         given date
-	 * @author Vijayakumar
+	 * @author Vijiyakumar
 	 */
 	@GetMapping("/filter")
-	ResponseEntity<?> getStudentAttendanceByDate(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+	ResponseEntity<?> listStudentAttendance(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.getStudentAttendanceByDate(dailyAttendanceFilterDto),
+				dailyAttendanceService.listStudentAttendance(dailyAttendanceFilterDto),
 				HttpStatus.OK);
 	}
 
@@ -96,7 +109,7 @@ public class DailyAttendanceController {
 	 * @param year            The year for which to check leave records 
 	 * @param classOfStudy    The class of study for which attendance records need to be retrieved
 	 * @return                List of student absence records
-	 * @author Vijayakumar
+	 * @author Vijiyakumar
 	 */
 	@GetMapping("/monthreport")
 	ResponseEntity<?> getMonthlyAbsenceReport(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
@@ -104,5 +117,25 @@ public class DailyAttendanceController {
 				dailyAttendanceService.getMonthlyAbsenceReport(dailyAttendanceFilterDto),
 				HttpStatus.OK);
 	}
+	
+//	  @PostMapping("/download")
+//	    public ResponseEntity<byte[]> downloadMonthlyAbsenceReport(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) throws IOException {
+//
+//	        // Get data from DB
+//	        List<MonthlyAbsenceDto> reports =
+//	                dailyAttendanceDao.getMonthlyAbsenceStudents(dailyAttendanceFilterDto);
+//
+//	        // Generate Excel
+//	        ByteArrayInputStream in = excelGenerator.quarterlyAttendanceToExcel(reports);
+//
+//	        HttpHeaders headers = new HttpHeaders();
+//	        headers.add("Content-Disposition", "attachment; filename=attendance_report.xlsx");
+//
+//	        return ResponseEntity.ok()
+//	                .headers(headers)
+//	                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//	                .body(in.readAllBytes());
+//	    }
+//	
 
 }

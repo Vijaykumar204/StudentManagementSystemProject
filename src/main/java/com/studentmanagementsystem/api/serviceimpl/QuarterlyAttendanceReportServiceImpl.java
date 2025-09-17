@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
+import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceReportDto;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.response.QuarterlyAttendanceListResponse;
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
@@ -139,20 +139,12 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	 * Retrieve the list of compliance or non-compliance students for a given quarter and year.
 	 */
 	@Override
-	public QuarterlyAttendanceListResponse getQuarterlyAttendanceByStatus(QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto) {
-		QuarterlyAttendanceListResponse response = new QuarterlyAttendanceListResponse();
+	public Response listQuarterlyAttendance(QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto) {
+		logger.info("Before listQuarterlyAttendance - Retrive the quarterly attendance report ");
+		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
-
-//	if(Boolean.TRUE.equals(attendanceComplianceStatus)) {
-//			response.setData( quartlyAttendanceReportDao. getQuarterlyAttendanceByStatus(quarterAndYear,WebServiceUtil.COMPLIANCE,classOfStudy) );	
-//		}
-//		else if(Boolean.FALSE.equals(attendanceComplianceStatus)){
-//			response.setData(quartlyAttendanceReportDao. getQuarterlyAttendanceByStatus(quarterAndYear,WebServiceUtil.NON_COMPLIANCE,classOfStudy));	
-//		}
-//		else {
-//			response.setData(quartlyAttendanceReportDao. getQuarterlyAttendanceByStatus(quarterAndYear,WebServiceUtil.NON_COMPLIANCE,classOfStudy));
-//		}
-		response.setData(quartlyAttendanceReportDao. getQuarterlyAttendanceList(quarterlyAttendanceFilterDto));
+		response.setData(quartlyAttendanceReportDao.listQuarterlyAttendance(quarterlyAttendanceFilterDto));
+		logger.info("After listQuarterlyAttendance - Successfully retrive the quarterly attendance report ");
 		return response;
 	}
 

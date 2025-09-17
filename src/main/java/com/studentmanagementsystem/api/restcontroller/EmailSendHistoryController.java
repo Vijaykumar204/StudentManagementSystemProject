@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.studentmanagementsystem.api.serviceimpl.EmailSentService;
+import com.studentmanagementsystem.api.service.EmailSentService;
+import com.studentmanagementsystem.api.serviceimpl.EmailSentServiceImpl;
 
 import jakarta.mail.MessagingException;
 
@@ -19,15 +20,30 @@ public class EmailSendHistoryController {
 
 	
 	/**
-	 * Send the quarterly attendance report and result report to student parents via email.
+	 * Send the quarterly attendance report to student parents via email.
 	 *
 	 * @param quarterAndYear The quarter and year for which the reports are to be sent (e.g., Q1-2025)
 	 * @return Confirmation message indicating that the reports were sent successfully
 	 * @author Vijiyakumar
+	 * @throws MessagingException 
 	 */
 	@GetMapping("/quarterresult")
-	ResponseEntity<?> sendQuarterlyResultReport(@RequestParam String quarterAndYear) throws MessagingException{
-		return new ResponseEntity<>(emailSentService.sendQuarterlyResultReport(quarterAndYear),HttpStatus.OK);
+	ResponseEntity<?> sendQuarterlyResultReport(@RequestParam String quarterAndYear,@RequestParam Integer classOfStudy,@RequestParam Long teacherId) throws MessagingException  {
+		return new ResponseEntity<>(emailSentService.sendQuarterlyAttendanceReport(quarterAndYear,classOfStudy,teacherId),HttpStatus.OK);
+	}
+	
+	/**
+	 * Send the quarterly mark report  to student parents via email.
+	 *
+	 * @param quarterAndYear The quarter and year for which the reports are to be sent (e.g., 03/2025)
+	 * @param classOfStudy  The class of study for which the report are to sent 
+	 * @return Confirmation message indicating that the reports were sent successfully
+	 * @author Vijiyakumar
+	 * @throws MessagingException 
+	 */
+	@GetMapping("/markresult")
+	ResponseEntity<?> sendMarkReport(@RequestParam String quarterAndYear,@RequestParam Integer classOfStudy,@RequestParam Long teacherId) throws MessagingException {
+		return new ResponseEntity<>(emailSentService.sendQuarterlyMarkResult(quarterAndYear,classOfStudy,teacherId),HttpStatus.OK);
 	}
 	
 	/**
@@ -37,8 +53,8 @@ public class EmailSendHistoryController {
 	 * @author Vijiyakumar
 	 */
 	@GetMapping("/absentAlert")
-	ResponseEntity<?> runAbsentAlertMessage() throws MessagingException{
-		return new ResponseEntity<>(emailSentService.runAbsentAlertMessage(),HttpStatus.OK);
+	ResponseEntity<?> runAbsentAlertMessage(@RequestParam Long teacherId) throws MessagingException{
+		return new ResponseEntity<>(emailSentService.runAbsentAlertMessage(teacherId),HttpStatus.OK);
 	}
 	
 }

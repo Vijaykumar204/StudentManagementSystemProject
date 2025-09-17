@@ -46,8 +46,8 @@ public class StudentController {
 	 * @author Vijiyakumar
 	 */
 	@GetMapping
-	public ResponseEntity<?> getStudentsList(@RequestBody StudentDto studentDto){
-		return new ResponseEntity<>( studentService.getStudentsList(studentDto),HttpStatus.OK);
+	public ResponseEntity<?> listStudentDetails(@RequestBody StudentDto studentDto){
+		return new ResponseEntity<>( studentService.listStudentDetails(studentDto),HttpStatus.OK);
 	}
 	
 	/**

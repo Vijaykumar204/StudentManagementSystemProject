@@ -5,11 +5,10 @@ import java.util.List;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidayFilterDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
-import com.studentmanagementsystem.api.model.custom.schoolholidays.response.SchoolHolidayListResponse;
 
 public interface SchoolHolidaysService {
 
-	SchoolHolidayListResponse getHolidays(SchoolHolidayFilterDto schoolHolidayFilterDto);
+	Response listDeclaredHolidays(SchoolHolidayFilterDto schoolHolidayFilterDto);
 
 	//Response cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto);
 

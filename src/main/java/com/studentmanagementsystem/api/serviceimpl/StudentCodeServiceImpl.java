@@ -65,6 +65,18 @@ public class StudentCodeServiceImpl implements StudentCodeService {
 		return response;
 	}
 
+
+
+	@Override
+	public Response loadStudentCode(String groupCode) {
+		
+		Response response = new Response();
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(studentCodeRespository.findByGroupCode(groupCode));
+		
+		return response;
+	}
+
 	
 
 }

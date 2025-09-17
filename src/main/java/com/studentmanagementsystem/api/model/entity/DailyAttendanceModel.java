@@ -18,6 +18,10 @@ public class DailyAttendanceModel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "AT_Id")
 	private Long attendanceId;
+	
+	@ManyToOne
+	@JoinColumn(name = "student_Id", referencedColumnName = "STU_Id", nullable = false)
+	private StudentModel studentModel;
 
 	@Column(name = "AT_Date", nullable = false)
 	private LocalDate attendanceDate;
@@ -31,24 +35,23 @@ public class DailyAttendanceModel {
 
 	@Column(name = "AT_Approved_Extra_Cur_Activities", length = 1,columnDefinition ="CHAR DEFAULT 'N'")
 	private String approvedExtraCurricularActivitiesFlag;
+	
+	@ManyToOne
+	@JoinColumn(name ="AT_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel createTeacher;
 
 	@Column(name = "AT_Create_Date_Time")
 	private LocalDateTime createDate;
 
-	@Column(name = "AT_Update_Teacher")
-	private Long updateTeacher;
+	@ManyToOne
+	@JoinColumn(name ="AT_Update_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel updateTeacher;
 
 	@Column(name = "AT_Update_Date_Time")
 	private LocalDateTime updateTime;
-
-	@ManyToOne
-	@JoinColumn(name = "student_Id", referencedColumnName = "STU_Id", nullable = false)
-	private StudentModel studentModel;
 	
-	@ManyToOne
-	@JoinColumn(name ="AT_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
-	private TeacherModel teacherModel;
 
+	//Getter and Setter
 	public Long getAttendanceId() {
 		return attendanceId;
 	}
@@ -98,15 +101,6 @@ public class DailyAttendanceModel {
 	}
 
 
-
-	public TeacherModel getTeacherModel() {
-		return teacherModel;
-	}
-
-	public void setTeacherModel(TeacherModel teacherModel) {
-		this.teacherModel = teacherModel;
-	}
-
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
@@ -115,11 +109,11 @@ public class DailyAttendanceModel {
 		this.createDate = createDate;
 	}
 
-	public Long getUpdateTeacher() {
+	public TeacherModel getUpdateTeacher() {
 		return updateTeacher;
 	}
 
-	public void setUpdateTeacher(Long updateTeacher) {
+	public void setUpdateTeacher(TeacherModel updateTeacher) {
 		this.updateTeacher = updateTeacher;
 	}
 
@@ -130,5 +124,14 @@ public class DailyAttendanceModel {
 	public void setUpdateTime(LocalDateTime updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public TeacherModel getCreateTeacher() {
+		return createTeacher;
+	}
+
+	public void setCreateTeacher(TeacherModel createTeacher) {
+		this.createTeacher = createTeacher;
+	}
+	
 
 }

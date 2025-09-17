@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,12 +17,13 @@ public class EmailSentHistory {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
 	@Column(name = "Email_Id")
     private Long emailId;
 	
-	@Column(name = "Student_Id",nullable = false)
-    private Long studentId;
+	@ManyToOne
+	@JoinColumn(name = "Student_Id",referencedColumnName = "STU_Id",nullable = false)
+	private StudentModel studentId;
+	
 	
 	@Column(name = "Parents_Email" ,nullable = false,length = 30)
     private String studentEmail;
@@ -34,8 +37,10 @@ public class EmailSentHistory {
 	@Column(name = "Email_Sent_Date",nullable = false)
     private LocalDateTime mailSentDate;
 	
-	@Column(name = "Email_send_By")
-	 private Long teacherId;
+	//@Column(name = "Email_send_By")
+	@ManyToOne
+	@JoinColumn(name ="Email_send_By" ,referencedColumnName = "TEACH_Id",nullable = false)
+	 private TeacherModel teacherId;
 	
 	
 	public Long getEmailId() {
@@ -46,13 +51,6 @@ public class EmailSentHistory {
 		this.emailId = emailId;
 	}
 
-	public Long getStudentId() {
-		return studentId;
-	}
-
-	public void setStudentId(Long studentId) {
-		this.studentId = studentId;
-	}
 
 	public String getStudentEmail() {
 		return studentEmail;
@@ -84,6 +82,22 @@ public class EmailSentHistory {
 
 	public void setMailSentDate(LocalDateTime mailSentDate) {
 		this.mailSentDate = mailSentDate;
+	}
+
+	public StudentModel getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(StudentModel studentId) {
+		this.studentId = studentId;
+	}
+
+	public TeacherModel getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(TeacherModel teacherId) {
+		this.teacherId = teacherId;
 	}
 	
 	

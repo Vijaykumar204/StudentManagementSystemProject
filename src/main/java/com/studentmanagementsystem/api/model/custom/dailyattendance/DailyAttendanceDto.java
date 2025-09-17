@@ -11,6 +11,8 @@ import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 public class DailyAttendanceDto {
 	
+	
+	
 	private Long attendanceId;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)

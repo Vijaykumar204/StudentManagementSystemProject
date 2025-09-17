@@ -1,6 +1,6 @@
 package com.studentmanagementsystem.api.model.custom.studentmarks;
 
-public class TotalResultCountdto {
+public class ResultReport {
 	
 	
 	private String quarter;
@@ -64,14 +64,14 @@ public class TotalResultCountdto {
 		this.failDueToAttendance = failDueToAttendance;
 	}
 
-	public TotalResultCountdto(String quarter, Integer totalCount, Long totalPass, Long totalFail, Long failDueToMark,
+	public ResultReport(String quarter, Integer totalCount, Long totalPass, Long totalFail,
 			Long failDueToAttendance) {
 	
 		this.quarter = quarter;
 		this.totalCount = totalCount;
 		this.totalPass = totalPass;
 		this.totalFail = totalFail;
-		this.failDueToMark = failDueToMark;
+//		this.failDueToMark = failDueToMark;
 		this.failDueToAttendance = failDueToAttendance;
 	}
 

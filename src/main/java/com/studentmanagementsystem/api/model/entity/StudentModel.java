@@ -67,7 +67,7 @@ public class StudentModel {
 	
 	@Column(name = "STU_Postal_Code",nullable = false,length=6)
 	private String homePostalCode;
-
+	
 	@OneToOne
 	@JoinColumn(name ="STU_Status",referencedColumnName = "CODE" ,columnDefinition ="CHAR DEFAULT 'A'")
 	private StudentCodeModel status;
@@ -89,6 +89,10 @@ public class StudentModel {
 	
 	@Column(name = "STU_Update_Date_Time")
 	private LocalDateTime updateDate;
+	
+	
+	
+	
 	
 	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
 	@JsonIgnore

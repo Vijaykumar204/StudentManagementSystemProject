@@ -6,9 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
 import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 
@@ -30,8 +28,8 @@ public class QuarterlyAttendanceReportController {
 	 * @author Vijiyakumar
 	 */	
 	@GetMapping
-	ResponseEntity<?> getQuarterlyAttendanceByStatus(@RequestBody QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto){
-		return new ResponseEntity<>(quarterlyAttendanceReportService.getQuarterlyAttendanceByStatus(quarterlyAttendanceFilterDto),HttpStatus.OK);
+	ResponseEntity<?> listQuarterlyAttendance(@RequestBody QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto){
+		return new ResponseEntity<>(quarterlyAttendanceReportService.listQuarterlyAttendance(quarterlyAttendanceFilterDto),HttpStatus.OK);
 	}
 	
 

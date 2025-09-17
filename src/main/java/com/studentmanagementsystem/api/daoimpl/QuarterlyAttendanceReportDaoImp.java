@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.ComplianceAndNonComplianceReportDto;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceReportDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
@@ -13,7 +12,6 @@ import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportMod
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
@@ -102,7 +100,6 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		        totalExtra
 		).where(cb.and(monthPredicate, yearPredicate))
 		 .groupBy(studentJoin.get("studentId"));
-
 		return entityManager.createQuery(cq).getResultList();
 	}
 
@@ -125,24 +122,27 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	//  WHERE qar.quarter_and_year = :quarterAndYear
 	//  AND qar.attendance_compliance_status = :complianceStatus;
 	@Override
-	public List<ComplianceAndNonComplianceReportDto> getQuarterlyAttendanceList(
+	public List<QuarterlyAttendanceReportDto> listQuarterlyAttendance(
 			QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<ComplianceAndNonComplianceReportDto> cq  =cb.createQuery(ComplianceAndNonComplianceReportDto.class);
+		CriteriaQuery<QuarterlyAttendanceReportDto> cq  =cb.createQuery(QuarterlyAttendanceReportDto.class);
 		Root<QuarterlyAttendanceReportModel> quarterlyAttendanceReportRoot = cq.from(QuarterlyAttendanceReportModel.class);
 		Join<QuarterlyAttendanceReportModel,StudentModel> quarterlyAttendanceReporAndStudentJoin = quarterlyAttendanceReportRoot.join("studentModel");
 		
-		cq.select(cb.construct(ComplianceAndNonComplianceReportDto.class,
-				
-				quarterlyAttendanceReporAndStudentJoin.get("studentId"),
-				quarterlyAttendanceReportRoot.get("quarterAndYear"),
-				quarterlyAttendanceReporAndStudentJoin.get("firstName"),
-				quarterlyAttendanceReporAndStudentJoin.get("middleName"),
-				quarterlyAttendanceReporAndStudentJoin.get("lastName"),
-				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("description")	
+		
+		cq.select(cb.construct(QuarterlyAttendanceReportDto.class,
+				 
+				quarterlyAttendanceReportRoot.get("studentModel").get("studentId"),
+				quarterlyAttendanceReportRoot.get("totalSchoolWorkingDays"),
+				quarterlyAttendanceReportRoot.get("totalDaysOfPresent"),
+				quarterlyAttendanceReportRoot.get("totalDaysOfAbsents"),				
+				quarterlyAttendanceReportRoot.get("totalApprovedActivitiesPermissionDays"),
+				quarterlyAttendanceReportRoot.get("totalApprovedSickdays"),
+				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("description")
 				
 				));
+		
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		if (quarterlyAttendanceFilterDto.getStudentId() != null) {
@@ -153,12 +153,13 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		        quarterlyAttendanceFilterDto.getStudentId()
 		    ));
 		}
-		else if(quarterlyAttendanceFilterDto.getEmail()!=null && quarterlyAttendanceFilterDto.getEmail()!=" ") {
+		else if(quarterlyAttendanceFilterDto.getEmail()!=null && !quarterlyAttendanceFilterDto.getEmail().isBlank()) {
 			String emailLike = "%"+ quarterlyAttendanceFilterDto.getEmail().toLowerCase() + "%";
 			predicates.add(cb.like(cb.lower(quarterlyAttendanceReporAndStudentJoin.get("email")),emailLike));
 		}
-		else if(quarterlyAttendanceFilterDto.getPhoneNumber()!=null && quarterlyAttendanceFilterDto.getPhoneNumber()!=" ") {
-			predicates.add(cb.like(cb.lower(quarterlyAttendanceReporAndStudentJoin.get("phoneNumber")),quarterlyAttendanceFilterDto.getPhoneNumber()));
+		else if(quarterlyAttendanceFilterDto.getPhoneNumber()!=null && !quarterlyAttendanceFilterDto.getPhoneNumber().isBlank()) {
+			String phoneNumberLike = "%"+ quarterlyAttendanceFilterDto.getPhoneNumber() + "%";
+			predicates.add(cb.like(cb.lower(quarterlyAttendanceReporAndStudentJoin.get("phoneNumber")),phoneNumberLike));
 		}
 		
 		if(quarterlyAttendanceFilterDto.getFilter()!=null) {
@@ -171,12 +172,11 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 			cq.where(cb.and(predicates.toArray(new Predicate[0])));
 		}
 		
-		TypedQuery<ComplianceAndNonComplianceReportDto> result = entityManager.createQuery(cq);
-		result.setFirstResult(quarterlyAttendanceFilterDto.getSize());
-		result.setMaxResults(quarterlyAttendanceFilterDto.getLength());
-		
-		
-		return result.getResultList();	
+		return  entityManager.createQuery(cq)
+				             .setFirstResult(quarterlyAttendanceFilterDto.getSize())
+				             .setMaxResults(quarterlyAttendanceFilterDto.getLength())
+				             .getResultList();
+			
 	}
 	
 	/*
@@ -184,11 +184,12 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	 */
 
 	@Override
-	public List<QuarterlyAttendanceReportDto> getQuarterlyAttendanceReport(String quarterAndYear) {
+	public List<QuarterlyAttendanceReportDto> getQuarterlyAttendanceReport(String quarterAndYear,Integer classOfStudy) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<QuarterlyAttendanceReportDto> cq  =cb.createQuery(QuarterlyAttendanceReportDto.class);
 		Root<QuarterlyAttendanceReportModel> quarterlyAttendanceReportRoot = cq.from(QuarterlyAttendanceReportModel.class);
 		Predicate quarterandYearCondition = cb.equal(quarterlyAttendanceReportRoot.get("quarterAndYear"),quarterAndYear);
+		Predicate classCondition = cb.equal(quarterlyAttendanceReportRoot.get("studentModel").get("classOfStudy"), classOfStudy);
 		cq.select(cb.construct(QuarterlyAttendanceReportDto.class,
 				 
 				quarterlyAttendanceReportRoot.get("studentModel").get("studentId"),
@@ -199,7 +200,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 				quarterlyAttendanceReportRoot.get("totalApprovedSickdays"),
 				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("description")
 				
-				)).where(quarterandYearCondition)	;	
+				)).where(quarterandYearCondition,classCondition)	;	
 		
 
 		
@@ -229,7 +230,6 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 		        cb.function("YEAR", Integer.class, root.get("attendanceDate")),
 		        WebServiceUtil.YEAR
 		);
-
 		totalWorkingDaysQuery.select(
 		        cb.countDistinct(root.get("attendanceDate"))
 		).where(cb.and(monthPredicateCondition, yearPredicateCondition));

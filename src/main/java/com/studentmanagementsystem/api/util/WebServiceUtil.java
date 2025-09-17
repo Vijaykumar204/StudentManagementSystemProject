@@ -18,13 +18,14 @@ public final class WebServiceUtil {
 	public static final String HOSTEL = "HOSTEL";
 	public static final String DAYSCHOLAR = "DAYSCHOLAR";
 	public static final String ACTIVE ="ACTIVE";
-	public static final String DEACTIVE ="DEACTIVATE";
+	public static final String DEACTIVE ="DEACTIVE";
 	
 //******************** Student Message *********************************
 	
 	public static final String STUDENT_NOT_FOUND ="Student ID not found ";
 	public static final String NO_CHANGES = "No need to change already have %s status";
-	public static final String A_OR_D_STATUS="Student %sd successfully";
+	public static final String ACTIVETED_MESSAGE="Student activated successfully";
+	public static final String DEACTIVETED_MESSAGE="Student deactivated successfully";
 	public static final String STUDENT_EXISTS ="Student name and DOB already exists";
 	
 //******************** SchoolHoliday Message *********************************
@@ -34,6 +35,7 @@ public final class WebServiceUtil {
 	public static final String EXTRA_CURRICULAR_ACTIVITIES = "approvedExtraCurricularActivitiesFlag";
 	public static final String SICK_LEAVE = "longApprovedSickLeaveFlag";
 	public static final String SUCCESS_HOLIDAY_DECLARE="Holidays declared successfully";
+	public static final String SUCCESS_HOLIDAY_UPDATE = "Holidays updated successfully";
 	public static final String SUCCESS_CANCEL_HOLIDAY = "Holidays cancelled successfully";
 	
 //******************** DailyAttendance *********************************
@@ -43,8 +45,8 @@ public final class WebServiceUtil {
 	public static final String ABSENT = "ABSENT";	
 	public static final String YES = "Y";
 	public static final String NO = "N";
-	public static final String COMPLIANCE = "C";
-	public static final String NON_COMPLIANCE = "NC";
+	public static final String COMPLIANCE = "COMPLIANCE";
+	public static final String NON_COMPLIANCE = "NON_COMPLIANCE";
 	public static final String COMPLIANCE_COMMENT ="Good";
 	public static final String NON_COMPLIANCE_COMMENT ="Bad";
 	
@@ -256,7 +258,8 @@ public final class WebServiceUtil {
 	
 	public static final String NULL_ERROR = "%s is required";
 	
-	public static final String REGEX_ERROR = "%s format error";
+	public static final String CLASS_OF_STUDY_ERROR = "Class of study must be between 6 and 10";
+	public static final String REGEX_ERROR = "Invalid %s format";
 	
 //******************** Response Status *********************************
 	
@@ -270,6 +273,8 @@ public final class WebServiceUtil {
 	public static final String DECLARE_MARK="Successfully declared mark";
 	public static final String STUDENT_ATTENDANCE_STATUS =" student attendance is non compliance,so does not declare the mark";
 	public static final String TEACHER_ID_ERROR = "Invalid Teacher ID. Please enter a valid one";
+	
+	public static final String INVALID_CODE = "%s invalid";
 
 	
 	

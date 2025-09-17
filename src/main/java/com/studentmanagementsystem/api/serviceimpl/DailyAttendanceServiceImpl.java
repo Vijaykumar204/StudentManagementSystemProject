@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,6 @@ import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.response.DailyAttendanceListResponse;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.response.MonthlyAbsenceListResponse;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
@@ -62,14 +59,14 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	 */
 
 	@Override
-	public Response setAttandanceMultiStudents(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
+	public Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
 
 		Response response = new Response();
 		
 		List<DailyAttendanceModel> dailyAttendanceModelList = new ArrayList<>();
 		LocalDateTime today = LocalDateTime.now();
 		for (DailyAttendanceDto attendance : dailyAttendanceDto) {
-			logger.info("Before setAttandanceMultiStudents - Attempting to mark attendance StudentId : {}  for TeacherId: {}",attendance.getStudentId(), attendance.getTeacherId());
+			logger.info("Before markStudentAttendance - Attempting to mark attendance StudentId : {}  for TeacherId: {}",attendance.getStudentId(), attendance.getTeacherId());
 			List<String> requestMissedFieldList = fieldValidation.checkValidationSetAttendanceToSingleStudent(attendance);
 
 			if (!requestMissedFieldList.isEmpty()) {
@@ -98,8 +95,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 					return response;
 				}
 				
-//				dailyAttendanceModel.setCreateTeacher(teacher.getTeacherId());
-				dailyAttendanceModel.setTeacherModel(teacher);
+				dailyAttendanceModel.setCreateTeacher(teacher);
 				dailyAttendanceModel.setCreateDate(today);
 				if (attendanceDate != null) {
 					dailyAttendanceModel.setAttendanceDate(attendanceDate);
@@ -115,7 +111,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 					response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 					return response;
 				}
-				dailyAttendanceModel.setUpdateTeacher(teacher.getTeacherId());
+				dailyAttendanceModel.setUpdateTeacher(teacher);
 				dailyAttendanceModel.setUpdateTime(today);
 			}
 			StudentCodeModel attendanceStatus = studentCodeRespository.findStudentCodeByCode(attendance.getAttendanceStatus());
@@ -145,7 +141,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		 response.setStatus(WebServiceUtil.SUCCESS);	
 		 response.setData(WebServiceUtil.MARK_ATTENDANCE);
 		 
-			logger.info("After setAttandanceMultiStudents - Attendace Maeked successfully");
+			logger.info("After markStudentAttendance - Attendace Maeked successfully");
 
 		return response ;
 	}
@@ -155,16 +151,17 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	 *
 	 */
 	@Override
-	public DailyAttendanceListResponse getStudentAttendanceByDate(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+	public Response listStudentAttendance(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		logger.info("Before getStudentAttendanceByDate - Attempting to retrive the student attendance");
 
-	    DailyAttendanceListResponse response = new DailyAttendanceListResponse();
+		Response response = new Response();
 	    response.setStatus(WebServiceUtil.SUCCESS);
 
-	    if (Boolean.TRUE.equals(dailyAttendanceFilterDto.getAttendanceMark())) {
-	        response.setData(dailyAttendanceDao.getStudentAttendanceTaken(dailyAttendanceFilterDto));
+	    if (Boolean.FALSE.equals(dailyAttendanceFilterDto.getAttendanceMark())) {
+	    	response.setData(dailyAttendanceDao.getStudentAttendanceNotTaken(dailyAttendanceFilterDto));
 	    } else {
-	        response.setData(dailyAttendanceDao.getStudentAttendanceNotTaken(dailyAttendanceFilterDto));
+	        
+	        response.setData(dailyAttendanceDao.getStudentAttendanceTaken(dailyAttendanceFilterDto));
 	    }
 		logger.info("After getStudentAttendanceByDate - Successfully retrived student attendance");
 	    return response;
@@ -178,9 +175,9 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	 *   Monthly absence → students absent during the given month</li>
 	 */
 	@Override
-	public MonthlyAbsenceListResponse getMonthlyAbsenceReport(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+	public Response getMonthlyAbsenceReport(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		logger.info("Before getMonthlyAbsenceReport - Attempting to retrive the monthly absence studenet list");
-		MonthlyAbsenceListResponse response =  new MonthlyAbsenceListResponse();
+		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
 		response.setData( dailyAttendanceDao.getMonthlyAbsenceStudents(dailyAttendanceFilterDto));
 		logger.info("After getMonthlyAbsenceReport - Successfully retrived monthly absence list");

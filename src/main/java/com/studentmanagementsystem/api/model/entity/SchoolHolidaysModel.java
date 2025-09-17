@@ -41,14 +41,13 @@ public class SchoolHolidaysModel {
 	private LocalDateTime createDate;
 	
 	@ManyToOne
-	@JoinColumn(name ="HOL_Update_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	@JoinColumn(name ="HOL_Update_Teacher" ,referencedColumnName = "TEACH_Id")
 	private TeacherModel updateTeacher;
 	
 	@Column(name = "HOL_Update_Date_Time")
 	private LocalDateTime updateDate;
 
-	
-	
+	//Getter and Setter
 	public Long getHolidayId() {
 		return holidayId;
 	}

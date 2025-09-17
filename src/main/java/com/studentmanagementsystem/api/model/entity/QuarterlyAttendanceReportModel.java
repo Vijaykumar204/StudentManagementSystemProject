@@ -19,6 +19,10 @@ public class QuarterlyAttendanceReportModel {
 	@Column(name = "QUARTER_Id")
 	private Long quarterlyAttendanceId;
 	
+	@ManyToOne
+	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id",nullable = false)
+	private StudentModel studentModel;
+	
 	@Column(name ="QUARTER_And_Year",length =7,nullable = false)
 	private String quarterAndYear;
 	
@@ -31,13 +35,12 @@ public class QuarterlyAttendanceReportModel {
 	@Column(name = "QUARTER_Tot_Absent",nullable = false)
 	private Long totalDaysOfAbsents;
 	
-	@Column(name = "QUARTER_Tot_Approved_Extra_Cur_Activities",nullable = false)
-	private Long totalApprovedActivitiesPermissionDays;
-	
 	@Column(name = "QUARTER_Tot_Approved_Sick_Leave",nullable = false)
 	private Long totalApprovedSickdays;
 	
-//	@Column(name = "QUARTER_Attendance_Compliance_Status" ,length=2,nullable = false)
+	@Column(name = "QUARTER_Tot_Approved_Extra_Cur_Activities",nullable = false)
+	private Long totalApprovedActivitiesPermissionDays;
+	
 	@OneToOne
 	@JoinColumn(name ="QUARTER_Attendance_Compliance_Status",referencedColumnName = "CODE" ,nullable = false)
 	private StudentCodeModel  attendanceComplianceStatus;
@@ -45,9 +48,7 @@ public class QuarterlyAttendanceReportModel {
 	@Column(name="QUARTER_Attendance_Comments",length = 25)
 	private String comments;
 	
-	 @ManyToOne
-	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id",nullable = false)
-	private StudentModel studentModel;
+
 
 	public Long getQuarterlyAttendanceId() {
 		return quarterlyAttendanceId;

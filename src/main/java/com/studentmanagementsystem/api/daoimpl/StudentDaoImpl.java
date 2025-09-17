@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
 
-import com.studentmanagementsystem.api.dao.StudentModelDao;
+import com.studentmanagementsystem.api.dao.StudentDao;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -21,7 +20,7 @@ import jakarta.transaction.Transactional;
 
 @Repository
 @Transactional
-public class StudentModelDaoImpl implements StudentModelDao {
+public class StudentDaoImpl implements StudentDao {
 
 	@Autowired
 	private EntityManager entityManager;
@@ -31,12 +30,14 @@ public class StudentModelDaoImpl implements StudentModelDao {
 	 */
 
 	@Override
-	public List<StudentDto>  getStudentsList(StudentDto studentDto) {
+	public List<StudentDto>  listStudentDetails(StudentDto studentDto) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<StudentDto> studentQuery = cb.createQuery(StudentDto.class);
-		Root<StudentModel> studentRoot = studentQuery.from(StudentModel.class);
-		studentQuery.select(cb.construct(StudentDto.class, 
+		CriteriaQuery<StudentDto> cq = cb.createQuery(StudentDto.class);
+		Root<StudentModel> studentRoot = cq.from(StudentModel.class);
+		
+		cq.select(cb.construct(StudentDto.class, 
+				
 				studentRoot.get("studentId"),   
 				studentRoot.get("firstName"),   
 				studentRoot.get("middleName"),
@@ -68,7 +69,8 @@ public class StudentModelDaoImpl implements StudentModelDao {
 			predicates.add(cb.like(cb.lower(studentRoot.get("email")), emailLike));
 		}
 		else if (studentDto.getPhoneNumber() != null && studentDto.getPhoneNumber() != " ") { 
-			predicates.add(cb.like(studentRoot.get("phoneNumber"), studentDto.getPhoneNumber()));
+			String phoneNumberLike = "%"+ studentDto.getPhoneNumber() + "%";
+			predicates.add(cb.like(studentRoot.get("phoneNumber"),phoneNumberLike));
 		}
 		if (studentDto.getResidingStatus() != null) {
 			predicates.add(cb.equal(studentRoot.get("residingStatus").get("code"), studentDto.getResidingStatus()));
@@ -80,15 +82,14 @@ public class StudentModelDaoImpl implements StudentModelDao {
 			predicates.add(cb.equal(studentRoot.get("classOfStudy"), studentDto.getClassOfStudy()));
 		}
 		if (!predicates.isEmpty()) {
-			studentQuery.where(cb.and(predicates.toArray(new Predicate[0])));
+			cq.where(cb.and(predicates.toArray(new Predicate[0])));
 		}
 		
-		TypedQuery<StudentDto> result = entityManager.createQuery(studentQuery);
-		result.setFirstResult(studentDto.getSize());
-		result.setMaxResults(studentDto.getLength());
-		
-		
-		return result.getResultList();	
+		return entityManager.createQuery(cq)
+				.setFirstResult(studentDto.getSize())
+				.setMaxResults(studentDto.getLength())
+				.getResultList();
+				
 	}
 
 }

@@ -3,7 +3,6 @@ package com.studentmanagementsystem.api.service;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 
-import com.studentmanagementsystem.api.model.custom.student.response.StudentModelListResponse;
 
 public interface StudentService {
 
@@ -14,6 +13,6 @@ public interface StudentService {
 
 	Response activeOrDeactiveByStudentId(String studentActiveStatus, Long studentId, Long teacherId);
 
-	StudentModelListResponse getStudentsList(StudentDto studentDto);
+	Response listStudentDetails(StudentDto studentDto);
 
 }

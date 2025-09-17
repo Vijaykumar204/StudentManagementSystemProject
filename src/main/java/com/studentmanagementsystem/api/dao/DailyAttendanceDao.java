@@ -14,9 +14,5 @@ public interface DailyAttendanceDao {
 
 	List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
-	//List<ExceedingDaysLeaveDto> getStudentleaveForExtraActivitiesd(int month, int year, String leaveStatus,
-	//		int leaveCount);
-
-	//List<MonthlyAbsenceDto> getStudentleave(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
 }

@@ -7,6 +7,6 @@ import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHoliday
 
 public interface SchoolHolidaysDao {
 
-	List<SchoolHolidaysDto> getAllHolidays(SchoolHolidayFilterDto schoolHolidayFilterDto);
+	List<SchoolHolidaysDto> listDeclaredHolidays(SchoolHolidayFilterDto schoolHolidayFilterDto);
 
 }

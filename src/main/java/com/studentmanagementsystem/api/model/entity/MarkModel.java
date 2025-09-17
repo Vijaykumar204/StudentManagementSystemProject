@@ -18,9 +18,12 @@ public class MarkModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
 	@Column(name = "Mark_Id")
 	private Long markId;
+	
+	@ManyToOne
+	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id")
+	private StudentModel studentModel;
 	
 	@Column(name = "Mark_Quarter_And_Year",nullable = false,length=10)
 	private String quarterAndYear;
@@ -42,34 +45,30 @@ public class MarkModel {
 	
 	@Column(name = "Toatal_Mark")
 	private Integer totalMarks;
-	
-//	@Column(name = "Result_Status")
+
 	@OneToOne
 	@JoinColumn(name ="Result_Status",referencedColumnName = "CODE" )
 	private StudentCodeModel result;
 	
-//	@Column(name = "Mark_Create_Teacher",nullable = false)
-//	private Long createTeacher;
+	@ManyToOne
+	@JoinColumn(name ="Mark_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
+	private TeacherModel createTeacher;
+
 	
 	@Column(name = "Mark_Create_Date_Time")
 	private LocalDateTime createDate;
 	
-	@Column(name = "Mark_Update_Teacher")
-	private Long updateTeacher;
+	@ManyToOne
+	@JoinColumn(name ="Mark_Update_Teacher" ,referencedColumnName = "TEACH_Id")
+	private TeacherModel updateTeacher;
 	
 	@Column(name = "Mark_Update_Date_Time")
 	private LocalDateTime updateTime;
 	
-	@Column(name = "Failed_for_Mark", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
-	private Boolean failedForMark = false;
+
+
 	
-	@ManyToOne
-	@JoinColumn(name = "student_Id",referencedColumnName = "STU_Id")
-	private StudentModel studentModel;
-	
-	@ManyToOne
-	@JoinColumn(name ="Mark_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
-	private TeacherModel teacherModel;
+
 
 	public Long getMarkId() {
 		return markId;
@@ -147,28 +146,12 @@ public class MarkModel {
 
 
 
-	public TeacherModel getTeacherModel() {
-		return teacherModel;
-	}
-
-	public void setTeacherModel(TeacherModel teacherModel) {
-		this.teacherModel = teacherModel;
-	}
-
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
 	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
-	}
-
-	public Long getUpdateTeacher() {
-		return updateTeacher;
-	}
-
-	public void setUpdateTeacher(Long updateTeacher) {
-		this.updateTeacher = updateTeacher;
 	}
 
 	public LocalDateTime getUpdateTime() {
@@ -179,13 +162,6 @@ public class MarkModel {
 		this.updateTime = updateTime;
 	}
 
-	public Boolean getFailedForMark() {
-		return failedForMark;
-	}
-
-	public void setFailedForMark(Boolean failedForMark) {
-		this.failedForMark = failedForMark;
-	}
 
 	public StudentModel getStudentModel() {
 		return studentModel;
@@ -193,6 +169,22 @@ public class MarkModel {
 
 	public void setStudentModel(StudentModel studentModel) {
 		this.studentModel = studentModel;
+	}
+
+	public TeacherModel getCreateTeacher() {
+		return createTeacher;
+	}
+
+	public void setCreateTeacher(TeacherModel createTeacher) {
+		this.createTeacher = createTeacher;
+	}
+
+	public TeacherModel getUpdateTeacher() {
+		return updateTeacher;
+	}
+
+	public void setUpdateTeacher(TeacherModel updateTeacher) {
+		this.updateTeacher = updateTeacher;
 	}
 
 

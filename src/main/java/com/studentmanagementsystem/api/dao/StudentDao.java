@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 
-public interface StudentModelDao {
+public interface StudentDao {
 
 
-	List<StudentDto> getStudentsList(StudentDto studentDto);
+	List<StudentDto> listStudentDetails(StudentDto studentDto);
 
 }

@@ -10,7 +10,7 @@ public class DailyAttendanceListResponse {
 	
 	 private String status;
 		
-	private List<DailyAttendanceDto> data;
+	private Object data;
 
 	public String getStatus() {
 		return status;
@@ -20,13 +20,15 @@ public class DailyAttendanceListResponse {
 		this.status = status;
 	}
 
-	public List<DailyAttendanceDto> getData() {
+	public Object getData() {
 		return data;
 	}
 
-	public void setData(List<DailyAttendanceDto> data) {
+	public void setData(Object data) {
 		this.data = data;
 	}
+
+
 	
 	
 	

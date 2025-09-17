@@ -16,7 +16,7 @@ public interface StudentMarksRepository extends JpaRepository<MarkModel, Long> {
 	@Query("SELECT sm FROM MarkModel sm WHERE sm.studentModel.studentId = :studentId AND sm.quarterAndYear = :quarterAndYear")
 	MarkModel findByStudentIdAndQuarterAndYear(@Param("studentId") Long studentId,
 			@Param("quarterAndYear") String quarterAndYear);
-	@Query("SELECT sm FROM MarkModel sm WHERE  sm.quarterAndYear = :quarterAndYear")
-	List<StudentMarksDto> findMarkByQuarterAndYear(@Param("quarterAndYear") String quarterAndYear);
+	@Query("SELECT sm FROM MarkModel sm WHERE  sm.quarterAndYear = :quarterAndYear AND sm.studentModel.classOfStudy = :classOfStudy")
+	List<StudentMarksDto> findMarkByQuarterAndYear(@Param("quarterAndYear") String quarterAndYear,@Param("classOfStudy") Integer classOfStudy);
 
 }
