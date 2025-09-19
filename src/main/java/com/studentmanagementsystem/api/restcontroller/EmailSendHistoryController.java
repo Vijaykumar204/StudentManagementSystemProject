@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +15,8 @@ import com.studentmanagementsystem.api.serviceimpl.EmailSentServiceImpl;
 import jakarta.mail.MessagingException;
 
 @RestController
+
+@RequestMapping(value = "mail")
 public class EmailSendHistoryController {
 	
 	@Autowired
@@ -27,7 +31,7 @@ public class EmailSendHistoryController {
 	 * @author Vijiyakumar
 	 * @throws MessagingException 
 	 */
-	@GetMapping("/quarterresult")
+	@PostMapping("/quarter-report")
 	ResponseEntity<?> sendQuarterlyResultReport(@RequestParam String quarterAndYear,@RequestParam Integer classOfStudy,@RequestParam Long teacherId) throws MessagingException  {
 		return new ResponseEntity<>(emailSentService.sendQuarterlyAttendanceReport(quarterAndYear,classOfStudy,teacherId),HttpStatus.OK);
 	}
@@ -41,7 +45,7 @@ public class EmailSendHistoryController {
 	 * @author Vijiyakumar
 	 * @throws MessagingException 
 	 */
-	@GetMapping("/markresult")
+	@PostMapping("/mark-result")
 	ResponseEntity<?> sendMarkReport(@RequestParam String quarterAndYear,@RequestParam Integer classOfStudy,@RequestParam Long teacherId) throws MessagingException {
 		return new ResponseEntity<>(emailSentService.sendQuarterlyMarkResult(quarterAndYear,classOfStudy,teacherId),HttpStatus.OK);
 	}

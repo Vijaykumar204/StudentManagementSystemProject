@@ -23,4 +23,8 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 	List<DailyAttendanceModel> findAbsentStudentIds(@Param("attendanceDate") LocalDate attendanceDate,
 			@Param("statusCode") String statusCode);
 
+	@Query("SELECT d FROM DailyAttendanceModel d WHERE d.attendanceDate = :attendanceDate AND d.studentModel.studentId = :studentId")
+	DailyAttendanceModel findAbsentStatus(@Param("attendanceDate") LocalDate attendanceDate,
+			@Param("studentId") Long studentId);
+
 }

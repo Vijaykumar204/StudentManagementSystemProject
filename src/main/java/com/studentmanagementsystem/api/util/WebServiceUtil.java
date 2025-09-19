@@ -222,7 +222,7 @@ public final class WebServiceUtil {
 	public static final String SICK_LEAVE_ALERT_SUBJECT ="Sick Leave Approval for %s";
 	public static final String SICK_LEAVE_ALERT_BODY =  """
 			<p>Dear Sir/Madam,</p>
-            <p> This is to inform you that the sick leave request submitted for your ward, %s (Class %d), 
+            <p> This is to inform you that the sick leave request submitted for your ward %s 
             on %s has been approved.</p>
             <p>  Please ensure your child takes proper rest and resumes school once fully recovered. 
              If additional leave is required, kindly notify us in advance.</p>
@@ -269,12 +269,15 @@ public final class WebServiceUtil {
 	public static final String SAVE ="%s saved successfully";
 	public static final String UPDATE = "%s updated successfully";
 	public static final String MARK_ATTENDANCE = "Attendance marked successfully";
+	public static final String UPDATE_ATTENDANCE="Attendance update successfully";
 	public static final String FAILURE = "Failure";
 	public static final String DECLARE_MARK="Successfully declared mark";
 	public static final String STUDENT_ATTENDANCE_STATUS =" student attendance is non compliance,so does not declare the mark";
 	public static final String TEACHER_ID_ERROR = "Invalid Teacher ID. Please enter a valid one";
 	
 	public static final String INVALID_CODE = "%s invalid";
+	
+	public static final String MAIL_SEND = "Successfully sent mail";
 
 	
 	

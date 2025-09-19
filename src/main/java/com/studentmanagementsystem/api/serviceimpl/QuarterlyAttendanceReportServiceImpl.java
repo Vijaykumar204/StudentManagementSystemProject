@@ -38,6 +38,34 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	@Autowired
 	private StudentCodeRespository studentCodeRespository;
 
+	/**
+	 *Updates the quarterly attendance report.
+	 * This method is executed automatically by a Cron job 
+	 * every day at 5:00 PM.
+	 *
+	 * Author: Vijayakumar
+	 */
+	@Override
+	public void findQuarterToUpadte(List<Integer> quarterMonth) {
+		int march =0,june=0,sep=0,dec=0;
+		for(Integer monthNumber : quarterMonth)
+		{	
+		if (monthNumber == 1 || monthNumber == 2 || monthNumber == 3  && march==0) {
+			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_MARCH_AND_YEAR, WebServiceUtil.MARCH_END);
+			march =1;
+		} else if (monthNumber == 4 || monthNumber == 5 || monthNumber == 6 && june == 0) {
+			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_JUNE_AND_YEAR, WebServiceUtil.JUNE_END);		
+			june =1;
+		} else if (monthNumber == 7 || monthNumber == 8 || monthNumber == 9 && sep == 0) {
+			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_SEP_AND_YEAR, WebServiceUtil.SEP_END);
+			sep=1;
+		} else if (monthNumber == 10 || monthNumber == 11 || monthNumber == 12 && dec == 0) {
+			updateQuarterlyAttendanceReport(WebServiceUtil.QUART_DEC_AND_YEAR, WebServiceUtil.DEC_END);
+			dec=1;
+		}
+		}
+	}
+
 
 	/**
 	 * Scheduled task that updates the quarterly attendance report.
@@ -85,7 +113,7 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 //	@Override
 	public void updateQuarterlyAttendanceReport(String quarterAndYear, List<Integer> quarterMonthEnd) {
 		
-		
+		logger.info("Before updateQuarterlyAttendanceReport - Update the quarterly Attendance , quarter : {} ",quarterAndYear);
 
 		List<QuarterlyAttendanceReportDto> quarterlyAttendanceList = quartlyAttendanceReportDao
 				.getAttendanceSummary(quarterMonthEnd);
@@ -131,7 +159,7 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 				quarterlyAttendanceReportModel.setComments(WebServiceUtil.COMPLIANCE_COMMENT);
 			}
 			quarterlyAttendanceModelRepository.save(quarterlyAttendanceReportModel);
-			
+			logger.info("After updateQuarterlyAttendanceReport - SuccessFully updated");
 		}
 	}
 	

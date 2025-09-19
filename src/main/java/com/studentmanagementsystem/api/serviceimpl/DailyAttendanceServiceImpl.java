@@ -23,8 +23,12 @@ import com.studentmanagementsystem.api.repository.StudentCodeRespository;
 import com.studentmanagementsystem.api.repository.StudentModelRepository;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
+import com.studentmanagementsystem.api.service.EmailSentService;
+import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
+
+import jakarta.mail.MessagingException;
 
 @Service
 public class DailyAttendanceServiceImpl implements DailyAttendanceService {
@@ -52,56 +56,74 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	
 	@Autowired
 	private SchoolHolidaysRepository schoolHolidaysRepository;
+	
+	@Autowired
+	private EmailSentService emailSentService;
 
+	@Autowired
+	private  QuarterlyAttendanceReportService quarterlyAttendanceService;
 
 	/**
 	 * Mark attendance for students.
 	 */
 
 	@Override
-	public Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate) {
+	public Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto) {
 
 		Response response = new Response();
-		
-		List<DailyAttendanceModel> dailyAttendanceModelList = new ArrayList<>();
 		LocalDateTime today = LocalDateTime.now();
+		
+		LocalDate date = LocalDate.now();
+		
+		//List to save attendance
+		List<DailyAttendanceModel> dailyAttendanceModelList = new ArrayList<>();
+		
+		//List to collect absent student IDs
+		List<Long> absentIdList = new ArrayList<>();
+		
+		//List to collect month to update the quarterly attendance
+		List<Integer> quarterMonthList = new ArrayList<>();
+		Long teacherId = null;
+		Integer updateMessage =0;
+		
 		for (DailyAttendanceDto attendance : dailyAttendanceDto) {
+			
 			logger.info("Before markStudentAttendance - Attempting to mark attendance StudentId : {}  for TeacherId: {}",attendance.getStudentId(), attendance.getTeacherId());
+			
+			//Validation
 			List<String> requestMissedFieldList = fieldValidation.checkValidationSetAttendanceToSingleStudent(attendance);
-
 			if (!requestMissedFieldList.isEmpty()) {
 				response.setStatus(WebServiceUtil.WARNING);	
 				response.setData(requestMissedFieldList);		
 				return response;
 			}
 			
-			SchoolHolidaysModel schoolHolidayModel = schoolHolidaysRepository.getHolidayByHolidayDate(attendance.getAttendanceDate());
-			
-			if(schoolHolidayModel != null && Boolean.FALSE.equals(schoolHolidayModel.getIsHolidayCancelled())) {
-				 response.setStatus(WebServiceUtil.WARNING);	
-				 response.setData(attendance.getAttendanceDate() + WebServiceUtil.DO_NOT_MARK_ATTENDANCE);
-			}
-			
+			// check if studentId and attendanceDate already exist or not
 			DailyAttendanceModel dailyAttendanceModel;
 			dailyAttendanceModel = dailyAttendanceRepository.findStudentIdAndAttendanceDate(attendance.getStudentId(),attendance.getAttendanceDate());
+			//save the daily attendance
 			if(dailyAttendanceModel == null) {
+				
+				//check if attendanceDate is holiday or not
+				SchoolHolidaysModel schoolHolidayModel = schoolHolidaysRepository.getHolidayByHolidayDate(attendance.getAttendanceDate());
+				if(schoolHolidayModel != null && Boolean.FALSE.equals(schoolHolidayModel.getIsHolidayCancelled())) {
+					 response.setStatus(WebServiceUtil.WARNING);	
+					 response.setData(attendance.getAttendanceDate() + WebServiceUtil.DO_NOT_MARK_ATTENDANCE);
+				}
+				
 				dailyAttendanceModel = new DailyAttendanceModel();
-		          StudentModel student = studentModelRepository.findStudentByStudentId(attendance.getStudentId());
-		          dailyAttendanceModel.setStudentModel(student);
+		        StudentModel student = studentModelRepository.findStudentByStudentId(attendance.getStudentId());
+		        dailyAttendanceModel.setStudentModel(student);
 				TeacherModel teacher = teacherRepository.findTeacherByTeacherId(attendance.getTeacherId());
 				if(teacher==null) {
 					response.setStatus(WebServiceUtil.WARNING);	
 					response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 					return response;
 				}
-				
 				dailyAttendanceModel.setCreateTeacher(teacher);
 				dailyAttendanceModel.setCreateDate(today);
-				if (attendanceDate != null) {
-					dailyAttendanceModel.setAttendanceDate(attendanceDate);
-				} else {
-					dailyAttendanceModel.setAttendanceDate(attendance.getAttendanceDate());
-				}
+				dailyAttendanceModel.setAttendanceDate(attendance.getAttendanceDate());
+				
 			}
 			else {
 				
@@ -113,15 +135,15 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 				}
 				dailyAttendanceModel.setUpdateTeacher(teacher);
 				dailyAttendanceModel.setUpdateTime(today);
+				updateMessage =1;
 			}
+			
 			StudentCodeModel attendanceStatus = studentCodeRespository.findStudentCodeByCode(attendance.getAttendanceStatus());
-
-			if(attendanceStatus == null) {
-				response.setStatus(WebServiceUtil.WARNING);	
-				response.setData(String.format(WebServiceUtil.INVAILD, "attendanceStatus"));
-			}
 			dailyAttendanceModel.setAttendanceStatus(attendanceStatus);
-
+			if(attendance.getAttendanceStatus().equals(WebServiceUtil.ABSENT) && date.equals(attendance.getAttendanceDate())) {
+				absentIdList.add(attendance.getStudentId());
+			}
+			
 			if (WebServiceUtil.ABSENT.equals(attendance.getAttendanceStatus())) {
 				dailyAttendanceModel.setLongApprovedSickLeaveFlag(attendance.getLongApprovedSickLeaveFlag());
 				dailyAttendanceModel
@@ -130,19 +152,36 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 				dailyAttendanceModel.setLongApprovedSickLeaveFlag(WebServiceUtil.NO);
 				dailyAttendanceModel.setApprovedExtraCurricularActivitiesFlag(WebServiceUtil.NO);
 			}
-
+		     teacherId = attendance.getTeacherId();
+		     int monthValue = attendance.getAttendanceDate().getMonthValue();
+		     if(!quarterMonthList.contains(monthValue)) {
+		    	 quarterMonthList.add(monthValue);
+		     }
 			dailyAttendanceModelList.add(dailyAttendanceModel);
-			
 		}
-			
-
+		// save the student attendance	
 		dailyAttendanceRepository.saveAll(dailyAttendanceModelList);
+		dailyAttendanceRepository.flush();
 		
-		 response.setStatus(WebServiceUtil.SUCCESS);	
-		 response.setData(WebServiceUtil.MARK_ATTENDANCE);
+		// update the quarterly attendance report
+		quarterlyAttendanceService.findQuarterToUpadte(quarterMonthList);
+		
+		 //send mail to absent students 
+		 if(!absentIdList.isEmpty()) {
+		 try {
+			emailSentService.absentAlertEmail(absentIdList,teacherId);
+		} catch (MessagingException e) {
+			
+			e.printStackTrace();
+		}}
 		 
-			logger.info("After markStudentAttendance - Attendace Maeked successfully");
-
+		 logger.info("After markStudentAttendance - Attendace Marked successfully");
+		 
+		 response.setStatus(WebServiceUtil.SUCCESS);
+		 if(updateMessage==0)
+			 	response.setData(WebServiceUtil.MARK_ATTENDANCE);
+		 else
+			response.setData(WebServiceUtil.UPDATE_ATTENDANCE);
 		return response ;
 	}
 

@@ -57,7 +57,7 @@ public class MarkDaoImpl implements MarkDao {
 				studentMarksRoot.get("science"), 
 				studentMarksRoot.get("socialScience"),
 				studentMarksRoot.get("totalMarks"),
-				studentMarksRoot.get("result").get("description")
+				studentMarksRoot.get("result").get("code")
 
 		)).where(quarterCondition);
 		 
@@ -66,17 +66,17 @@ public class MarkDaoImpl implements MarkDao {
 		
 
 			
-        if (markFilterDto.getStudentId() != null) {
+        if (markFilterDto.getStudentId() != null && !"TOPPER".equals(markFilterDto.getFilter())) {
 		    predicates.add(cb.equal(
 		       studentMarksRoot.get("studentModel").get("studentId"),
 		        markFilterDto.getStudentId()
 		    ));
 		}
-		else if(markFilterDto.getEmail()!=null && !markFilterDto.getEmail().isBlank()) {
+		else if(markFilterDto.getEmail()!=null && !markFilterDto.getEmail().isBlank() && !"TOPPER".equals(markFilterDto.getFilter())) {
 			String emailLike = "%"+ markFilterDto.getEmail().toLowerCase() + "%";
 			predicates.add(cb.like(cb.lower( studentMarksRoot.get("studentModel").get("email")),emailLike));
 		}
-		else if(markFilterDto.getPhoneNumber()!=null && !markFilterDto.getPhoneNumber().isBlank()) {
+		else if(markFilterDto.getPhoneNumber()!=null && !markFilterDto.getPhoneNumber().isBlank() && !"TOPPER".equals(markFilterDto.getFilter())) {
 			String phoneNumberLike = "%"+ markFilterDto.getPhoneNumber() + "%";
 			predicates.add(cb.like(cb.lower( studentMarksRoot.get("studentModel").get("phoneNumber")),phoneNumberLike));
 		}

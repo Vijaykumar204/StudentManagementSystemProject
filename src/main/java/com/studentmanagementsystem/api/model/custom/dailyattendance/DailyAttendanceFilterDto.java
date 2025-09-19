@@ -7,6 +7,12 @@ public class DailyAttendanceFilterDto {
 	private Integer size =0;
 	
 	private Integer length =10;
+	
+	private Long studentId;
+	
+	private String email;
+	
+	private String phoneNumber;
 
 	private Boolean attendanceMark;
 	
@@ -102,5 +108,31 @@ public class DailyAttendanceFilterDto {
 	public void setMonthlyAbsence(String monthlyAbsence) {
 		this.monthlyAbsence = monthlyAbsence;
 	}
+
+	public Long getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(Long studentId) {
+		this.studentId = studentId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	
+	
 	
 }

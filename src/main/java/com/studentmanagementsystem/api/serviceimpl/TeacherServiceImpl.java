@@ -106,7 +106,7 @@ public class TeacherServiceImpl implements TeacherService {
 		    teacherRepository.save(teacher);
 		    
 		    response.setStatus(WebServiceUtil.SUCCESS);
-		    response.setData(WebServiceUtil.SAVE);
+		    response.setData(String.format(WebServiceUtil.SAVE, "Teacher"));
 		    
 		    return response;
 	}

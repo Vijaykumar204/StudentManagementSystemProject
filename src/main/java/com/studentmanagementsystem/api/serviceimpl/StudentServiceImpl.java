@@ -89,7 +89,10 @@ public class StudentServiceImpl implements StudentService {
 			
 			studentModel = new StudentModel();
 			studentModel.setCreateDate(today);
-			studentModel.setCreateTeacher(teacher);		
+			studentModel.setCreateTeacher(teacher);	
+			//Load status code
+			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentDto.getStatus());
+			studentModel.setStatus(isStatus);
 			}
 		
 		// Update the exists student
@@ -127,9 +130,7 @@ public class StudentServiceImpl implements StudentService {
 		studentModel.setHomePostalCode(studentDto.getHomePostalCode());
 		studentModel.setEmail(studentDto.getEmail());
 		studentModel.setParentsEmail(studentDto.getParentsEmail());
-		//Load status code
-		StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentDto.getStatus());
-		studentModel.setStatus(isStatus);
+		
 		
 	     studentModelRepository.save(studentModel);
 
@@ -202,8 +203,8 @@ public class StudentServiceImpl implements StudentService {
 			response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 			return response;
 		}
-
-		//Active student
+		// Deactivate student
+		
 		if (studentActiveStatus.equals(WebServiceUtil.DEACTIVE)
 				&& !studentActiveStatus.equals(student.getStatus().getCode())) {
 			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentActiveStatus);
@@ -215,7 +216,7 @@ public class StudentServiceImpl implements StudentService {
 			student.setUpdateDate(today);
 			updateMessage =1;
 
-		// Deactivate student
+			//Active student
 		} else if (studentActiveStatus.equals(WebServiceUtil.ACTIVE)
 				&& !studentActiveStatus.equals(student.getStatus().getCode())) {
 
@@ -234,7 +235,7 @@ public class StudentServiceImpl implements StudentService {
 		studentModelRepository.save(student);
 
 		response.setStatus(WebServiceUtil.SUCCESS);
-		if(updateMessage == 1)
+		if(updateMessage == 0)
 		       response.setData(WebServiceUtil.ACTIVETED_MESSAGE);
 		else
 			 response.setData(WebServiceUtil.DEACTIVETED_MESSAGE);

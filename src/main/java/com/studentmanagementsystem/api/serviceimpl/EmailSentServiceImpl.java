@@ -16,6 +16,7 @@ import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAtt
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.EmailSentHistory;
+import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.DailyAttendanceRepository;
@@ -67,7 +68,8 @@ public class EmailSentServiceImpl implements EmailSentService {
 	public Response sendQuarterlyAttendanceReport(String quarterAndResult,Integer classOfStudy,Long teacherId) throws MessagingException {
 		
 		logger.info("Before sendQuarterlyAttendanceReport - Attempting sent the quarterly attendance report for TeacherId: {}", teacherId);
-
+		
+		Response response = new Response();
 		
 //		List<StudentMarksDto> studentMarklist = studentMarksDao.getAllStudentMarks(quarterAndResult);
 
@@ -133,7 +135,11 @@ public class EmailSentServiceImpl implements EmailSentService {
 	
 		}
 		 logger.info("Before sendQuarterlyAttendanceReport - Successfully sended");
-		return null;
+		 
+		 response.setStatus(WebServiceUtil.SUCCESS);
+		 response.setData(WebServiceUtil.MAIL_SEND);
+		 
+		return response;
 	}
 	
 	 /*
@@ -142,11 +148,10 @@ public class EmailSentServiceImpl implements EmailSentService {
 	public Response sendQuarterlyMarkResult(String quarterAndResult,Integer classOfStudy,Long teacherId) throws MessagingException {
 		
 		logger.info("Before sendQuarterlyMarkResult - Attempting sent the quarterly mark report for TeacherId: {}", teacherId);
-	//List<StudentMarksDto> studentMarklist = studentMarksDao.getAllStudentMarks(quarterAndResult);
-	List<StudentMarksDto> studentMarklist = studentMarksRepository.findMarkByQuarterAndYear(quarterAndResult,classOfStudy);
-	 for(StudentMarksDto mark : studentMarklist) {
-			
-			StudentModel student = studentModelRepository.findStudentByStudentId(mark.getStudentId());
+		Response response =new  Response();
+		List<MarkModel> studentMarklist = studentMarksRepository.findMarkByQuarterAndYear(quarterAndResult,classOfStudy);
+		for(MarkModel mark : studentMarklist) {
+			StudentModel student = studentModelRepository.findStudentByStudentId(mark.getStudentModel().getStudentId());
 			String name;
 			if(student.getMiddleName()!=null) {
 	        name =student.getFirstName()+" "+student.getMiddleName()+" "+student.getLastName();
@@ -179,7 +184,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 		  	                mark.getScience(),
 		  	                mark.getSocialScience(),
 		  	                mark.getTotalMarks(),
-		  	                mark.getResult(),
+		  	                mark.getResult().getCode(),
 		  	                name
 		  	        );
 		         helper.setText(body, true);
@@ -203,7 +208,10 @@ public class EmailSentServiceImpl implements EmailSentService {
 			        emailSentHistoryRepository.save(email);	
 	}
 	 logger.info("Before sendQuarterlyMarkResult - Successfully sended");
-	return null;
+	 
+	 response.setStatus(WebServiceUtil.SUCCESS);
+	 response.setData(WebServiceUtil.MAIL_SEND);
+	return response;
 
 	}
 	
@@ -270,6 +278,65 @@ public class EmailSentServiceImpl implements EmailSentService {
 		logger.info("After runAbsentAlertMessage - Successfully sended");
 		return response ;
 		
+	}
+    
+    /**
+	 * Send Absent Alert message.
+	 * This method is executed automatically by a Cron job 
+	 * every day at 12:00 AM.
+	 *
+	 * Author: Vijayakumar
+	 */	
+	@Override
+	public void absentAlertEmail(List<Long> absentIdList,Long teacherId) throws MessagingException {
+		logger.info("Before absentAlertEmail - Attempting sent absence alert mail");
+		LocalDate attendanceDate = LocalDate.now();
+		for(Long studentId : absentIdList) {
+			DailyAttendanceModel absent =	dailyAttendanceRepository.findAbsentStatus(attendanceDate,studentId);
+
+			StudentModel student = studentModelRepository.findStudentByStudentId(studentId);
+	        String name = student.getMiddleName() != null
+	                ? student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName()
+	                : student.getFirstName() + " " + student.getLastName();
+			
+	        MimeMessage message = mailSender.createMimeMessage();
+	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+	        String subject = "";
+	        String body = "";
+
+	        if (WebServiceUtil.NO.equals(absent.getLongApprovedSickLeaveFlag()) && 
+	            WebServiceUtil.NO.equals(absent.getApprovedExtraCurricularActivitiesFlag())) {
+
+	            subject = String.format(WebServiceUtil.ABSENT_ALERT_SUBJECT, name, attendanceDate);
+	            body = String.format(WebServiceUtil.ABSENT_ALERT_BODY, name, attendanceDate, student.getFirstName());
+
+	        } else if (WebServiceUtil.YES.equals(absent.getLongApprovedSickLeaveFlag())) {
+	            subject = String.format(WebServiceUtil.SICK_LEAVE_ALERT_SUBJECT, name);
+	            body = String.format(WebServiceUtil.SICK_LEAVE_ALERT_BODY, name, attendanceDate);
+
+	        } else if (WebServiceUtil.YES.equals(absent.getApprovedExtraCurricularActivitiesFlag())) {
+	            subject = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_SUBJECT, name);
+	            body = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_BODY,name,attendanceDate,name,attendanceDate);
+	        }
+			    helper.setTo(student.getParentsEmail());
+		        helper.setSubject(subject);
+		        helper.setText(body, true);
+		        mailSender.send(message);
+		        
+		        LocalDateTime today = LocalDateTime.now();	
+		        TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+		  	        EmailSentHistory email = new EmailSentHistory();
+		  	        
+		  	        email.setStudentId(student);
+		  	        email.setStudentEmail(student.getParentsEmail()  );
+		  	        email.setEmailSubject(subject);
+		  	        email.setEmailMessage(body);
+		  	        email.setMailSentDate(today);
+		  	        email.setTeacherId(teacher);
+		  	        emailSentHistoryRepository.save(email);
+		}
+		
+		logger.info("After absentAlertEmail - Successfully sended");
 	}
 	
 

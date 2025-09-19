@@ -14,6 +14,6 @@ public interface DailyAttendanceService {
 
 	Response getMonthlyAbsenceReport(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
-	Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto, LocalDate attendanceDate);
+	Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto);
 
 }

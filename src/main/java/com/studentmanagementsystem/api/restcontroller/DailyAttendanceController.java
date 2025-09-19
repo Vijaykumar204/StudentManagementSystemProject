@@ -1,25 +1,16 @@
 package com.studentmanagementsystem.api.restcontroller;
 
-import java.io.ByteArrayInputStream;
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.itextpdf.io.exceptions.IOException;
-import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
 
 
@@ -29,25 +20,7 @@ public class DailyAttendanceController {
 
 	@Autowired
 	private DailyAttendanceService dailyAttendanceService;
-	
 
-	
-	@Autowired
-	private DailyAttendanceDao dailyAttendanceDao;
-
-//	/**
-//	 * Mark attendance for a single student.
-//	 *
-//	 * @param dailyAttendanceDto The attendance details of the student (from request body)
-//	 * @return Confirmation message indicating successful attendance marking
-//	 * @author Vijiyakumar
-//	 */
-//	@PostMapping("/single")
-//	
-//	ResponseEntity<?> setAttendanceToSingleStudent(@RequestBody DailyAttendanceDto dailyAttendanceDto ){
-//		return new ResponseEntity<>(dailyAttendanceService.setAttendanceToSingleStudent(dailyAttendanceDto),HttpStatus.OK);
-//		
-//	}
 
 	/**
 	 * Mark attendance for students.
@@ -57,11 +30,10 @@ public class DailyAttendanceController {
 	 * @return Confirmation message indicating successful attendance marking
 	 * @author Vijiyakumar
 	 */
-	@PostMapping
-	ResponseEntity<?> markStudentAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,
-			@RequestParam(required = false) LocalDate attendanceDate) {
+	@PostMapping("/save")
+	ResponseEntity<?> markStudentAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.markStudentAttendance(dailyAttendanceDto, attendanceDate), HttpStatus.OK);
+				dailyAttendanceService.markStudentAttendance(dailyAttendanceDto), HttpStatus.OK);
 	}
 
 	/**
@@ -86,7 +58,7 @@ public class DailyAttendanceController {
 	 *         given date
 	 * @author Vijiyakumar
 	 */
-	@GetMapping("/filter")
+	@GetMapping("/list")
 	ResponseEntity<?> listStudentAttendance(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		return new ResponseEntity<>(
 				dailyAttendanceService.listStudentAttendance(dailyAttendanceFilterDto),
@@ -111,7 +83,7 @@ public class DailyAttendanceController {
 	 * @return                List of student absence records
 	 * @author Vijiyakumar
 	 */
-	@GetMapping("/monthreport")
+	@GetMapping("/month-report")
 	ResponseEntity<?> getMonthlyAbsenceReport(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		return new ResponseEntity<>(
 				dailyAttendanceService.getMonthlyAbsenceReport(dailyAttendanceFilterDto),

@@ -139,7 +139,7 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 				quarterlyAttendanceReportRoot.get("totalDaysOfAbsents"),				
 				quarterlyAttendanceReportRoot.get("totalApprovedActivitiesPermissionDays"),
 				quarterlyAttendanceReportRoot.get("totalApprovedSickdays"),
-				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("description")
+				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("code")
 				
 				));
 		

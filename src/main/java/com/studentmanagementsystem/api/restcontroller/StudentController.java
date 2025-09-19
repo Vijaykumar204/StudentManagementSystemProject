@@ -45,7 +45,7 @@ public class StudentController {
 	 * @return List of students that match the given filter criteria
 	 * @author Vijiyakumar
 	 */
-	@GetMapping
+	@GetMapping("/list")
 	public ResponseEntity<?> listStudentDetails(@RequestBody StudentDto studentDto){
 		return new ResponseEntity<>( studentService.listStudentDetails(studentDto),HttpStatus.OK);
 	}
@@ -59,9 +59,9 @@ public class StudentController {
 	 * @return Updated student details with active/deactive status
 	 * @author Vijiyakumar
 	 */	
-	@PostMapping("/statuschange")
-	public ResponseEntity<?> activeOrDeactiveByStudentId(@RequestParam String studentActiveStatus,@RequestParam Long studentId,@RequestParam Long TeacherId){
-		return new ResponseEntity<>(studentService.activeOrDeactiveByStudentId(studentActiveStatus,studentId,TeacherId),HttpStatus.OK);
+	@PostMapping("/status-change")
+	public ResponseEntity<?> activeOrDeactiveByStudentId(@RequestParam String status,@RequestParam Long studentId,@RequestParam Long TeacherId){
+		return new ResponseEntity<>(studentService.activeOrDeactiveByStudentId(status,studentId,TeacherId),HttpStatus.OK);
 	}
 	
 }

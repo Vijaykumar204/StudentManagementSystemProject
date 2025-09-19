@@ -49,16 +49,16 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		CriteriaQuery<DailyAttendanceDto> cq=cb.createQuery(DailyAttendanceDto.class);
 		Root<DailyAttendanceModel> dailyAttendanceRoot = cq.from(DailyAttendanceModel.class);
 		
-		Join<DailyAttendanceDto,StudentModel> studentAndDailyAttendanceJoin = dailyAttendanceRoot.join("studentModel");	
+	//	Join<DailyAttendanceDto,StudentModel> studentAndDailyAttendanceJoin = dailyAttendanceRoot.join("studentModel");	
 		
 		 cq.select(cb.construct(DailyAttendanceDto.class,
 				 
 				 dailyAttendanceRoot.get("attendanceDate"),
-				 dailyAttendanceRoot.get("attendanceStatus").get("description"),
-				 studentAndDailyAttendanceJoin.get("studentId"),
-				 studentAndDailyAttendanceJoin.get("firstName"),
-				 studentAndDailyAttendanceJoin.get("middleName"),
-				 studentAndDailyAttendanceJoin.get("lastName")
+				 dailyAttendanceRoot.get("attendanceStatus").get("code"),
+				 dailyAttendanceRoot.get("studentModel").get("studentId"),
+				 dailyAttendanceRoot.get("studentModel").get("firstName"),
+				 dailyAttendanceRoot.get("studentModel").get("middleName"),
+				 dailyAttendanceRoot.get("studentModel").get("lastName")
 	    		
 	    		 ));
 		 
@@ -67,6 +67,23 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		 if(dailyAttendanceFilterDto.getAttendanceStatus()  !=null) {
 				predicates.add( cb.equal(dailyAttendanceRoot.get("attendanceStatus").get("code"),dailyAttendanceFilterDto.getAttendanceStatus()));
 		  }
+		 
+		    if (dailyAttendanceFilterDto.getStudentId() != null) {
+			    predicates.add(cb.equal(
+			    		dailyAttendanceRoot.get("studentModel").get("studentId"), 
+			    		dailyAttendanceFilterDto.getStudentId()
+			    ));
+			}
+			else if (dailyAttendanceFilterDto.getEmail() != null) {
+				String emailLike = "%"+ dailyAttendanceFilterDto.getEmail().toLowerCase() + "%";
+				predicates.add(cb.like(cb.lower(dailyAttendanceRoot.get("studentModel").get("email")), emailLike));
+			}
+
+			else if (dailyAttendanceFilterDto.getPhoneNumber() != null) { 
+				String phoneNumberLike = "%"+ dailyAttendanceFilterDto.getPhoneNumber() + "%";
+				predicates.add(cb.like(dailyAttendanceRoot.get("StudentModel").get("phoneNumber"),phoneNumberLike));
+			}
+		 
 		 predicates.add(cb.equal(dailyAttendanceRoot.get("attendanceDate"),dailyAttendanceFilterDto.getDate() ));
 		 predicates.add(cb.equal(dailyAttendanceRoot.get("studentModel").get("classOfStudy"),dailyAttendanceFilterDto.getClassOfStudy() ));
 
@@ -89,21 +106,25 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	public List<DailyAttendanceDto> getStudentAttendanceNotTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
 		//Student model
-		CriteriaQuery<DailyAttendanceDto> dailyAttendanceQuery=cb.createQuery(DailyAttendanceDto.class);
-		Root<StudentModel> studentRoot = dailyAttendanceQuery.from(StudentModel.class);
+		CriteriaQuery<DailyAttendanceDto> cq=cb.createQuery(DailyAttendanceDto.class);
+		Root<StudentModel> studentRoot = cq.from(StudentModel.class);
 		
-		Subquery<DailyAttendanceModel> dailyAttendanceSubQuery=dailyAttendanceQuery.subquery(DailyAttendanceModel.class);
-		Root<DailyAttendanceModel> dailyAttendanceRoot = dailyAttendanceSubQuery.from(DailyAttendanceModel.class);
+		Subquery<DailyAttendanceModel> sq=cq.subquery(DailyAttendanceModel.class);
+		Root<DailyAttendanceModel> dailyAttendanceRoot = sq.from(DailyAttendanceModel.class);
 		
 		Predicate studentIdCondition = cb.equal(dailyAttendanceRoot.get("studentModel").get("studentId"),studentRoot.get("studentId"));
 		Predicate attendanceDateCondition =  cb.equal(dailyAttendanceRoot.get("attendanceDate"),dailyAttendanceFilterDto.getDate() );
 		
-		dailyAttendanceSubQuery.select(dailyAttendanceRoot).where(cb.and(studentIdCondition,attendanceDateCondition));
+		sq.select(
+										dailyAttendanceRoot
+										).where(cb.and(studentIdCondition,attendanceDateCondition));
 		
-		Predicate existsCondition = cb.not(cb.exists(dailyAttendanceSubQuery));
-		Predicate classOfStudyCondition = cb.equal(studentRoot.get("classOfStudy"), dailyAttendanceFilterDto.getClassOfStudy());
-		Predicate statusCondition = cb.equal(studentRoot.get("status").get("code"), WebServiceUtil.ACTIVE);
-		dailyAttendanceQuery.select(cb.construct(DailyAttendanceDto.class,
+		
+		
+//		Predicate existsCondition = cb.not(cb.exists(sq));
+//		Predicate classOfStudyCondition = cb.equal(studentRoot.get("classOfStudy"), dailyAttendanceFilterDto.getClassOfStudy());
+//		Predicate statusCondition = cb.equal(studentRoot.get("status").get("code"), WebServiceUtil.ACTIVE);
+		cq.select(cb.construct(DailyAttendanceDto.class,
 				
 				studentRoot.get("studentId"),
 				studentRoot.get("firstName"), //Student First Name
@@ -111,9 +132,34 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 				studentRoot.get("lastName")   //Student Last Name
 	     		
 				)
-				).where(existsCondition,classOfStudyCondition,statusCondition);
+				);
+		
+		 List<Predicate> predicates = new ArrayList<Predicate>();
+		
+		   if (dailyAttendanceFilterDto.getStudentId() != null) {
+			    predicates.add(cb.equal(
+			    		studentRoot.get("studentId"), 
+			    		dailyAttendanceFilterDto.getStudentId()
+			    ));
+			}
+			else if (dailyAttendanceFilterDto.getEmail() != null) {
+				String emailLike = "%"+ dailyAttendanceFilterDto.getEmail().toLowerCase() + "%";
+				predicates.add(cb.like(cb.lower(studentRoot.get("email")), emailLike));
+			}
+
+			else if (dailyAttendanceFilterDto.getPhoneNumber() != null) { 
+				String phoneNumberLike = "%"+ dailyAttendanceFilterDto.getPhoneNumber() + "%";
+				predicates.add(cb.like(studentRoot.get("phoneNumber"),phoneNumberLike));
+			}
+		   predicates.add( cb.not(cb.exists(sq)));
+		   predicates.add(cb.equal(studentRoot.get("classOfStudy"), dailyAttendanceFilterDto.getClassOfStudy()));
+		   predicates.add(cb.equal(studentRoot.get("status").get("code"), WebServiceUtil.ACTIVE));
+		   
+		   if(!predicates.isEmpty()) {
+			   cq.where(cb.and(predicates.toArray(new Predicate[0])));
+		   }
 		   		
-			return entityManager.createQuery(dailyAttendanceQuery)
+			return entityManager.createQuery(cq)
 					.setFirstResult(dailyAttendanceFilterDto.getSize())
 					.setMaxResults(dailyAttendanceFilterDto.getLength())
 					.getResultList();
@@ -147,24 +193,24 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	    Join<StudentModel, DailyAttendanceModel> dailyAttendanceJoin = studentRoot.join("dailyAttendanceModel");
 	    
 	    
-	   
 	    List<Predicate> conditions = new ArrayList<>();
 	    conditions.add(cb.equal(cb.function("MONTH", Integer.class, dailyAttendanceJoin.get("attendanceDate")),
 	            dailyAttendanceFilterDto.getMonth()));
 	    conditions.add(cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceJoin.get("attendanceDate")),
 	            dailyAttendanceFilterDto.getYear()));
 	    conditions.add(cb.equal(studentRoot.get("classOfStudy"), dailyAttendanceFilterDto.getClassOfStudy()));
+//	    condition .add(cb.greaterThanOrEqualTo(, null))
 
 	    // Conditional extra filters
 	    String attendanceStatus=null;
 	    if (dailyAttendanceFilterDto.getMonthlyAbsence() != null) {
 	        String type = dailyAttendanceFilterDto.getMonthlyAbsence();
 
-	        if ("sick".equals(type)) {
+	        if ("SICK".equals(type)) {
 	            conditions.add(cb.equal(dailyAttendanceJoin.get(WebServiceUtil.SICK_LEAVE), WebServiceUtil.YES));
 	            attendanceStatus="AND d.longApprovedSickLeaveFlag = 'Y' ";
 	            
-	        } else if ("activity".equals(type)) {
+	        } else if ("ACTIVITY".equals(type)) {
 	            conditions.add(cb.equal(dailyAttendanceJoin.get(WebServiceUtil.EXTRA_CURRICULAR_ACTIVITIES), WebServiceUtil.YES));
 	            attendanceStatus="AND d.approvedExtraCurricularActivitiesFlag = 'Y' ";
 	        }
@@ -173,6 +219,23 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	        conditions.add(cb.equal(dailyAttendanceJoin.get("attendanceStatus").get("code"), WebServiceUtil.ABSENT));
 	        attendanceStatus="AND d.attendanceStatus = 'ABSENT' ";
 	    }
+	    
+	    // Search by filter
+	    if (dailyAttendanceFilterDto.getStudentId() != null) {
+	    	conditions.add(cb.equal(
+		    		studentRoot.get("studentId"), 
+		    		dailyAttendanceFilterDto.getStudentId()
+		    ));
+		}
+		else if (dailyAttendanceFilterDto.getEmail() != null) {
+			String emailLike = "%"+ dailyAttendanceFilterDto.getEmail().toLowerCase() + "%";
+			conditions.add(cb.like(cb.lower(studentRoot.get("email")), emailLike));
+		}
+
+		else if (dailyAttendanceFilterDto.getPhoneNumber() != null) { 
+			String phoneNumberLike = "%"+ dailyAttendanceFilterDto.getPhoneNumber() + "%";
+			conditions.add(cb.like(studentRoot.get("phoneNumber"),phoneNumberLike));
+		}
 
 	    // Select data
 	    cq.multiselect(
@@ -194,7 +257,10 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	    List<MonthlyAbsenceDto> monthlyAbsenceList = new ArrayList<>();
 	    for (Tuple tuple : results) {
 	        Long studentId = tuple.get("studentId", Long.class);
-
+	        
+	        if(tuple.get("absenceCount", Long.class).intValue() >= dailyAttendanceFilterDto.getRange())
+	        {
+	        
 	        List<LocalDate> absentDates = entityManager.createQuery(
 	                "SELECT d.attendanceDate FROM DailyAttendanceModel d " +
 	                        "WHERE d.studentModel.studentId = :studentId " +
@@ -217,7 +283,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	                absentDates
 	        ));
 	    }
-	    
+	    }
 
 	    return monthlyAbsenceList;
 	}

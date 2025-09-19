@@ -11,7 +11,7 @@ import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAtt
 import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 
 @RestController
-@RequestMapping("quarterlyreport")
+@RequestMapping("quarterly")
 public class QuarterlyAttendanceReportController {
 	
 	@Autowired
@@ -27,7 +27,7 @@ public class QuarterlyAttendanceReportController {
 	 * @return List of compilance or  non-compliance student records
 	 * @author Vijiyakumar
 	 */	
-	@GetMapping
+	@GetMapping("/list")
 	ResponseEntity<?> listQuarterlyAttendance(@RequestBody QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto){
 		return new ResponseEntity<>(quarterlyAttendanceReportService.listQuarterlyAttendance(quarterlyAttendanceFilterDto),HttpStatus.OK);
 	}
