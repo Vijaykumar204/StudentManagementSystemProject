@@ -5,6 +5,7 @@ package com.studentmanagementsystem.api.model.custom.quarterlyreport;
 public class QuarterlyAttendanceReportDto {
 
 	
+	private Integer sno;
 
 	private Long quarterlyAttendanceId;
 	
@@ -109,6 +110,15 @@ public class QuarterlyAttendanceReportDto {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+
+	public Integer getSno() {
+		return sno;
+	}
+
+	public void setSno(Integer sno) {
+		this.sno = sno;
 	}
 
 	public QuarterlyAttendanceReportDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents, Long totalApprovedSickdays,

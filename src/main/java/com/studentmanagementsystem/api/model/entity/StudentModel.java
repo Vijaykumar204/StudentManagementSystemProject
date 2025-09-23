@@ -90,10 +90,6 @@ public class StudentModel {
 	@Column(name = "STU_Update_Date_Time")
 	private LocalDateTime updateDate;
 	
-	
-	
-	
-	
 	@OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
 	@JsonIgnore
 	List<DailyAttendanceModel> dailyAttendanceModel;

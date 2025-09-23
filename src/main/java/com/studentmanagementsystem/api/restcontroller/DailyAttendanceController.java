@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,84 +31,43 @@ public class DailyAttendanceController {
 	 * @return Confirmation message indicating successful attendance marking
 	 * @author Vijiyakumar
 	 */
-	@PostMapping("/save")
-	ResponseEntity<?> markStudentAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto) {
+	@PostMapping("/save/{classOfStudy}")
+	ResponseEntity<?> saveAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,@PathVariable Integer classOfStudy) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.markStudentAttendance(dailyAttendanceDto), HttpStatus.OK);
+				dailyAttendanceService.saveAttendance(dailyAttendanceDto,classOfStudy), HttpStatus.OK);
 	}
 
 	/**
-	 * Retrieve student attendance for a particular date to check whether it was
-	 * taken or not.
+	 * Retrieve student attendance for a particular date 
 	 *
-	 *@param dailyAttendanceFilterDto  
-	 *  attendanceMark     The attendanceMark value: 
-	 * 								 true →  attendance marked,
-	 * 								 false → attendance not marked 
-	 *  attendanceStatus   The attendanceStatus value :
-	 * 								 PRESENT -> present students , 
-	 * 								 ABSENT -> absent students , 
-	 * 								 null ->all attendance list
-	 *  attendanceDate     The specific date for which to retrieve attendance
-	 *                     records
-	 *  classOfStudy       The class of study for which attendance needs to be
-	 *                     retrieved
-	 *  (from Request body)                         
+	 *@param dailyAttendanceFilterDto   Filter criteria for retrieving  attendance.
+	 *                        
 	 *  
 	 * @return List of students with attendance status (marked or not marked) on the
 	 *         given date
 	 * @author Vijiyakumar
 	 */
 	@GetMapping("/list")
-	ResponseEntity<?> listStudentAttendance(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+	ResponseEntity<?> attendanceList(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.listStudentAttendance(dailyAttendanceFilterDto),
+				dailyAttendanceService.attendanceList(dailyAttendanceFilterDto),
 				HttpStatus.OK);
 	}
 
 
 	/**
-	 * Retrieve students' attendance records for a given month and year, based on the type of absence:
+	 * Retrieve the monthly attendance list of students based on the given filters.
 	 * 
-	 *   Extra-curricular activity leave → more than 3 days in the given month</li>
-	 *   Sick leave → more than 6 days in the given month</li>
-	 *   Monthly absence → students absent during the given month</li>
-	 *
-	 * @param attendanceFlag  The attendance type: 
-	 *                        null → Monthly absence, 
-	 *                        true → Sick leave, 
-	 *                        false → Extra-curricular activity leave
-	 * @param month           The month for which to check leave records 
-	 * @param year            The year for which to check leave records 
-	 * @param classOfStudy    The class of study for which attendance records need to be retrieved
-	 * @return                List of student absence records
+	 * @param dailyAttendanceFilterDto Filter criteria for retrieving monthly attendance.
+	 * @return A list of students' monthly absence records matching the given filters.
 	 * @author Vijiyakumar
 	 */
-	@GetMapping("/month-report")
-	ResponseEntity<?> getMonthlyAbsenceReport(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+	@GetMapping("/month-list")
+	ResponseEntity<?> monthlyAttendanceList(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.getMonthlyAbsenceReport(dailyAttendanceFilterDto),
+				dailyAttendanceService.monthliAttendanceList(dailyAttendanceFilterDto),
 				HttpStatus.OK);
 	}
 	
-//	  @PostMapping("/download")
-//	    public ResponseEntity<byte[]> downloadMonthlyAbsenceReport(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) throws IOException {
-//
-//	        // Get data from DB
-//	        List<MonthlyAbsenceDto> reports =
-//	                dailyAttendanceDao.getMonthlyAbsenceStudents(dailyAttendanceFilterDto);
-//
-//	        // Generate Excel
-//	        ByteArrayInputStream in = excelGenerator.quarterlyAttendanceToExcel(reports);
-//
-//	        HttpHeaders headers = new HttpHeaders();
-//	        headers.add("Content-Disposition", "attachment; filename=attendance_report.xlsx");
-//
-//	        return ResponseEntity.ok()
-//	                .headers(headers)
-//	                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//	                .body(in.readAllBytes());
-//	    }
-//	
 
 }

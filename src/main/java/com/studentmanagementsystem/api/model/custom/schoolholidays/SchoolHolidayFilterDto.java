@@ -2,7 +2,7 @@ package com.studentmanagementsystem.api.model.custom.schoolholidays;
 
 public class SchoolHolidayFilterDto {
 	
-	private Integer size=0;
+	private Integer start=0;
 	
 	private Integer length =10;
 	
@@ -11,13 +11,23 @@ public class SchoolHolidayFilterDto {
 	private Integer month;
 	
 	private Integer year;
+	
+	private String searchValue;
+	
+	private String sortingBy;
+	
+	private String sortingOrder;
+	
+	
 
-	public Integer getSize() {
-		return size;
+
+
+	public Integer getStart() {
+		return start;
 	}
 
-	public void setSize(Integer size) {
-		this.size = size;
+	public void setStart(Integer start) {
+		this.start = start;
 	}
 
 	public Integer getLength() {
@@ -51,6 +61,32 @@ public class SchoolHolidayFilterDto {
 	public void setYear(Integer year) {
 		this.year = year;
 	}
+
+	public String getSearchValue() {
+		return searchValue;
+	}
+
+	public void setSearchValue(String searchValue) {
+		this.searchValue = searchValue;
+	}
+
+	public String getSortingBy() {
+		return sortingBy;
+	}
+
+	public void setSortingBy(String sortingBy) {
+		this.sortingBy = sortingBy;
+	}
+
+	public String getSortingOrder() {
+		return sortingOrder;
+	}
+
+	public void setSortingOrder(String sortingOrder) {
+		this.sortingOrder = sortingOrder;
+	}
+	
+	
 	
 	
 	

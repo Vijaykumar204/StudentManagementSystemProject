@@ -8,7 +8,7 @@ import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHoliday
 
 public interface SchoolHolidaysService {
 
-	Response listDeclaredHolidays(SchoolHolidayFilterDto schoolHolidayFilterDto);
+	Response declaredHolidaysList(SchoolHolidayFilterDto schoolHolidayFilterDto);
 
 	//Response cancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto);
 

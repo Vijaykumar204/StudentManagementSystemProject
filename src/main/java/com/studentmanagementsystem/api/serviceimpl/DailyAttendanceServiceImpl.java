@@ -1,5 +1,4 @@
 package com.studentmanagementsystem.api.serviceimpl;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
@@ -66,9 +66,18 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	/**
 	 * Mark attendance for students.
 	 */
+	
+	@Override
+	public Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto,Integer classOfStudy) {
+		return saveAttendance(dailyAttendanceDto, classOfStudy);
+	}
+
+	/**
+	 * Mark attendance for students.
+	 */
 
 	@Override
-	public Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto) {
+	public Response saveAttendance(List<DailyAttendanceDto> dailyAttendanceDto,Integer classOfStudy) {
 
 		Response response = new Response();
 		LocalDateTime today = LocalDateTime.now();
@@ -81,77 +90,92 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		//List to collect absent student IDs
 		List<Long> absentIdList = new ArrayList<>();
 		
+		List<Long> studentIdList = new ArrayList<>();
+		
 		//List to collect month to update the quarterly attendance
 		List<Integer> quarterMonthList = new ArrayList<>();
 		Long teacherId = null;
-		Integer updateMessage =0;
+		Integer updateFlag =0;
+		LocalDate attendanceDate=null;
+		DailyAttendanceModel dailyAttendanceModel;
 		
 		for (DailyAttendanceDto attendance : dailyAttendanceDto) {
 			
 			logger.info("Before markStudentAttendance - Attempting to mark attendance StudentId : {}  for TeacherId: {}",attendance.getStudentId(), attendance.getTeacherId());
 			
-			//Validation
-			List<String> requestMissedFieldList = fieldValidation.checkValidationSetAttendanceToSingleStudent(attendance);
-			if (!requestMissedFieldList.isEmpty()) {
+			//Field Validation
+			List<String> requestFieldList = fieldValidation.attendanceFieldValidation(attendance);
+			if (!requestFieldList.isEmpty()) {
 				response.setStatus(WebServiceUtil.WARNING);	
-				response.setData(requestMissedFieldList);		
+				response.setData(requestFieldList);		
+				return response;
+			}
+			 // Verify if the teacher ID exists
+			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(attendance.getTeacherId());
+			if(teacher==null) {
+				response.setStatus(WebServiceUtil.WARNING);	
+				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 				return response;
 			}
 			
-			// check if studentId and attendanceDate already exist or not
-			DailyAttendanceModel dailyAttendanceModel;
+			// Verify if studentId and attendanceDate already exist
+			
 			dailyAttendanceModel = dailyAttendanceRepository.findStudentIdAndAttendanceDate(attendance.getStudentId(),attendance.getAttendanceDate());
+			
 			//save the daily attendance
 			if(dailyAttendanceModel == null) {
 				
-				//check if attendanceDate is holiday or not
+				//Verify if attendanceDate is holiday
 				SchoolHolidaysModel schoolHolidayModel = schoolHolidaysRepository.getHolidayByHolidayDate(attendance.getAttendanceDate());
 				if(schoolHolidayModel != null && Boolean.FALSE.equals(schoolHolidayModel.getIsHolidayCancelled())) {
 					 response.setStatus(WebServiceUtil.WARNING);	
 					 response.setData(attendance.getAttendanceDate() + WebServiceUtil.DO_NOT_MARK_ATTENDANCE);
 				}
-				
+		
 				dailyAttendanceModel = new DailyAttendanceModel();
+				
 		        StudentModel student = studentModelRepository.findStudentByStudentId(attendance.getStudentId());
 		        dailyAttendanceModel.setStudentModel(student);
-				TeacherModel teacher = teacherRepository.findTeacherByTeacherId(attendance.getTeacherId());
-				if(teacher==null) {
-					response.setStatus(WebServiceUtil.WARNING);	
-					response.setData(WebServiceUtil.TEACHER_ID_ERROR);
-					return response;
-				}
 				dailyAttendanceModel.setCreateTeacher(teacher);
 				dailyAttendanceModel.setCreateDate(today);
 				dailyAttendanceModel.setAttendanceDate(attendance.getAttendanceDate());
 				
+				studentIdList.add(attendance.getStudentId());
+				attendanceDate = attendance.getAttendanceDate();
+				
 			}
 			else {
 				
-				TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(attendance.getTeacherId());
-				if(teacher==null) {
-					response.setStatus(WebServiceUtil.WARNING);	
-					response.setData(WebServiceUtil.TEACHER_ID_ERROR);
-					return response;
-				}
 				dailyAttendanceModel.setUpdateTeacher(teacher);
 				dailyAttendanceModel.setUpdateTime(today);
-				updateMessage =1;
+				updateFlag =1;
 			}
 			
 			StudentCodeModel attendanceStatus = studentCodeRespository.findStudentCodeByCode(attendance.getAttendanceStatus());
 			dailyAttendanceModel.setAttendanceStatus(attendanceStatus);
-			if(attendance.getAttendanceStatus().equals(WebServiceUtil.ABSENT) && date.equals(attendance.getAttendanceDate())) {
-				absentIdList.add(attendance.getStudentId());
+			
+	
+			
+			if (WebServiceUtil.PRESENT.equals(attendance.getAttendanceStatus())) {
+				dailyAttendanceModel
+				.setApprovedExtraCurricularActivitiesFlag(attendance.getApprovedExtraCurricularActivitiesFlag());	
+			}
+			else {
+				dailyAttendanceModel.setApprovedExtraCurricularActivitiesFlag(WebServiceUtil.NO);
 			}
 			
 			if (WebServiceUtil.ABSENT.equals(attendance.getAttendanceStatus())) {
 				dailyAttendanceModel.setLongApprovedSickLeaveFlag(attendance.getLongApprovedSickLeaveFlag());
-				dailyAttendanceModel
-						.setApprovedExtraCurricularActivitiesFlag(attendance.getApprovedExtraCurricularActivitiesFlag());
+
 			} else {
 				dailyAttendanceModel.setLongApprovedSickLeaveFlag(WebServiceUtil.NO);
-				dailyAttendanceModel.setApprovedExtraCurricularActivitiesFlag(WebServiceUtil.NO);
+
 			}
+			
+			if(attendance.getAttendanceStatus().equals(WebServiceUtil.ABSENT) || dailyAttendanceModel.getApprovedExtraCurricularActivitiesFlag().equals(WebServiceUtil.YES) && date.equals(attendance.getAttendanceDate())) {
+				absentIdList.add(attendance.getStudentId());
+			}
+			 
 		     teacherId = attendance.getTeacherId();
 		     int monthValue = attendance.getAttendanceDate().getMonthValue();
 		     if(!quarterMonthList.contains(monthValue)) {
@@ -159,6 +183,34 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		     }
 			dailyAttendanceModelList.add(dailyAttendanceModel);
 		}
+		
+		
+		if(!studentIdList.isEmpty()) {
+		  List<Long> existsStudentId = studentModelRepository.findStudentIdByClassOfStudy(classOfStudy);
+		  List<Long> notTakenList = new ArrayList<>(existsStudentId);
+		  notTakenList.removeAll(studentIdList);
+		  
+		  if(!notTakenList.isEmpty()) {
+			  for(Long studentId : notTakenList) {
+				  dailyAttendanceModel = new DailyAttendanceModel();
+				  StudentModel student = studentModelRepository.findStudentByStudentId(studentId);
+				  
+				    dailyAttendanceModel.setStudentModel(student);
+					TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+					dailyAttendanceModel.setCreateTeacher(teacher);
+					dailyAttendanceModel.setCreateDate(today);
+					dailyAttendanceModel.setAttendanceDate(attendanceDate);
+					
+					StudentCodeModel attendanceStatus = studentCodeRespository.findStudentCodeByCode(WebServiceUtil.ABSENT);
+					dailyAttendanceModel.setAttendanceStatus(attendanceStatus);
+					dailyAttendanceModel.setLongApprovedSickLeaveFlag(WebServiceUtil.NO);
+					dailyAttendanceModel.setApprovedExtraCurricularActivitiesFlag(WebServiceUtil.NO);
+					dailyAttendanceModelList.add(dailyAttendanceModel);
+				  
+			  }
+		  }
+		}
+		
 		// save the student attendance	
 		dailyAttendanceRepository.saveAll(dailyAttendanceModelList);
 		dailyAttendanceRepository.flush();
@@ -178,7 +230,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 		 logger.info("After markStudentAttendance - Attendace Marked successfully");
 		 
 		 response.setStatus(WebServiceUtil.SUCCESS);
-		 if(updateMessage==0)
+		 if(updateFlag==0)
 			 	response.setData(WebServiceUtil.MARK_ATTENDANCE);
 		 else
 			response.setData(WebServiceUtil.UPDATE_ATTENDANCE);
@@ -191,34 +243,72 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	 */
 	@Override
 	public Response listStudentAttendance(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+		return attendanceList(dailyAttendanceFilterDto);
+	}
+
+	/**
+	 * Retrieve student attendance for a particular date to check whether given filter.
+	 *
+	 */
+	@Override
+	public Response attendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		logger.info("Before getStudentAttendanceByDate - Attempting to retrive the student attendance");
 
-		Response response = new Response();
+		List<DailyAttendanceDto> attendanceList;
+		
+	   
+	 //   attendanceList = dailyAttendanceDao.listAttendanceNotTaken(dailyAttendanceFilterDto);
+	   
+	 	attendanceList= dailyAttendanceDao.attendanceList(dailyAttendanceFilterDto);
+	 
+	    
+	    Integer totalCount = dailyAttendanceRepository.findTotalCount(dailyAttendanceFilterDto.getClassOfStudy());
+	    
+	    int sno = 1;
+        for (DailyAttendanceDto attendance : attendanceList) {
+        	attendance.setSno(sno++);
+        }
+	    Response response = new Response();
 	    response.setStatus(WebServiceUtil.SUCCESS);
-
-	    if (Boolean.FALSE.equals(dailyAttendanceFilterDto.getAttendanceMark())) {
-	    	response.setData(dailyAttendanceDao.getStudentAttendanceNotTaken(dailyAttendanceFilterDto));
-	    } else {
-	        
-	        response.setData(dailyAttendanceDao.getStudentAttendanceTaken(dailyAttendanceFilterDto));
-	    }
+	    response.setTotalCount(totalCount);
+	    response.setFilterCount(sno-1);
+	    response.setData(attendanceList);
+	    
 		logger.info("After getStudentAttendanceByDate - Successfully retrived student attendance");
+		
 	    return response;
 	}
  
 	/**
-	 * Retrieve students' attendance records for a given month and year, based on the type of absence:
-	 * 
-	 *   Extra-curricular activity leave → more than 3 days in the given month</li>
-	 *   Sick leave → more than 6 days in the given month</li>
-	 *   Monthly absence → students absent during the given month</li>
+	 * Retrieve students'monthly attendance list for a given filter
+	 *
 	 */
 	@Override
 	public Response getMonthlyAbsenceReport(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+		return monthliAttendanceList(dailyAttendanceFilterDto);
+	}
+
+	/**
+	 * Retrieve students'monthly attendance list for a given filter
+	 *
+	 */
+	@Override
+	public Response monthliAttendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto) {
 		logger.info("Before getMonthlyAbsenceReport - Attempting to retrive the monthly absence studenet list");
+		
+		List<MonthlyAbsenceDto> absentList= dailyAttendanceDao.monthlyAttendanceList(dailyAttendanceFilterDto);
+		Integer totalCount = dailyAttendanceRepository.findTotalCount(dailyAttendanceFilterDto.getClassOfStudy());
+		 
+		    int sno = 1;
+	        for (MonthlyAbsenceDto absent : absentList) {
+	        	absent.setSno(sno++);
+	        }
+	        
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setData( dailyAttendanceDao.getMonthlyAbsenceStudents(dailyAttendanceFilterDto));
+		response.setTotalCount(totalCount);
+		response.setFilterCount(sno-1);
+		response.setData( absentList);
 		logger.info("After getMonthlyAbsenceReport - Successfully retrived monthly absence list");
 
 		return response;

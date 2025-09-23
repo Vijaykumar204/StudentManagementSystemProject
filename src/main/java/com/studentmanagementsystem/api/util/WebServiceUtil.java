@@ -20,6 +20,13 @@ public final class WebServiceUtil {
 	public static final String ACTIVE ="ACTIVE";
 	public static final String DEACTIVE ="DEACTIVE";
 	
+	public static final String NAME ="name";
+	public static final String EMAIL ="email";
+	public static final String PHONENUMBER ="phoneNumber";
+	
+	
+	
+
 //******************** Student Message *********************************
 	
 	public static final String STUDENT_NOT_FOUND ="Student ID not found ";
@@ -32,8 +39,7 @@ public final class WebServiceUtil {
 	
 	public static final Boolean CANCEL_HOLIDAY=true;
 	public static final Boolean HOLIDAY=false;
-	public static final String EXTRA_CURRICULAR_ACTIVITIES = "approvedExtraCurricularActivitiesFlag";
-	public static final String SICK_LEAVE = "longApprovedSickLeaveFlag";
+	
 	public static final String SUCCESS_HOLIDAY_DECLARE="Holidays declared successfully";
 	public static final String SUCCESS_HOLIDAY_UPDATE = "Holidays updated successfully";
 	public static final String SUCCESS_CANCEL_HOLIDAY = "Holidays cancelled successfully";
@@ -49,7 +55,20 @@ public final class WebServiceUtil {
 	public static final String NON_COMPLIANCE = "NON_COMPLIANCE";
 	public static final String COMPLIANCE_COMMENT ="Good";
 	public static final String NON_COMPLIANCE_COMMENT ="Bad";
+	public static final String EXTRA_CURRICULAR_ACTIVITIES = "approvedExtraCurricularActivitiesFlag";
+	public static final String SICK_LEAVE = "longApprovedSickLeaveFlag";
 	
+	public static final String 	GREATER_THAN = ">";
+	public static final String 	LESS_THAN ="<";
+	public static final String 	EQUAL_TO ="==";
+	public static final String 	GREATER_THAN_EQUAL_TO = ">=";
+	public static final String 	LESS_THAN_EQAUL_TO ="<=";
+	public static final String 	IN_BETWEEN="between";
+	public static final String 	SICK_LEAVE_FILTER ="sickLeave";
+	public static final String 	 EXTRA_CURRICULAR_ACTIVITY_FILTER = "extraActivity";
+	
+	public static final String ASCENDING_ORDER = "asc";
+	public static final String DESCENDING_ORDER="desc";
 //******************** DailyAttendance Message  *********************************
 	
 	public static final String SUNDAY = " is Sunday,so no need to declare";
@@ -81,7 +100,7 @@ public final class WebServiceUtil {
 
 //******************** Date Pattern *********************************	
 	
-	public static final String APP_DATE_FORMAT = "yyyy-MM-dd";
+	public static final String APP_DATE_FORMAT = "MM-dd-yyyy";
 	
 //******************** Email Message *********************************	
 	

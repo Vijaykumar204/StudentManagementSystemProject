@@ -1,7 +1,11 @@
 package com.studentmanagementsystem.api.validation;
+
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher; // optional if you use Matcher
 import java.util.regex.Pattern;
+
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
@@ -18,6 +22,10 @@ public class FieldValidation {
 	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@mailanator\\.in$");
 
 	public List<String> checkValidationStudentSaveMethod(StudentDto studentDto) {
+		return studentFieldValidation(studentDto);
+	}
+
+	public List<String> studentFieldValidation(StudentDto studentDto) {
 		List<String> requestMissedFieldList = new ArrayList<>();
 		
 		// student first name
@@ -126,6 +134,11 @@ public class FieldValidation {
 	}
 
 	public List<String> checkValidationActiveOrDeactiveByStudentId(String studentActiveStatus, Long studentId,
+	Long teacherId) {
+		return statusFieldValidation(studentActiveStatus, studentId, teacherId);
+	}
+
+	public List<String> statusFieldValidation(String studentActiveStatus, Long studentId,
 			Long teacherId) {
 		List<String> requestMissedFieldList = new ArrayList<>();
 		if (!studentActiveStatus.equals(WebServiceUtil.ACTIVE) && !studentActiveStatus.equals(WebServiceUtil.DEACTIVE)) {
@@ -142,6 +155,10 @@ public class FieldValidation {
 	}
 
 	public List<String> checkValidationDeclareHoliday(SchoolHolidaysDto schoolHolidaysDto) {
+		return holidayValidation(schoolHolidaysDto);
+	}
+
+	public List<String> holidayValidation(SchoolHolidaysDto schoolHolidaysDto) {
 
 		List<String> requestMissedFieldList = new ArrayList<>();
 		if (schoolHolidaysDto.getHolidayDate() == null) {
@@ -157,6 +174,10 @@ public class FieldValidation {
 	}
 
 	public List<String> checkValidationCancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto) {
+		return cancelHolidayValidation(schoolHolidaysDto);
+	}
+
+	public List<String> cancelHolidayValidation(SchoolHolidaysDto schoolHolidaysDto) {
 
 		List<String> requestMissedFieldList = new ArrayList<>();
 
@@ -172,6 +193,10 @@ public class FieldValidation {
 	}
 
 	public List<String> checkValidationSetAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto) {
+		return attendanceFieldValidation(dailyAttendanceDto);
+	}
+
+	public List<String> attendanceFieldValidation(DailyAttendanceDto dailyAttendanceDto) {
 		List<String> requestMissedFieldList = new ArrayList<>();
 		if (dailyAttendanceDto.getAttendanceDate() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "attendanceDate"));

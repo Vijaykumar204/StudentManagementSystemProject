@@ -13,6 +13,8 @@ public class SchoolHolidaysDto {
 
 	private Long holidayId;
 	
+	private Integer sno;
+	 
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
@@ -25,6 +27,8 @@ public class SchoolHolidaysDto {
 	private String holidayCancelledReason;
 	
 	private Long teacherId;
+	
+   ;
 
 	public Long getHolidayId() {
 		return holidayId;
@@ -75,6 +79,15 @@ public class SchoolHolidaysDto {
 		this.teacherId = teacherId;
 	}
 
+	
+	public Integer getSno() {
+		return sno;
+	}
+
+	public void setSno(Integer sno) {
+		this.sno = sno;
+	}
+
 	public SchoolHolidaysDto(Long holidayId, LocalDate holidayDate, String holidayReason, Boolean isHolidayCancelled,
 			String holidayCancelledReason) {
 	
@@ -83,6 +96,7 @@ public class SchoolHolidaysDto {
 		this.holidayReason = holidayReason;
 		this.isHolidayCancelled = isHolidayCancelled;
 		this.holidayCancelledReason = holidayCancelledReason;
+		
 	}
 
 	public SchoolHolidaysDto() {

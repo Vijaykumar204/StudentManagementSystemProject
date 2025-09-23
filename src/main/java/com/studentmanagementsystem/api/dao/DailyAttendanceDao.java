@@ -8,11 +8,19 @@ import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsen
 
 public interface DailyAttendanceDao {
 
-	List<DailyAttendanceDto> getStudentAttendanceTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+	//List<DailyAttendanceDto> getStudentAttendanceTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
-	List<DailyAttendanceDto> getStudentAttendanceNotTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+	List<DailyAttendanceDto> listAttendance(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+
+	List<DailyAttendanceDto> attendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+
+	//List<DailyAttendanceDto> getStudentAttendanceNotTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+
+	//List<DailyAttendanceDto> listAttendanceNotTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
 	List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+
+	List<MonthlyAbsenceDto> monthlyAttendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
 
 }

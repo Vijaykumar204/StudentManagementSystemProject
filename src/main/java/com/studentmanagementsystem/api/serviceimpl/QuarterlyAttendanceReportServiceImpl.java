@@ -169,9 +169,18 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	@Override
 	public Response listQuarterlyAttendance(QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto) {
 		logger.info("Before listQuarterlyAttendance - Retrive the quarterly attendance report ");
+		List<QuarterlyAttendanceReportDto> quarterlyAttendanceList = quartlyAttendanceReportDao.listQuarterlyAttendance(quarterlyAttendanceFilterDto);
+		Integer totalCount = quarterlyAttendanceModelRepository.findTotalCount(quarterlyAttendanceFilterDto.getClassOfStudy(),quarterlyAttendanceFilterDto.getQuarterAndYear());
+		int sno=1;
+		for(QuarterlyAttendanceReportDto quaterlyAttendance : quarterlyAttendanceList) {
+			quaterlyAttendance.setSno(sno++);
+		}
+		
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setData(quartlyAttendanceReportDao.listQuarterlyAttendance(quarterlyAttendanceFilterDto));
+		response.setTotalCount(totalCount);
+		response.setFilterCount(sno-1);
+		response.setData(quarterlyAttendanceList);
 		logger.info("After listQuarterlyAttendance - Successfully retrive the quarterly attendance report ");
 		return response;
 	}

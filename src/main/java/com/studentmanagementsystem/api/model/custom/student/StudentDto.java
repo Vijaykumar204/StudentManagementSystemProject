@@ -12,18 +12,11 @@ import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 public class StudentDto {
 
-  
-    private Integer size = 0;
-    
-    private Integer length =3;
+    private Integer sno;
     
 	private Long studentId;
 	
-	private String firstName;
-	
-	private String middleName;
-	
-	private String lastName;
+	private String name;
 	
 	private String gender;
 	
@@ -35,12 +28,12 @@ public class StudentDto {
 	private Integer classOfStudy;
 
 	private String residingStatus;
+	
+	private String email;
 
 	private String phoneNumber;
 
 	private String  parentsName;
-
-//	private String emergencyContactPhoneNumber;
 	
 	private String parentsEmail;
 
@@ -52,11 +45,13 @@ public class StudentDto {
 
 	private String status;
 	
-	private String email;
-	
 	private Long teacherId;
-
-
+	
+	private String firstName;
+	
+	private String middleName;
+	
+	private String lastName;
 
 	public Long getStudentId() {
 		return studentId;
@@ -160,28 +155,25 @@ public class StudentDto {
 	public void setTeacherId(Long teacherId) {
 		this.teacherId = teacherId;
 	}
-	
-	  public Integer getSize() {
-		return size;
+	public Integer getSno() {
+		return sno;
 	}
-	public void setSize(Integer size) {
-		this.size = size;
+	public void setSno(Integer sno) {
+		this.sno = sno;
 	}
-	public Integer getLength() {
-		return length;
+	public String getName() {
+		return name;
 	}
-	public void setLength(Integer length) {
-		this.length = length;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public StudentDto(Long studentId, String firstName, String middleName, String lastName, String gender,
+	public StudentDto(Long studentId, String name, String gender,
 			LocalDate dateOfBirth, Integer classOfStudy, String residingStatus, String phoneNumber, String parentsName,
 			 String homeStreetName, String homeCityName, String homePostalCode, String status,
 			String email,String parentsEmail) {
 
 		this.studentId = studentId;
-		this.firstName = firstName;
-		this.middleName = middleName;
-		this.lastName = lastName;
+		this.name = name;
 		this.gender = gender;
 		this.dateOfBirth = dateOfBirth;
 		this.classOfStudy = classOfStudy;
@@ -194,7 +186,6 @@ public class StudentDto {
 		this.status = status;
 		this.email = email;
 		this.parentsEmail = parentsEmail;
-
 	}
 	public StudentDto() {
 	    }

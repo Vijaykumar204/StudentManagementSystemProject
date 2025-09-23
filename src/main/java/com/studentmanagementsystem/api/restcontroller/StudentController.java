@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
-
+import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
 import com.studentmanagementsystem.api.service.StudentService;
 
 @RestController
@@ -34,20 +34,24 @@ public class StudentController {
 	}
 	
 	/**
-	 * Filter students by ID, email, or phone number.
+	 * Retrieves the student list.
 	 *
-	 * 
-	 * @param email (optional) The email address of the student
-	 * @param phoneNumber (optional) The phone number of the student
-	 * @param residingStatus (optional) The residential status of the student (H -> hostel,DS->Dayscholar)
-	 * @param status (optional)  The status of the student (A -> Active ,D->deactive)
-	 * @param classOfStudy (optional) The class of study  of the student (6-9)
-	 * @return List of students that match the given filter criteria
+	 * @param searchBy       (optional) The field to search by: name, email, or phoneNumber.
+	 * @param searchValue    (optional) The value to search for, based on the selected searchBy field.
+	 * @param residingStatus (optional) The residential status of the student 
+	 *                       (HOSTEL -> Hostel, DAYSCHOLAR -> Day Scholar).
+	 * @param status         (optional) The status of the student 
+	 *                       (ACTIVE -> Active, DEACTIVE -> Deactive).
+	 * @param classOfStudy   (Require)  The class of study of the student (6–10).
+	 * @param sortingBy      (optional) The column name to sort by.
+	 * @param sortingOrder   (optional) The sorting order: asc → ascending, desc → descending.
+	 * @return Return list of students that match the given filter criteria.
 	 * @author Vijiyakumar
 	 */
+
 	@GetMapping("/list")
-	public ResponseEntity<?> listStudentDetails(@RequestBody StudentDto studentDto){
-		return new ResponseEntity<>( studentService.listStudentDetails(studentDto),HttpStatus.OK);
+	public ResponseEntity<?> listStudentDetails(@RequestBody StudentFilterDto filterDto){
+		return new ResponseEntity<>( studentService.listStudentDetails(filterDto),HttpStatus.OK);
 	}
 	
 	/**

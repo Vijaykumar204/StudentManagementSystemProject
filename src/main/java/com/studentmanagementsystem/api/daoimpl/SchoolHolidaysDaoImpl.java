@@ -8,6 +8,8 @@ import com.studentmanagementsystem.api.dao.SchoolHolidaysDao;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidayFilterDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.entity.SchoolHolidaysModel;
+import com.studentmanagementsystem.api.util.WebServiceUtil;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -24,26 +26,29 @@ public class SchoolHolidaysDaoImpl implements SchoolHolidaysDao {
 
 
 	/**
-	 *  Retrieve the list of active holidays(iscancelHoliday = false).
-	 *  And
-	 *  Retrieve the list of cancel holidays(iscancelHoliday = true).
+	 * Retrive list of declared holidays 
 	 */
 	@Override
-	public List<SchoolHolidaysDto> listDeclaredHolidays(SchoolHolidayFilterDto schoolHolidayFilterDto) {
+	public List<SchoolHolidaysDto> declaredHolidaysList(SchoolHolidayFilterDto schoolHolidayFilterDto) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<SchoolHolidaysDto> cq = cb.createQuery(SchoolHolidaysDto.class);
 		Root<SchoolHolidaysModel> holidaysRoot = cq.from(SchoolHolidaysModel.class);
 		
-
 		cq.select(cb.construct(SchoolHolidaysDto.class,
 				holidaysRoot.get("holidayId"), 
 				holidaysRoot.get("holidayDate"),
 				holidaysRoot.get("holidayReason"),
 				holidaysRoot.get("isHolidayCancelled"),
-				holidaysRoot.get("holidayCancelledReason"
-						)));
+				holidaysRoot.get("holidayCancelledReason")
+				
+				));
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
+		
+		if(schoolHolidayFilterDto.getSearchValue()!=null) {
+			predicates.add(cb.like(cb.lower(holidaysRoot.get("holidayReason")), "%"+schoolHolidayFilterDto.getSearchValue()+"%"));
+		}
+		
 		if(schoolHolidayFilterDto.getIsHolidayCancelled()!=null) {
 			predicates.add( cb.equal(holidaysRoot.get("isHolidayCancelled"),schoolHolidayFilterDto.getIsHolidayCancelled()));
 		}
@@ -55,9 +60,15 @@ public class SchoolHolidaysDaoImpl implements SchoolHolidaysDao {
 		if (!predicates.isEmpty()) {
 			cq.where(cb.and(predicates.toArray(new Predicate[0])));
 		}
+		 if(schoolHolidayFilterDto.getSortingBy()!=null && schoolHolidayFilterDto.getSortingOrder() !=null) {
+	        	if(WebServiceUtil.ASCENDING_ORDER .equals(schoolHolidayFilterDto.getSortingOrder())) 
+	        		 cq.orderBy(cb.asc(holidaysRoot.get(schoolHolidayFilterDto.getSortingBy())));
+	        	else if(WebServiceUtil.DESCENDING_ORDER.equals(schoolHolidayFilterDto.getSortingOrder()))
+	        		cq.orderBy(cb.desc(holidaysRoot.get(schoolHolidayFilterDto.getSortingBy())));	
+	        }
 		
 		return entityManager.createQuery(cq)
-				.setFirstResult(schoolHolidayFilterDto.getSize())
+				.setFirstResult(schoolHolidayFilterDto.getStart())
 				.setMaxResults(schoolHolidayFilterDto.getLength())
 				.getResultList();
 		

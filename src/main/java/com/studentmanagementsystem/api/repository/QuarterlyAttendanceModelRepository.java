@@ -19,5 +19,8 @@ public interface QuarterlyAttendanceModelRepository extends JpaRepository<Quarte
 			+ "WHERE q.studentModel.studentId = :studentId " + "AND q.quarterAndYear = :quarterAndYear")
 	String findAttendanceComplianceStatusByStudentIdandquarterAndYear(@Param("studentId") Long studentId,
 			@Param("quarterAndYear") String quarterAndYear);
+	@Query("SELECT COUNT(q.quarterlyAttendanceId) FROM QuarterlyAttendanceReportModel q "
+			+ "WHERE q.studentModel.classOfStudy = :classOfStudy " + "AND q.quarterAndYear = :quarterAndYear")
+	Integer findTotalCount(@Param("classOfStudy")Integer classOfStudy,@Param("quarterAndYear") String quarterAndYear);
 
 }

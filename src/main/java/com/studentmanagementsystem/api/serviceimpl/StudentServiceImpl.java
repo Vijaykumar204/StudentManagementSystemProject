@@ -2,7 +2,6 @@ package com.studentmanagementsystem.api.serviceimpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.StudentDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
@@ -20,7 +20,6 @@ import com.studentmanagementsystem.api.service.StudentService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
 
-import jakarta.persistence.EntityManager;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -59,14 +58,14 @@ public class StudentServiceImpl implements StudentService {
 		
 		//Field validation
 		Response response = new Response();
-		List<String> requestMissedFieldList = fieldValidation.checkValidationStudentSaveMethod(studentDto);
-		if (!requestMissedFieldList.isEmpty()) {
+		List<String> requestFieldList = fieldValidation.studentFieldValidation(studentDto);
+		if (!requestFieldList.isEmpty()) {
 			response.setStatus(WebServiceUtil.WARNING);
-			response.setData(requestMissedFieldList);
+			response.setData(requestFieldList);
 			return response;
 		}
 		
-		//Check whether the teacher ID exists or not
+		//Verify if the teacher ID exists
 		TeacherModel teacher = teacherRepository.findTeacherByTeacherId(studentDto.getTeacherId());
 		if (teacher == null) {
 			response.setStatus(WebServiceUtil.WARNING);
@@ -97,7 +96,7 @@ public class StudentServiceImpl implements StudentService {
 		
 		// Update the exists student
 		else {
-			//Check whether the student ID exists or not
+			//Verify if student ID exists
 			studentModel = studentModelRepository.findStudentByStudentId(studentDto.getStudentId());
 			if (studentModel == null) {
 				response.setStatus(WebServiceUtil.FAILURE);
@@ -114,15 +113,16 @@ public class StudentServiceImpl implements StudentService {
 		studentModel.setMiddleName(studentDto.getMiddleName());
 		studentModel.setLastName(studentDto.getLastName());
 		studentModel.setDateOfBirth(studentDto.getDateOfBirth());
+		studentModel.setClassOfStudy(studentDto.getClassOfStudy());
 		
 		//Load gender code 
 		StudentCodeModel gender = studentCodeRespository.findStudentCodeByCode(studentDto.getGender());
 		studentModel.setGender(gender);
-		studentModel.setClassOfStudy(studentDto.getClassOfStudy());
 		
 		//Load residing status code 
 		StudentCodeModel residingStatus = studentCodeRespository.findStudentCodeByCode(studentDto.getResidingStatus());
 		studentModel.setResidingStatus(residingStatus);
+		
 		studentModel.setPhoneNumber(studentDto.getPhoneNumber());
 		studentModel.setParentsName(studentDto.getParentsName());
 		studentModel.setHomeStreetName(studentDto.getHomeStreetName());
@@ -150,15 +150,24 @@ public class StudentServiceImpl implements StudentService {
 	 * residingStatus,status,classOfStudy
 	 */
 	@Override
-	public Response  listStudentDetails(StudentDto studentDto) {
+	public Response  listStudentDetails(StudentFilterDto filterDto) {
 		
 		logger.info("Before listStudentDetails - Attempting to retrive student details ");
 		
-		List<StudentDto> studentListRequestDto = studentRequestDao. listStudentDetails(studentDto);
+		List<StudentDto> studentList = studentRequestDao. listStudentDetails(filterDto);
 		
+		Integer totalCount = studentModelRepository.findTotalCount(filterDto.getClassOfStudy());
+		
+		int sno = 1;
+        for (StudentDto student : studentList) {
+        	student.setSno(sno++);
+        }
+        
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setData(studentListRequestDto);
+		response.setTotalCount(totalCount);
+		response.setFilterCount(sno-1);
+		response.setData(studentList);
 		
 		logger.info("After listStudentDetails :  Successfully retrived the student details");
 		
@@ -169,26 +178,26 @@ public class StudentServiceImpl implements StudentService {
 	 * Activate or deactivate a student by ID.
 	 */
 	@Override
-	public Response activeOrDeactiveByStudentId(String studentActiveStatus, Long studentId, Long teacherId) {
+	public Response activeOrDeactiveByStudentId(String status, Long studentId, Long teacherId) {
 		
 		//Logger
-		if (studentActiveStatus == WebServiceUtil.ACTIVE)
+		if (status == WebServiceUtil.ACTIVE)
 			logger.info("Before activeOrDeactiveByStudentId : Activate the StudentId : '{}' for TeacherId :{} ", studentId, teacherId);
 		else
 			logger.info("Before activeOrDeactiveByStudentId : Deactive the StudentId : '{}' for TeacherId :{} ", studentId, teacherId);
-		int updateMessage =0;
+		int updateFlag =0;
 		// Field validation
 		Response response = new Response();
-		List<String> requestMissedFieldList = fieldValidation
-				.checkValidationActiveOrDeactiveByStudentId(studentActiveStatus, studentId, teacherId);
-		if (!requestMissedFieldList.isEmpty()) {
+		List<String> requestFieldList = fieldValidation
+				.statusFieldValidation(status, studentId, teacherId);
+		if (!requestFieldList.isEmpty()) {
 			response.setStatus(WebServiceUtil.WARNING);
-			response.setData(requestMissedFieldList);
+			response.setData(requestFieldList);
 			return response;
 		}
 
 		LocalDateTime today = LocalDateTime.now();
-		//Check whether the student ID exists or not
+		//Verify if the student ID exists
 		StudentModel student = studentModelRepository.findStudentByStudentId(studentId);
 		if (student == null) {
 			response.setStatus(WebServiceUtil.WARNING);
@@ -196,7 +205,7 @@ public class StudentServiceImpl implements StudentService {
 			return response;
 		}
 		
-		//Check whether the teacher ID exists or not
+		//Verify if the teacher ID exists
 		TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
 		if (teacher == null) {
 			response.setStatus(WebServiceUtil.WARNING);
@@ -205,29 +214,29 @@ public class StudentServiceImpl implements StudentService {
 		}
 		// Deactivate student
 		
-		if (studentActiveStatus.equals(WebServiceUtil.DEACTIVE)
-				&& !studentActiveStatus.equals(student.getStatus().getCode())) {
-			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentActiveStatus);
+		if (status.equals(WebServiceUtil.DEACTIVE)
+				&& !status.equals(student.getStatus().getCode())) {
+			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(status);
 
 			student.setStatus(isStatus);
 			student.setLasteffectivedate(today);
 
 			student.setUpdateTeacher(teacher);
 			student.setUpdateDate(today);
-			updateMessage =1;
+			updateFlag =1;
 
 			//Active student
-		} else if (studentActiveStatus.equals(WebServiceUtil.ACTIVE)
-				&& !studentActiveStatus.equals(student.getStatus().getCode())) {
+		} else if (status.equals(WebServiceUtil.ACTIVE)
+				&& !status.equals(student.getStatus().getCode())) {
 
-			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(studentActiveStatus);
+			StudentCodeModel isStatus = studentCodeRespository.findStudentCodeByCode(status);
 			student.setStatus(isStatus);
 			student.setLasteffectivedate(null);
 			student.setUpdateTeacher(teacher);
 			student.setUpdateDate(today);
 		} else {
 			response.setStatus(WebServiceUtil.WARNING);
-			response.setData(String.format(WebServiceUtil.NO_CHANGES, studentActiveStatus));
+			response.setData(String.format(WebServiceUtil.NO_CHANGES, status));
 			return response;
 
 		}
@@ -235,12 +244,12 @@ public class StudentServiceImpl implements StudentService {
 		studentModelRepository.save(student);
 
 		response.setStatus(WebServiceUtil.SUCCESS);
-		if(updateMessage == 0)
+		if(updateFlag == 0)
 		       response.setData(WebServiceUtil.ACTIVETED_MESSAGE);
 		else
 			 response.setData(WebServiceUtil.DEACTIVETED_MESSAGE);
 		
-		if (studentActiveStatus == WebServiceUtil.ACTIVE)
+		if (status == WebServiceUtil.ACTIVE)
 			logger.info("After activeOrDeactiveByStudentId : Successfully activated  StudentId : '{}' for TeacherId :{} ", studentId, teacherId);
 		else
 			logger.info("After activeOrDeactiveByStudentId :Successfully activated  StudentId : '{}' for TeacherId :{} ", studentId, teacherId);

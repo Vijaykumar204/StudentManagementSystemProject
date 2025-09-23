@@ -8,8 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import com.studentmanagementsystem.api.dao.StudentDao;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
-
+import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
+import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -26,11 +27,11 @@ public class StudentDaoImpl implements StudentDao {
 	private EntityManager entityManager;
 
 	/**
-	 * Filter students by  email or phone number or residingStatus or status
+	 * Retrive list of student details
 	 */
 
 	@Override
-	public List<StudentDto>  listStudentDetails(StudentDto studentDto) {
+	public List<StudentDto>  listStudentDetails(StudentFilterDto filterDto) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<StudentDto> cq = cb.createQuery(StudentDto.class);
@@ -39,9 +40,13 @@ public class StudentDaoImpl implements StudentDao {
 		cq.select(cb.construct(StudentDto.class, 
 				
 				studentRoot.get("studentId"),   
-				studentRoot.get("firstName"),   
-				studentRoot.get("middleName"),
-				studentRoot.get("lastName"),
+				 cb.concat(
+			                cb.concat(
+			                        cb.concat(cb.coalesce(studentRoot.get("firstName"), ""), " "),
+			                        cb.concat(cb.coalesce(studentRoot.get("middleName"), ""), " ")
+			                ),
+			                cb.coalesce(studentRoot.get("lastName"), "")
+			        ),
 				studentRoot.get("gender").get("description"),
 				studentRoot.get("dateOfBirth"),
 				studentRoot.get("classOfStudy"),
@@ -54,40 +59,67 @@ public class StudentDaoImpl implements StudentDao {
 				studentRoot.get("status").get("description"),
 				studentRoot.get("email"),
 				studentRoot.get("parentsEmail")
+				
 
 		));
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
-        if (studentDto.getStudentId() != null) {
-		    predicates.add(cb.equal(
-		    		studentRoot.get("studentId"), 
-		    		studentDto.getStudentId()
-		    ));
+		
+        if(filterDto.getSearchBy()!=null && filterDto.getSearchValue()!=null) {
+        switch(filterDto.getSearchBy().toLowerCase())
+        {
+        
+        case WebServiceUtil.NAME:
+        	 Predicate fullName = cb.like(
+        			 cb.concat(
+ 			                cb.concat(
+ 			                        cb.concat(cb.coalesce(studentRoot.get("firstName"), ""), " "),
+ 			                        cb.concat(cb.coalesce(studentRoot.get("middleName"), ""), " ")
+ 			                ),
+ 			                cb.coalesce(studentRoot.get("lastName"), "")
+ 			        ),
+                    "%" + filterDto.getSearchValue() + "%"
+            );
+        	
+        	predicates.add(fullName);
+        	break;
+        	
+        case WebServiceUtil.EMAIL:
+        	Predicate email =cb.like(cb.lower(studentRoot.get("email")) ,"%"+ filterDto.getSearchValue().toLowerCase() + "%");
+			predicates.add(email);
+			break;
+			
+        case WebServiceUtil.PHONENUMBER:
+        	Predicate phoneNumber = cb.like(studentRoot.get("phoneNumber"),"%"+ filterDto.getSearchValue() + "%");
+			predicates.add(phoneNumber);
+			break;
+        }
+        }
+        
+        if(filterDto.getSortingBy()!=null && filterDto.getSortingOrder() !=null) {
+        	System.out.println("order");
+        	if(WebServiceUtil.ASCENDING_ORDER.equals(filterDto.getSortingOrder())) 
+        		 cq.orderBy(cb.asc(studentRoot.get(filterDto.getSortingBy())));
+        	else if(WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getSortingOrder()))
+        		cq.orderBy(cb.desc(studentRoot.get(filterDto.getSortingBy())));	
+        }
+        
+		if (filterDto.getResidingStatus() != null) {
+			predicates.add(cb.equal(studentRoot.get("residingStatus").get("code"), filterDto.getResidingStatus()));
 		}
-		else if (studentDto.getEmail() != null && studentDto.getEmail()!=" ") {
-			String emailLike = "%"+ studentDto.getEmail().toLowerCase() + "%";
-			predicates.add(cb.like(cb.lower(studentRoot.get("email")), emailLike));
-		}
-		else if (studentDto.getPhoneNumber() != null && studentDto.getPhoneNumber() != " ") { 
-			String phoneNumberLike = "%"+ studentDto.getPhoneNumber() + "%";
-			predicates.add(cb.like(studentRoot.get("phoneNumber"),phoneNumberLike));
+		if (filterDto.getStatus() != null) {
+			predicates.add(cb.equal(studentRoot.get("status").get("code"), filterDto.getStatus()));
 		}
-		if (studentDto.getResidingStatus() != null) {
-			predicates.add(cb.equal(studentRoot.get("residingStatus").get("code"), studentDto.getResidingStatus()));
-		}
-		if (studentDto.getStatus() != null) {
-			predicates.add(cb.equal(studentRoot.get("status").get("code"), studentDto.getStatus()));
-		}
-		if (studentDto.getClassOfStudy() != null) {
-			predicates.add(cb.equal(studentRoot.get("classOfStudy"), studentDto.getClassOfStudy()));
+		if (filterDto.getClassOfStudy() != null) {
+			predicates.add(cb.equal(studentRoot.get("classOfStudy"), filterDto.getClassOfStudy()));
 		}
 		if (!predicates.isEmpty()) {
 			cq.where(cb.and(predicates.toArray(new Predicate[0])));
 		}
 		
 		return entityManager.createQuery(cq)
-				.setFirstResult(studentDto.getSize())
-				.setMaxResults(studentDto.getLength())
+				.setFirstResult(filterDto.getStart())
+				.setMaxResults(filterDto.getLength())
 				.getResultList();
 				
 	}

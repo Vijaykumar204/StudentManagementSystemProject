@@ -3,7 +3,13 @@ package com.studentmanagementsystem.api.model.custom;
 public class Response {
 	private String status;
 	
+	  private Integer totalCount ;
+	    
+	    private Integer filterCount;
+	
 	private Object data;
+	
+  
 	
 	public Response() {
 		
@@ -28,9 +34,22 @@ public class Response {
 	public void setData(Object data) {
 		this.data = data;
 	}
-
-	@Override
-	public String toString() {
-		return "Response [status=" + status + ", data=" + data + "]";
+	public Integer getTotalCount() {
+		return totalCount;
 	}
+	public void setTotalCount(Integer totalCount) {
+		this.totalCount = totalCount;
+	}
+	public Integer getFilterCount() {
+		return filterCount;
+	}
+	public void setFilterCount(Integer filterCount) {
+		this.filterCount = filterCount;
+	}
+	
+
+//	@Override
+//	public String toString() {
+//		return "Response [status=" + status + ", data=" + data + "]";
+//	}
 }

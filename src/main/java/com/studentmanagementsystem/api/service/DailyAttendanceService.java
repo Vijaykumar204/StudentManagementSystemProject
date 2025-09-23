@@ -12,8 +12,14 @@ public interface DailyAttendanceService {
 
 	Response listStudentAttendance(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
+	Response attendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+
 	Response getMonthlyAbsenceReport(DailyAttendanceFilterDto dailyAttendanceFilterDto);
 
-	Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto);
+	Response monthliAttendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+
+	Response markStudentAttendance(List<DailyAttendanceDto> dailyAttendanceDto,Integer classOfStudy);
+
+	Response saveAttendance(List<DailyAttendanceDto> dailyAttendanceDto,Integer classOfStudy);
 
 }

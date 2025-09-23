@@ -2,22 +2,27 @@ package com.studentmanagementsystem.api.model.custom.dailyattendance;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.studentmanagementsystem.api.util.WebServiceUtil;
+
 public class DailyAttendanceFilterDto {
 	
-	private Integer size =0;
+	private Integer start =0;
 	
 	private Integer length =10;
 	
-	private Long studentId;
+	private String searchBy;
 	
-	private String email;
+	private String searchValue;
 	
-	private String phoneNumber;
-
-	private Boolean attendanceMark;
+	private String status;
 	
-	private String attendanceStatus;
+	private String approvedStatus;
 	
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate date;
 	
 	private Integer classOfStudy;
@@ -26,16 +31,23 @@ public class DailyAttendanceFilterDto {
 	
 	private Integer year;
 	
-	private Integer range;
+	private String operationBy;
+	
+	private Long operationValue;
+	
+	private String sortingBy;
+	
+	private String sortingOrder;
 	
 	private String monthlyAbsence;
 
-	public Integer getSize() {
-		return size;
+
+	public Integer getStart() {
+		return start;
 	}
 
-	public void setSize(Integer size) {
-		this.size = size;
+	public void setStart(Integer start) {
+		this.start = start;
 	}
 
 	public Integer getLength() {
@@ -44,21 +56,6 @@ public class DailyAttendanceFilterDto {
 
 	public void setLength(Integer length) {
 		this.length = length;
-	}
-
-	public Boolean getAttendanceMark() {
-		return attendanceMark;
-	}
-
-	public void setAttendanceMark(Boolean attendanceMark) {
-		this.attendanceMark = attendanceMark;
-	}
-	public String getAttendanceStatus() {
-		return attendanceStatus;
-	}
-
-	public void setAttendanceStatus(String attendanceStatus) {
-		this.attendanceStatus = attendanceStatus;
 	}
 
 	public LocalDate getDate() {
@@ -93,14 +90,6 @@ public class DailyAttendanceFilterDto {
 		this.year = year;
 	}
 
-	public Integer getRange() {
-		return range;
-	}
-
-	public void setRange(Integer range) {
-		this.range = range;
-	}
-
 	public String getMonthlyAbsence() {
 		return monthlyAbsence;
 	}
@@ -109,29 +98,76 @@ public class DailyAttendanceFilterDto {
 		this.monthlyAbsence = monthlyAbsence;
 	}
 
-	public Long getStudentId() {
-		return studentId;
+	public String getSearchBy() {
+		return searchBy;
 	}
 
-	public void setStudentId(Long studentId) {
-		this.studentId = studentId;
+	public void setSearchBy(String searchBy) {
+		this.searchBy = searchBy;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getSearchValue() {
+		return searchValue;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setSearchValue(String searchValue) {
+		this.searchValue = searchValue;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setStatus(String status) {
+		this.status = status;
 	}
+
+	public String getApprovedStatus() {
+		return approvedStatus;
+	}
+
+	public void setApprovedStatus(String approvedStatus) {
+		this.approvedStatus = approvedStatus;
+	}
+
+	public String getOperationBy() {
+		return operationBy;
+	}
+
+	public void setOperationBy(String operationBy) {
+		this.operationBy = operationBy;
+	}
+
+
+
+
+	public Long getOperationValue() {
+		return operationValue;
+	}
+
+	public void setOperationValue(Long operationValue) {
+		this.operationValue = operationValue;
+	}
+
+	public String getSortingBy() {
+		return sortingBy;
+	}
+
+	public void setSortingBy(String sortingBy) {
+		this.sortingBy = sortingBy;
+	}
+
+	public String getSortingOrder() {
+		return sortingOrder;
+	}
+
+	public void setSortingOrder(String sortingOrder) {
+		this.sortingOrder = sortingOrder;
+	}
+	
+	
+
+
 	
 	
 	

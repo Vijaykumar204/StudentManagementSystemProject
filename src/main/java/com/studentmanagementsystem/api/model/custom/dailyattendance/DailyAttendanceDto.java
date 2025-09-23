@@ -11,9 +11,22 @@ import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 public class DailyAttendanceDto {
 	
+
+	private Integer sno;
 	
+	private Long studentId;
 	
-	private Long attendanceId;
+	private String name;
+	
+	private Integer classOfStudy;
+	
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
+	private LocalDate dateOfBirth;
+	
+	private String email;
+	
+	private String phoneNumber;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
@@ -26,15 +39,13 @@ public class DailyAttendanceDto {
 	
 	private String approvedExtraCurricularActivitiesFlag = "N";
 	
-	private Long studentId;
-	
 	private Long teacherId;
 	
-	private String firstName;
+	private Long attendanceId;
 	
-	private String studentMiddleName;
 	
-	private String studentLastName;
+	
+
 
 	public Long getAttendanceId() {
 		return attendanceId;
@@ -84,38 +95,55 @@ public class DailyAttendanceDto {
 		this.studentId = studentId;
 	}
 	
-	public String getStudentFirstName() {
-		return getFirstName();
-	}
 
-	public String getFirstName() {
-		return firstName;
-	}
 
-	public void setStudentFirstName(String studentFirstName) {
-		setFirstName(studentFirstName);
-	}
 
-	public void setFirstName(String studentFirstName) {
-		this.firstName = studentFirstName;
-	}
 
-	public String getStudentMiddleName() {
-		return studentMiddleName;
-	}
 
-	public void setStudentMiddleName(String studentMiddleName) {
-		this.studentMiddleName = studentMiddleName;
-	}
-
-	public String getStudentLastName() {
-		return studentLastName;
-	}
-
-	public void setStudentLastName(String studentLastName) {
-		this.studentLastName = studentLastName;
-	}
 	
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public Integer getClassOfStudy() {
+		return classOfStudy;
+	}
+
+	public void setClassOfStudy(Integer classOfStudy) {
+		this.classOfStudy = classOfStudy;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	
+
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public Long getTeacherId() {
 		return teacherId;
 	}
@@ -124,18 +152,14 @@ public class DailyAttendanceDto {
 		this.teacherId = teacherId;
 	}
 
-//	public DailyAttendanceDto(Long attendanceId, LocalDate attendanceDate, char attendanceStatus,
-//			char longApprovedSickLeaveFlag, char approvedExtraCurricularActivitiesFlag, Long studentId) {
-//		
-//		this.attendanceId = attendanceId;
-//		this.attendanceDate = attendanceDate;
-//		this.attendanceStatus = attendanceStatus;
-//		this.longApprovedSickLeaveFlag = longApprovedSickLeaveFlag;
-//		this.approvedExtraCurricularActivitiesFlag = approvedExtraCurricularActivitiesFlag;
-//		this.studentId = studentId;
-//	}
 
+	public Integer getSno() {
+		return sno;
+	}
 
+	public void setSno(Integer sno) {
+		this.sno = sno;
+	}
 
 	public DailyAttendanceDto() {
 		
@@ -143,36 +167,33 @@ public class DailyAttendanceDto {
 
 
 
-	public DailyAttendanceDto(LocalDate attendanceDate, String attendanceStatus, Long studentId, String studentFirstName,
-			String studentMiddleName, String studentLastName) {
+	public DailyAttendanceDto(Long studentId,String name,Integer classOfStudy,LocalDate dateOfBirth ,String email,String phoneNumber,
+			LocalDate attendanceDate, String attendanceStatus,String longApprovedSickLeaveFlag,String approvedExtraCurricularActivitiesFlag ) {
 		
-	
+		this.studentId = studentId;
+		this.name=name;
+		this.classOfStudy = classOfStudy;
+		this.dateOfBirth = dateOfBirth;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
 		this.attendanceDate = attendanceDate;
 		this.attendanceStatus = attendanceStatus;
-		this.studentId = studentId;
-		this.firstName = studentFirstName;
-		this.studentMiddleName = studentMiddleName;
-		this.studentLastName = studentLastName;
+		this.longApprovedSickLeaveFlag=longApprovedSickLeaveFlag;
+		this.approvedExtraCurricularActivitiesFlag=approvedExtraCurricularActivitiesFlag;
 		
 		
 	}
 
-	public DailyAttendanceDto(Long studentId, String studentFirstName, String studentMiddleName,
-			String studentLastName) {
-		super();
+	public DailyAttendanceDto(Long studentId, String name) {
+		
 		this.studentId = studentId;
-		this.firstName = studentFirstName;
-		this.studentMiddleName = studentMiddleName;
-		this.studentLastName = studentLastName;
+		this.name = name;
 	}
 
-	public DailyAttendanceDto(LocalDate attendanceDate, Long studentId, String studentFirstName,
-			String studentMiddleName, String studentLastName) {
+	public DailyAttendanceDto(LocalDate attendanceDate, Long studentId, String name) {
 		this.attendanceDate = attendanceDate;
 		this.studentId = studentId;
-		this.firstName = studentFirstName;
-		this.studentMiddleName = studentMiddleName;
-		this.studentLastName = studentLastName;
+		this.name=name;
 	}
 
 	public DailyAttendanceDto(LocalDate attendanceDate) {
