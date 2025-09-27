@@ -11,7 +11,7 @@ import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttenda
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
-import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
+import com.studentmanagementsystem.api.model.custom.teacher.TeacherDto;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 @Service
@@ -19,33 +19,28 @@ public class FieldValidation {
 
 	private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z ]+$");
 	private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
-	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@mailanator\\.in$");
-
-	public List<String> checkValidationStudentSaveMethod(StudentDto studentDto) {
-		return studentFieldValidation(studentDto);
-	}
+	private static final Pattern EMAIL_PATTERN =Pattern.compile("^[a-z0-9]+@[a-z0-9]+[.](com|in)$");
+//	        Pattern.compile("^[A-Za-z0-9._%+-]+@(gmail\\.com|mailinator\\.in)$");
 
 	public List<String> studentFieldValidation(StudentDto studentDto) {
 		List<String> requestMissedFieldList = new ArrayList<>();
-		
+
 		// student first name
-		if (studentDto.getFirstName() == null && studentDto.getFirstName().isBlank()) {
+		if (studentDto.getFirstName() == null || studentDto.getFirstName().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentFirstName"));
 		} else if (!NAME_PATTERN.matcher(studentDto.getFirstName()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "studentFirstName"));
 		}
-		
+
 		// student middle name
-//		if ( studentDto.getMiddleName()!=null ) {
-//			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentMiddleName"));
-//		}
-		if (studentDto.getMiddleName() != null && !NAME_PATTERN.matcher(studentDto.getMiddleName()).matches())
-		{
+		if (studentDto.getMiddleName() != null && !NAME_PATTERN.matcher(studentDto.getMiddleName()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "studentMiddleName"));
+		} else if (studentDto.getMiddleName().isBlank()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentMiddleName"));
 		}
-		
+
 		// student last name
-		if (studentDto.getLastName() == null) {
+		if (studentDto.getLastName() == null || studentDto.getLastName().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentLastName"));
 		} else if (!NAME_PATTERN.matcher(studentDto.getLastName()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "studentLastName"));
@@ -57,7 +52,7 @@ public class FieldValidation {
 		}
 
 		// student gender
-		if (studentDto.getGender() == null) {
+		if (studentDto.getGender() == null || studentDto.getGender().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentGender"));
 		} else if (!studentDto.getGender().equals(WebServiceUtil.MALE)
 				&& !studentDto.getGender().equals(WebServiceUtil.FEMALE)
@@ -65,16 +60,16 @@ public class FieldValidation {
 			requestMissedFieldList.add(String.format(WebServiceUtil.INVALID_CODE, "studentGender"));
 		}
 
-		//student class of study
-		if (studentDto.getClassOfStudy() >= 0 && studentDto.getClassOfStudy() <=5 || studentDto.getClassOfStudy() >=11 ) {
+		// student class of study
+		if (studentDto.getClassOfStudy() >= 0 && studentDto.getClassOfStudy() <= 5
+				|| studentDto.getClassOfStudy() >= 11) {
 			requestMissedFieldList.add(WebServiceUtil.CLASS_OF_STUDY_ERROR);
-		}
-		else if(studentDto.getClassOfStudy() == null) {
+		} else if (studentDto.getClassOfStudy() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentClassOfStudy"));
 		}
 
 		// student residing status
-		if (studentDto.getResidingStatus() == null) {
+		if (studentDto.getResidingStatus() == null || studentDto.getResidingStatus().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentResidingStatus"));
 		} else if (!studentDto.getResidingStatus().equals(WebServiceUtil.HOSTEL)
 				&& !studentDto.getResidingStatus().equals(WebServiceUtil.DAYSCHOLAR)) {
@@ -82,61 +77,60 @@ public class FieldValidation {
 		}
 
 		// student phone number
-		if (studentDto.getPhoneNumber() == null) {
+		if (studentDto.getPhoneNumber() == null || studentDto.getPhoneNumber().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentPhoneNumber"));
 		} else if (!PHONE_PATTERN.matcher(studentDto.getPhoneNumber()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "studentPhoneNumber"));
 		}
 
 		// student email
-		if (studentDto.getEmail() == null && studentDto.getEmail() == " ") {
+		if (studentDto.getEmail() == null || studentDto.getEmail().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentEmail"));
 		} else if (!EMAIL_PATTERN.matcher(studentDto.getEmail()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "studentEmail"));
 		}
-		
+
 		// student parent's email
-		if (studentDto.getParentsEmail() == null) {
+		if (studentDto.getParentsEmail() == null || studentDto.getParentsEmail().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "parentsEmail"));
 		} else if (!EMAIL_PATTERN.matcher(studentDto.getParentsEmail()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "parentsEmail"));
 		}
 
-		//student home street name
-		if (studentDto.getHomeStreetName() == null) {
+		// student home street name
+		if (studentDto.getHomeStreetName() == null || studentDto.getHomeStreetName().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "homeStreetNamel"));
 		}
 
-		//student home city name
-		if (studentDto.getHomeCityName() == null) {
+		// student home city name
+		if (studentDto.getHomeCityName() == null || studentDto.getHomeCityName().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "homeCityName"));
 		}
-		
+
 		// student postal code
-		if (studentDto.getHomePostalCode() == null) {
+		if (studentDto.getHomePostalCode() == null || studentDto.getHomePostalCode().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "homePostalCode"));
 		}
-		
-		if (studentDto.getStatus() == null) {
+
+		if (studentDto.getStatus() == null || studentDto.getStatus().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "status"));
-		}
-		else if(!studentDto.getStatus().equals(WebServiceUtil.ACTIVE) && !studentDto.getStatus().equals(WebServiceUtil.DEACTIVE)) {
+		} else if (!studentDto.getStatus().equals(WebServiceUtil.ACTIVE)
+				&& !studentDto.getStatus().equals(WebServiceUtil.DEACTIVE)) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.INVALID_CODE, "status"));
 		}
-		
-		
-		//teacher id
+
+		// teacher id
 		if (studentDto.getTeacherId() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherId"));
 		}
-		
+
 		return requestMissedFieldList;
 	}
 
-	public List<String> checkValidationActiveOrDeactiveByStudentId(String studentActiveStatus, Long studentId,
-	Long teacherId) {
-		return statusFieldValidation(studentActiveStatus, studentId, teacherId);
-	}
+//	public List<String> checkValidationActiveOrDeactiveByStudentId(String studentActiveStatus, Long studentId,
+//	Long teacherId) {
+//		return statusFieldValidation(studentActiveStatus, studentId, teacherId);
+//	}
 
 	public List<String> statusFieldValidation(String studentActiveStatus, Long studentId,
 			Long teacherId) {
@@ -154,29 +148,26 @@ public class FieldValidation {
 		return requestMissedFieldList;
 	}
 
-	public List<String> checkValidationDeclareHoliday(SchoolHolidaysDto schoolHolidaysDto) {
-		return holidayValidation(schoolHolidaysDto);
-	}
-
+	// Validation for holiday declare
 	public List<String> holidayValidation(SchoolHolidaysDto schoolHolidaysDto) {
 
-		List<String> requestMissedFieldList = new ArrayList<>();
+		List<String> missedFieldList = new ArrayList<>();
+
 		if (schoolHolidaysDto.getHolidayDate() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "holidayDate"));
+			missedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "holidayDate"));
 		}
-		if (schoolHolidaysDto.getHolidayReason() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "holidayReason"));
+
+		if (schoolHolidaysDto.getHolidayReason() == null || schoolHolidaysDto.getHolidayReason().isBlank()) {
+			missedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "holidayReason"));
 		}
-		if(schoolHolidaysDto.getTeacherId() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherId"));
+		if (schoolHolidaysDto.getTeacherId() == null) {
+			missedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherId"));
 		}
-		return requestMissedFieldList;
+
+		return missedFieldList;
 	}
 
-	public List<String> checkValidationCancelHolidayByDate(SchoolHolidaysDto schoolHolidaysDto) {
-		return cancelHolidayValidation(schoolHolidaysDto);
-	}
-
+	// Validation for cancel holidays
 	public List<String> cancelHolidayValidation(SchoolHolidaysDto schoolHolidaysDto) {
 
 		List<String> requestMissedFieldList = new ArrayList<>();
@@ -185,32 +176,36 @@ public class FieldValidation {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "HolidayDate"));
 		}
 
-		if (schoolHolidaysDto.getHolidayCancelledReason() == null) {
+		if (schoolHolidaysDto.getHolidayCancelledReason() == null
+				|| schoolHolidaysDto.getHolidayCancelledReason().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "holidayCancelledReason")
 					+ schoolHolidaysDto.getHolidayDate());
 		}
 		return requestMissedFieldList;
 	}
-
-	public List<String> checkValidationSetAttendanceToSingleStudent(DailyAttendanceDto dailyAttendanceDto) {
-		return attendanceFieldValidation(dailyAttendanceDto);
-	}
-
+	
+	//Validation for Attendance 
 	public List<String> attendanceFieldValidation(DailyAttendanceDto dailyAttendanceDto) {
 		List<String> requestMissedFieldList = new ArrayList<>();
 		if (dailyAttendanceDto.getAttendanceDate() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "attendanceDate"));
 		}
-		if (dailyAttendanceDto.getAttendanceStatus() == null
-				|| (!WebServiceUtil.PRESENT.equals(dailyAttendanceDto.getAttendanceStatus())
-						&& !WebServiceUtil.ABSENT.equals(dailyAttendanceDto.getAttendanceStatus()))) {
+		if (dailyAttendanceDto.getAttendanceStatus() == null || dailyAttendanceDto.getAttendanceStatus().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "attendanceStatus"));
+		} else if ((!WebServiceUtil.PRESENT.equals(dailyAttendanceDto.getAttendanceStatus())
+				&& !WebServiceUtil.ABSENT.equals(dailyAttendanceDto.getAttendanceStatus()))) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.INVALID_CODE, "attendanceStatus"));
+
 		}
 		if (dailyAttendanceDto.getStudentId() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentId"));
 		}
 		if (dailyAttendanceDto.getTeacherId() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherId"));
+		}
+
+		if (dailyAttendanceDto.getClassOfStudy() == null) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "classOfStudy"));
 		}
 
 		return requestMissedFieldList;
@@ -252,27 +247,36 @@ public class FieldValidation {
 		}
 		return requestMissedFieldList;
 	}
-
-	public List<String> checkValidationTeacherSave(TeacherModelListDto teacherModelListDto, Long teacherId) {
+	
+	// teacher Module validation
+	public List<String> checkValidationTeacherSave(TeacherDto teacherModelListDto, Long teacherId) {
 		List<String> requestMissedFieldList = new ArrayList<>();
-		if (teacherId == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherId"));
+		if (teacherModelListDto.getCreateTeacher() == null) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "createTeacher"));
 		}
 
-		if (teacherModelListDto.getTeacherName() == null) {
+		if (teacherModelListDto.getName() == null && teacherModelListDto.getName().isBlank()) {
 
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherName"));
-		} else if (!NAME_PATTERN.matcher(teacherModelListDto.getTeacherName()).matches()) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherName"));
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "name"));
+		} else if (!NAME_PATTERN.matcher(teacherModelListDto.getName()).matches()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "name"));
+		}
+		if (teacherModelListDto.getEmail() == null || teacherModelListDto.getEmail().isBlank()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "email"));
+		} else if (!EMAIL_PATTERN.matcher(teacherModelListDto.getEmail()).matches()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "email"));
 		}
 
-		if (teacherModelListDto.getTeacherPhoneNumber() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherPhoneNumber"));
-		} else if (!PHONE_PATTERN.matcher(teacherModelListDto.getTeacherPhoneNumber()).matches()) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherPhoneNumber"));
+		if (teacherModelListDto.getPhoneNumber() == null && teacherModelListDto.getPhoneNumber().isBlank()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "PhoneNumber"));
+		} else if (!PHONE_PATTERN.matcher(teacherModelListDto.getPhoneNumber()).matches()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "phoneNumber"));
 		}
-		if (teacherModelListDto.getTeacherDepartment() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherDepartment"));
+		if (teacherModelListDto.getDepartment() == null && teacherModelListDto.getPhoneNumber().isBlank()) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "department"));
+		}
+		if(!WebServiceUtil.ADMIN_TEACHER.equals(teacherModelListDto.getRole()) && !WebServiceUtil.TEACHER.equals(teacherModelListDto.getRole())) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.STUDENT_CODE_ERROR, "role"));
 		}
 		return requestMissedFieldList;
 	}

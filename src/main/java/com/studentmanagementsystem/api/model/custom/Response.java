@@ -1,14 +1,19 @@
 package com.studentmanagementsystem.api.model.custom;
 
 public class Response {
-	private String status;
 	
-	  private Integer totalCount ;
+	
+	   private String status;
+	   
+	   private Integer draw;
+	
+	   private Long totalCount ;
 	    
-	    private Integer filterCount;
+	   private Long filterCount;
+	   
 	
-	private Object data;
-	
+	   private Object data;
+	 
   
 	
 	public Response() {
@@ -34,20 +39,28 @@ public class Response {
 	public void setData(Object data) {
 		this.data = data;
 	}
-	public Integer getTotalCount() {
+
+	public Long getTotalCount() {
 		return totalCount;
 	}
-	public void setTotalCount(Integer totalCount) {
+	public void setTotalCount(Long totalCount) {
 		this.totalCount = totalCount;
 	}
-	public Integer getFilterCount() {
+	public Long getFilterCount() {
 		return filterCount;
 	}
-	public void setFilterCount(Integer filterCount) {
+	public void setFilterCount(Long filterCount) {
 		this.filterCount = filterCount;
+	}
+	public Integer getDraw() {
+		return draw;
+	}
+	public void setDraw(Integer draw) {
+		this.draw = draw;
 	}
 	
 
+	
 //	@Override
 //	public String toString() {
 //		return "Response [status=" + status + ", data=" + data + "]";

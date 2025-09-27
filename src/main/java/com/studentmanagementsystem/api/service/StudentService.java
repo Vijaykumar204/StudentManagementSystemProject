@@ -1,19 +1,16 @@
 package com.studentmanagementsystem.api.service;
 
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
-import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
-
 
 public interface StudentService {
 
-	Response saveStudent(StudentDto studentDto);
+	MessageResponse saveStudent(StudentDto studentDto);
 
-//	StudentModelListResponse getStudentsBy(Long studentId, String email, String phoneNumber, String residingStatus,
-//			String status, Integer classOfStudy);
+	MessageResponse activeOrDeactiveByStudentId(String status, Long studentId, Long teacherId);
 
-	Response activeOrDeactiveByStudentId(String status, Long studentId, Long teacherId);
-
-	Response listStudentDetails(StudentFilterDto filterDto);
+	Response listStudentDetails(CommonFilterDto filterDto);
 
 }

@@ -1,15 +1,17 @@
 package com.studentmanagementsystem.api.service;
 
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
-import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListDto;
-import com.studentmanagementsystem.api.model.custom.teacher.TeacherModelListResponseDto;
+import com.studentmanagementsystem.api.model.custom.teacher.TeacherDto;
+
 
 public interface TeacherService {
 
-	TeacherModelListResponseDto listAllTeachers();
+	MessageResponse saveTeacher(TeacherDto teacherModelListDto);
 
-	Response saveTeacher(TeacherModelListDto teacherModelListDto, Long teacherId);
+	Response teacherList(CommonFilterDto filterDto);
 
-	TeacherModelListResponseDto filterTeacher(Long teacherId, String teacherName, String teacherPhoneNumber);
+	MessageResponse teacherLogin(String email,String password);
 
 }

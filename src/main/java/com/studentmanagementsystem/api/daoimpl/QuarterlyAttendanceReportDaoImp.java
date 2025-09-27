@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceReportDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
@@ -122,59 +122,142 @@ public class QuarterlyAttendanceReportDaoImp implements QuarterlyAttendanceRepor
 	//  WHERE qar.quarter_and_year = :quarterAndYear
 	//  AND qar.attendance_compliance_status = :complianceStatus;
 	@Override
-	public List<QuarterlyAttendanceReportDto> listQuarterlyAttendance(
-			QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto) {
+	public List<QuarterlyAttendanceReportDto> quarterlyAttendanceList(
+			CommonFilterDto filterDto) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<QuarterlyAttendanceReportDto> cq  =cb.createQuery(QuarterlyAttendanceReportDto.class);
-		Root<QuarterlyAttendanceReportModel> quarterlyAttendanceReportRoot = cq.from(QuarterlyAttendanceReportModel.class);
-		Join<QuarterlyAttendanceReportModel,StudentModel> quarterlyAttendanceReporAndStudentJoin = quarterlyAttendanceReportRoot.join("studentModel");
+		Root<QuarterlyAttendanceReportModel> quarterlyAttendanceRoot = cq.from(QuarterlyAttendanceReportModel.class);
+	//	Join<QuarterlyAttendanceReportModel,StudentModel> quarterlyAttendanceReporAndStudentJoin = quarterlyAttendanceRoot.join("studentModel");
 		
 		
 		cq.select(cb.construct(QuarterlyAttendanceReportDto.class,
 				 
-				quarterlyAttendanceReportRoot.get("studentModel").get("studentId"),
-				quarterlyAttendanceReportRoot.get("totalSchoolWorkingDays"),
-				quarterlyAttendanceReportRoot.get("totalDaysOfPresent"),
-				quarterlyAttendanceReportRoot.get("totalDaysOfAbsents"),				
-				quarterlyAttendanceReportRoot.get("totalApprovedActivitiesPermissionDays"),
-				quarterlyAttendanceReportRoot.get("totalApprovedSickdays"),
-				quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("code")
+				quarterlyAttendanceRoot.get("studentModel").get("studentId"),
+				 cb.concat(
+			                cb.concat(
+			                        cb.concat(cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("firstName"), ""), " "),
+			                        cb.concat(cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("middleName"), ""), " ")
+			                ),
+			                cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("lastName"), "")
+			        ),
+				quarterlyAttendanceRoot.get("studentModel").get("classOfStudy"),
+				quarterlyAttendanceRoot.get("studentModel").get("dateOfBirth"),
+				quarterlyAttendanceRoot.get("studentModel").get("phoneNumber"),
+				quarterlyAttendanceRoot.get("studentModel").get("email"),
+				quarterlyAttendanceRoot.get("quarterAndYear"),
+				quarterlyAttendanceRoot.get("totalSchoolWorkingDays"),
+				quarterlyAttendanceRoot.get("totalDaysOfPresent"),
+				quarterlyAttendanceRoot.get("totalDaysOfAbsents"),				
+				quarterlyAttendanceRoot.get("totalApprovedActivitiesPermissionDays"),
+				quarterlyAttendanceRoot.get("totalApprovedSickdays"),
+				quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("code"),
+				quarterlyAttendanceRoot.get("attendancePercentage")
 				
 				));
 		
 		
 		List<Predicate> predicates = new ArrayList<Predicate>();
-		if (quarterlyAttendanceFilterDto.getStudentId() != null) {
-			
-			
-		    predicates.add(cb.equal(
-		        quarterlyAttendanceReporAndStudentJoin.get("studentId"), 
-		        quarterlyAttendanceFilterDto.getStudentId()
-		    ));
+		
+		// Name , email , phone number filter
+		 if(filterDto.getSearchBy()!=null && filterDto.getSearchValue()!=null) {
+		        switch(filterDto.getSearchBy().toLowerCase())
+		        {
+		        
+		        case WebServiceUtil.NAME:
+		        	 Predicate fullName = cb.like(
+		        			 cb.concat(
+		 			                cb.concat(
+		 			                        cb.concat(cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("firstName"), ""), " "),
+		 			                        cb.concat(cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("middleName"), ""), " ")
+		 			                ),
+		 			                cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("lastName"), "")
+		 			        ),
+		                    "%" + filterDto.getSearchValue() + "%"
+		            );
+		        	
+		        	predicates.add(fullName);
+		        	break;
+		        	
+		        case WebServiceUtil.EMAIL:
+		        	Predicate email =cb.like(cb.lower(quarterlyAttendanceRoot.get("studentModel").get("email")) ,"%"+ filterDto.getSearchValue().toLowerCase() + "%");
+					predicates.add(email);
+					break;
+					
+		        case WebServiceUtil.PHONE_NUMBER:
+		        	Predicate phoneNumber = cb.like(quarterlyAttendanceRoot.get("studentModel").get("phoneNumber"),"%"+ filterDto.getSearchValue() + "%");
+					predicates.add(phoneNumber);
+					break;
+		        }
+		        }
+		// Compliance and Non compliance status filter
+		if(WebServiceUtil.COMPLIANCE.equals(filterDto.getStatus())) {
+			predicates.add(cb.equal(quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("code"),WebServiceUtil.COMPLIANCE));
 		}
-		else if(quarterlyAttendanceFilterDto.getEmail()!=null && !quarterlyAttendanceFilterDto.getEmail().isBlank()) {
-			String emailLike = "%"+ quarterlyAttendanceFilterDto.getEmail().toLowerCase() + "%";
-			predicates.add(cb.like(cb.lower(quarterlyAttendanceReporAndStudentJoin.get("email")),emailLike));
-		}
-		else if(quarterlyAttendanceFilterDto.getPhoneNumber()!=null && !quarterlyAttendanceFilterDto.getPhoneNumber().isBlank()) {
-			String phoneNumberLike = "%"+ quarterlyAttendanceFilterDto.getPhoneNumber() + "%";
-			predicates.add(cb.like(cb.lower(quarterlyAttendanceReporAndStudentJoin.get("phoneNumber")),phoneNumberLike));
+		else if (WebServiceUtil.NON_COMPLIANCE.equals(filterDto.getStatus())) {
+			predicates.add(cb.equal(quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("code"),WebServiceUtil.NON_COMPLIANCE));
 		}
 		
-		if(quarterlyAttendanceFilterDto.getFilter()!=null) {
-			predicates.add(cb.equal(quarterlyAttendanceReportRoot.get("attendanceComplianceStatus").get("code"),quarterlyAttendanceFilterDto.getFilter()));
-		}
-		predicates.add(cb.equal(quarterlyAttendanceReportRoot.get("quarterAndYear"), quarterlyAttendanceFilterDto.getQuarterAndYear()));
-		predicates.add( cb.equal(quarterlyAttendanceReportRoot.get("studentModel").get("classOfStudy"),quarterlyAttendanceFilterDto.getClassOfStudy()));
+		 
+		 // Sorting filter
+    	if(filterDto.getOrderColumn()!=null && filterDto.getOrderType() !=null) {
+		 switch(filterDto.getOrderColumn()) {
+		 
+		 case WebServiceUtil.NAME:
+			 if(WebServiceUtil.ASCENDING_ORDER .equals(filterDto.getOrderType())) 
+        		 cq.orderBy(cb.asc(quarterlyAttendanceRoot.get("studentModel").get("firstName")));
+        	else if(WebServiceUtil.DESCENDING_ORDER .equals(filterDto.getOrderType()))
+        		cq.orderBy(cb.desc(quarterlyAttendanceRoot.get("studentModel").get("firstName")));
+			 
+			 break;
+		 case WebServiceUtil.EMAIL:
+			 if(WebServiceUtil.ASCENDING_ORDER .equals(filterDto.getOrderType())) 
+        		 cq.orderBy(cb.asc(quarterlyAttendanceRoot.get("studentModel").get("email")));
+        	else if(WebServiceUtil.DESCENDING_ORDER .equals(filterDto.getOrderType()))
+        		cq.orderBy(cb.desc(quarterlyAttendanceRoot.get("studentModel").get("email")));
+			 
+			 break;
+		 
+		 case WebServiceUtil.PHONE_NUMBER:
+			 if(WebServiceUtil.ASCENDING_ORDER .equals(filterDto.getOrderType())) 
+        		 cq.orderBy(cb.asc(quarterlyAttendanceRoot.get("studentModel").get("phoneNumber")));
+        	else if(WebServiceUtil.DESCENDING_ORDER .equals(filterDto.getOrderType()))
+        		cq.orderBy(cb.desc(quarterlyAttendanceRoot.get("studentModel").get("phoneNumber")));
+			 break;
+			 
+		 case WebServiceUtil.DOB:
+			 if(WebServiceUtil.ASCENDING_ORDER .equals(filterDto.getOrderType())) 
+        		 cq.orderBy(cb.asc(quarterlyAttendanceRoot.get("studentModel").get("dateOfBirth")));
+        	else if(WebServiceUtil.DESCENDING_ORDER .equals(filterDto.getOrderType()))
+        		cq.orderBy(cb.desc(quarterlyAttendanceRoot.get("studentModel").get("dateOfBirth")));
+			 break;
+//		 case WebServiceUtil.S_NO:
+//			 if(WebServiceUtil.ASCENDING_ORDER .equals(quarterlyAttendanceFilterDto.getOrderType())) 
+//        		 cq.orderBy(cb.asc(quarterlyAttendanceRoot.get("")));
+//        	else if(WebServiceUtil.DESCENDING_ORDER .equals(quarterlyAttendanceFilterDto.getOrderType()))
+//        		cq.orderBy(cb.desc(quarterlyAttendanceRoot.get("")));
+//			 break;
+		default:
+			if(WebServiceUtil.ASCENDING_ORDER .equals(filterDto.getOrderType())) 
+       		 cq.orderBy(cb.asc(quarterlyAttendanceRoot.get(filterDto.getOrderColumn())));
+      	else if(WebServiceUtil.DESCENDING_ORDER .equals(filterDto.getOrderType()))
+       		cq.orderBy(cb.desc(quarterlyAttendanceRoot.get(filterDto.getOrderColumn())));	
+
+		 }}
+		
+		 
+		
+		// quarterAndYear and classOfStudy filter
+		predicates.add(cb.equal(quarterlyAttendanceRoot.get("quarterAndYear"), filterDto.getQuarterAndYear()));
+		predicates.add( cb.equal(quarterlyAttendanceRoot.get("studentModel").get("classOfStudy"),filterDto.getClassOfStudy()));
 		
 		if (!predicates.isEmpty()) {
 			cq.where(cb.and(predicates.toArray(new Predicate[0])));
 		}
 		
 		return  entityManager.createQuery(cq)
-				             .setFirstResult(quarterlyAttendanceFilterDto.getSize())
-				             .setMaxResults(quarterlyAttendanceFilterDto.getLength())
+				             .setFirstResult(filterDto.getStart())
+				             .setMaxResults(filterDto.getLength())
 				             .getResultList();
 			
 	}

@@ -1,26 +1,11 @@
 package com.studentmanagementsystem.api.dao;
 
-import java.util.List;
-
-import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
+import java.util.Map;
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 
 public interface DailyAttendanceDao {
 
-	//List<DailyAttendanceDto> getStudentAttendanceTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
+	Map<String, Object> attendanceList(CommonFilterDto filterDto);
 
-	List<DailyAttendanceDto> listAttendance(DailyAttendanceFilterDto dailyAttendanceFilterDto);
-
-	List<DailyAttendanceDto> attendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto);
-
-	//List<DailyAttendanceDto> getStudentAttendanceNotTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
-
-	//List<DailyAttendanceDto> listAttendanceNotTaken(DailyAttendanceFilterDto dailyAttendanceFilterDto);
-
-	List<MonthlyAbsenceDto> getMonthlyAbsenceStudents(DailyAttendanceFilterDto dailyAttendanceFilterDto);
-
-	List<MonthlyAbsenceDto> monthlyAttendanceList(DailyAttendanceFilterDto dailyAttendanceFilterDto);
-
-
+	Map<String, Object> monthlyAttendanceList(CommonFilterDto filterDto);
 }

@@ -3,6 +3,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,7 +27,7 @@ public class DailyAttendanceModel {
 	@Column(name = "AT_Date", nullable = false)
 	private LocalDate attendanceDate;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AT_Status", referencedColumnName = "CODE")
 	private StudentCodeModel attendanceStatus;
 
@@ -36,14 +37,14 @@ public class DailyAttendanceModel {
 	@Column(name = "AT_Approved_Extra_Cur_Activities", length = 1,columnDefinition ="CHAR DEFAULT 'N'")
 	private String approvedExtraCurricularActivitiesFlag;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="AT_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
 	private TeacherModel createTeacher;
 
 	@Column(name = "AT_Create_Date_Time")
 	private LocalDateTime createDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="AT_Update_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
 	private TeacherModel updateTeacher;
 

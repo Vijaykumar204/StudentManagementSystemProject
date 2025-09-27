@@ -50,11 +50,14 @@ public class MarkModel {
 	@JoinColumn(name ="Result_Status",referencedColumnName = "CODE" )
 	private StudentCodeModel result;
 	
+	@Column(name = "Mark_Percentage",nullable = false)
+	private Integer percentage;
+	
 	@ManyToOne
 	@JoinColumn(name ="Mark_Create_Teacher" ,referencedColumnName = "TEACH_Id",nullable = false)
 	private TeacherModel createTeacher;
 
-	
+
 	@Column(name = "Mark_Create_Date_Time")
 	private LocalDateTime createDate;
 	
@@ -65,11 +68,7 @@ public class MarkModel {
 	@Column(name = "Mark_Update_Date_Time")
 	private LocalDateTime updateTime;
 	
-
-
 	
-
-
 	public Long getMarkId() {
 		return markId;
 	}
@@ -185,6 +184,14 @@ public class MarkModel {
 
 	public void setUpdateTeacher(TeacherModel updateTeacher) {
 		this.updateTeacher = updateTeacher;
+	}
+
+	public Integer getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(Integer percentage) {
+		this.percentage = percentage;
 	}
 
 

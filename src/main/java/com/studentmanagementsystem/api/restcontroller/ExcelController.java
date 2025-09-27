@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.service.ExcelService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,14 +23,37 @@ public class ExcelController {
 	/*
 	 * Download the monthy attendance report
 	 * 
-	 * @param dailyAttendanceFilterDto Filter criteria for retrieving monthly attendance.
+	 * @param filterDto Filter criteria for retrieving monthly attendance.
 	 * @author Vijiyakumar
 	 */
 	
 	@PostMapping("attendance/monthly-report")
-    public void downloadMonthlyAttendanceReport(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto,HttpServletResponse response) throws IOException {  
-    		  excelService.downloadMonthlyAttendanceReport(dailyAttendanceFilterDto,response);
-
+    public void downloadMonthlyAttendanceReport(@RequestBody CommonFilterDto filterDto,HttpServletResponse response) throws IOException {  
+    		  excelService.downloadMonthlyAttendanceReport(filterDto,response);
+    
+    }
+	
+	/*
+	 * Download the mark detail report
+	 * 
+	 * @param filterDto Filter criteria for retrieving report.
+	 * @author Vijiyakumar
+	 */
+	@PostMapping("mark/detail-report")
+    public void downloadMarkDetailReport(@RequestBody CommonFilterDto filterDto,HttpServletResponse response) throws IOException {  
+    		  excelService.downloadMarkDetailReport(filterDto,response);
+    
+    }
+	
+	/*
+	 * Download the mark summary report
+	 * 
+	 * @param filterDto Filter criteria for retrieving report.
+	 * @author Vijiyakumar
+	 */
+	@PostMapping("mark/summary-report")
+    public void downloadMarkSummaryReport(@RequestBody CommonFilterDto filterDto,HttpServletResponse response) throws IOException {  
+    		  excelService.downloadMarkSummaryReport(filterDto,response);
     
     }
 

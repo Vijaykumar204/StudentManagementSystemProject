@@ -9,14 +9,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.Response;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceReportDto;
 import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
 import com.studentmanagementsystem.api.repository.StudentCodeRespository;
-import com.studentmanagementsystem.api.repository.StudentModelRepository;
+import com.studentmanagementsystem.api.repository.StudentRepository;
 import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
@@ -33,7 +33,7 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	private QuarterlyAttendanceModelRepository quarterlyAttendanceModelRepository;
 	
 	@Autowired
-	private StudentModelRepository studentModelRepository;
+	private StudentRepository studentModelRepository;
 	
 	@Autowired
 	private StudentCodeRespository studentCodeRespository;
@@ -145,7 +145,8 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 			Long sick = quarterlyAttendance.getTotalApprovedSickdays();			
 
 	       int percentageOfPresent =  (int) Math.ceil((((present + activities + sick) / totalWorkingDays) * 100));
-	
+	       		
+	       quarterlyAttendanceReportModel.setAttendancePercentage(percentageOfPresent);
 
 			if (percentageOfPresent < 75) {
 				StudentCodeModel nonCompliance = studentCodeRespository.findStudentCodeByCode(WebServiceUtil.NON_COMPLIANCE);
@@ -167,10 +168,10 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 	 * Retrieve the list of compliance or non-compliance students for a given quarter and year.
 	 */
 	@Override
-	public Response listQuarterlyAttendance(QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto) {
+	public Response quarterlyAttendanceList(CommonFilterDto filterDto) {
 		logger.info("Before listQuarterlyAttendance - Retrive the quarterly attendance report ");
-		List<QuarterlyAttendanceReportDto> quarterlyAttendanceList = quartlyAttendanceReportDao.listQuarterlyAttendance(quarterlyAttendanceFilterDto);
-		Integer totalCount = quarterlyAttendanceModelRepository.findTotalCount(quarterlyAttendanceFilterDto.getClassOfStudy(),quarterlyAttendanceFilterDto.getQuarterAndYear());
+		List<QuarterlyAttendanceReportDto> quarterlyAttendanceList = quartlyAttendanceReportDao.quarterlyAttendanceList(filterDto);
+		Long totalCount = quarterlyAttendanceModelRepository.findTotalCount(filterDto.getClassOfStudy(),filterDto.getQuarterAndYear());
 		int sno=1;
 		for(QuarterlyAttendanceReportDto quaterlyAttendance : quarterlyAttendanceList) {
 			quaterlyAttendance.setSno(sno++);
@@ -178,8 +179,9 @@ public class QuarterlyAttendanceReportServiceImpl implements QuarterlyAttendance
 		
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setDraw(filterDto.getDraw());
 		response.setTotalCount(totalCount);
-		response.setFilterCount(sno-1);
+		response.setFilterCount((long) (sno-1));
 		response.setData(quarterlyAttendanceList);
 		logger.info("After listQuarterlyAttendance - Successfully retrive the quarterly attendance report ");
 		return response;

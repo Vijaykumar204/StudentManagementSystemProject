@@ -8,8 +8,9 @@ public final class WebServiceUtil {
 	
 //******************** Teacher*********************************
 	
-	public static final String ADMIN_TEACHER ="admin";
-	public static final String TEACHER = "teacher";
+	public static final String ADMIN_TEACHER ="ADMIN";
+	public static final String TEACHER = "TEACHER";
+	public static final String PASSWORD = "Humworld@123";
 	
 //********************Student*********************************	
 	public static final String MALE = "MALE";
@@ -18,11 +19,14 @@ public final class WebServiceUtil {
 	public static final String HOSTEL = "HOSTEL";
 	public static final String DAYSCHOLAR = "DAYSCHOLAR";
 	public static final String ACTIVE ="ACTIVE";
-	public static final String DEACTIVE ="DEACTIVE";
-	
+	public static final String DEACTIVE ="DEACTIVE";	
 	public static final String NAME ="name";
 	public static final String EMAIL ="email";
-	public static final String PHONENUMBER ="phoneNumber";
+	public static final String PHONE_NUMBER ="phonenumber";
+	public static final String DOB = "dob";
+	public static final String ID ="id";
+	public static final String S_NO="createDate";
+	public static final String TOPPER ="topper";
 	
 	
 	
@@ -39,7 +43,6 @@ public final class WebServiceUtil {
 	
 	public static final Boolean CANCEL_HOLIDAY=true;
 	public static final Boolean HOLIDAY=false;
-	
 	public static final String SUCCESS_HOLIDAY_DECLARE="Holidays declared successfully";
 	public static final String SUCCESS_HOLIDAY_UPDATE = "Holidays updated successfully";
 	public static final String SUCCESS_CANCEL_HOLIDAY = "Holidays cancelled successfully";
@@ -251,21 +254,20 @@ public final class WebServiceUtil {
             Hum School, Chennai
             </p> """;
 	
-	public static final String EXTRA_CUR_ACTIVITY_ALERT_SUBJECT="Extra-Curricular Activity Leave Notification for %s";
+	public static final String EXTRA_CUR_ACTIVITY_ALERT_SUBJECT="EApproval for Extra-Curricular Activity Participation for %s";
 	public static final String EXTRA_CUR_ACTIVITY_ALERT_BODY = """ 
 			
 		<p>	Dear Sir/Madam,</p>
 			
-			<p>This is to inform you that your ward, %s, has been granted leave on %s to participate in an extra-curricular activity </p>
+			<p>This is to inform you that your ward, %s, had requested to participate in an extra-curricular activity scheduled on %s. I am pleased to inform you that the request has been approved. </p>
 			
 			<h5>Details:</h5>
 			<p>- Student Name: %s </p>
-			
-			<p>- Leave Date: %s </p>
+			<p>- Activity Date: %s </p>
 			<p>- Leave Type: Extra-Curricular Activity </p>
 			<p>- Status: Approved </p>
 			
-			<p> Please ensure that your child participates responsibly and returns to school on the following day. If there are any special requirements or questions, feel free to contact us.</p>
+			<p> Please encourage your child to participate actively and ensure their timely presence for the event. Should you have any questions, feel free to contact me.</p>
 			    <p>
             Warm regards,<br>
             <b>Class Teacher</b><br>
@@ -275,7 +277,8 @@ public final class WebServiceUtil {
 	
 	//******************** Validation Message *********************************		
 	
-	public static final String NULL_ERROR = "%s is required";
+	public static final String NULL_ERROR = "%s is required ";
+	public static final String STUDENT_CODE_ERROR = " %s is invalid data";
 	
 	public static final String CLASS_OF_STUDY_ERROR = "Class of study must be between 6 and 10";
 	public static final String REGEX_ERROR = "Invalid %s format";
@@ -293,6 +296,7 @@ public final class WebServiceUtil {
 	public static final String DECLARE_MARK="Successfully declared mark";
 	public static final String STUDENT_ATTENDANCE_STATUS =" student attendance is non compliance,so does not declare the mark";
 	public static final String TEACHER_ID_ERROR = "Invalid Teacher ID. Please enter a valid one";
+	public static final String UNIQUE_ERROR ="%s already exist";
 	
 	public static final String INVALID_CODE = "%s invalid";
 	

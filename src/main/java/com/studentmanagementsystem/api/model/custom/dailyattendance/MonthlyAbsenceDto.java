@@ -16,8 +16,6 @@ public class MonthlyAbsenceDto {
     
     private String name;
     
-    private Integer classOfStudy;
-    
     @JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
     private LocalDate dateOfBirth;
@@ -25,6 +23,8 @@ public class MonthlyAbsenceDto {
     private String email;
     
     private String phoneNumber;
+    
+    private Integer classOfStudy;
     
     private Long totalWorkingDays;
     
@@ -34,27 +34,6 @@ public class MonthlyAbsenceDto {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
     private List<LocalDate> attendanceDate;
 
-//    public MonthlyAbsenceDto(Long studentId, String firstName, String middleName, String lastName,
-//    		 Long  totalWorkingDays,
-//    		 Integer absentCount, List<LocalDate> attendanceDate) {
-//        this.studentId = studentId;
-//        this.firstName = firstName;
-//        this.middleName = middleName;
-//        this.lastName = lastName;
-//        this.totalWorkingDays = totalWorkingDays;
-//        this.absentCount = absentCount;
-//        this.attendanceDate = attendanceDate;
-//    }
-//
-//	public MonthlyAbsenceDto(Long studentId, String firstName, String middleName, String lastName,
-//			List<LocalDate> attendanceDate) {
-//		
-//		this.studentId = studentId;
-//		this.firstName = firstName;
-//		this.middleName = middleName;
-//		this.lastName = lastName;
-//		this.attendanceDate = attendanceDate;
-//	}
 
 	public Integer getSno() {
 		return sno;

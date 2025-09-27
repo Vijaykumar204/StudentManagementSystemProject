@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
+
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.service.MarkService;
 
@@ -28,7 +29,7 @@ public class MarkController {
 	 * @author Vijiyakumar
 	 */
 	
-	@PostMapping("/add")
+	@PostMapping("/save")
 	ResponseEntity<?> saveStudentMarks(@RequestBody List<StudentMarksDto> studentMarksDto){
 		return new ResponseEntity<>(studentMarksService.saveStudentMarks(studentMarksDto),HttpStatus.OK);
 	}
@@ -41,10 +42,21 @@ public class MarkController {
 	 * @author Vijiyakumar
 	 */	
 	@GetMapping("/list")
-	ResponseEntity<?> listStudentMarks(@RequestBody QuarterlyAttendanceFilterDto markFilterDto){
-		return new ResponseEntity<>(studentMarksService.listStudentMarks(markFilterDto),HttpStatus.OK);
+	ResponseEntity<?> listStudentMarks(@RequestBody CommonFilterDto filterDto){
+		return new ResponseEntity<>(studentMarksService.listStudentMarks(filterDto),HttpStatus.OK);
 	}
 	
+	/**
+	 * Retrieve the list  result summary report.
+	 *
+	 * @param markFilterDto The Filter details (request body)
+	 * @return List of result summary report
+	 * @author Vijiyakumar
+	 */	
+	@GetMapping("/summary-report")
+	ResponseEntity<?> resultSummaryReport(@RequestBody CommonFilterDto filterDto){
+		return new ResponseEntity<>(studentMarksService.resultSummaryReport(filterDto),HttpStatus.OK);
+	}
 	
 	
 	

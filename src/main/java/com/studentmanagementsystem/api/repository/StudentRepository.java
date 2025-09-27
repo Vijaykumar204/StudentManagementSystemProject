@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
 @Repository
-public interface StudentModelRepository extends JpaRepository<StudentModel, Long> {
+public interface StudentRepository extends JpaRepository<StudentModel, Long> {
 
 
 	StudentModel findByFirstNameAndMiddleNameAndLastNameAndDateOfBirth(
@@ -20,13 +20,15 @@ public interface StudentModelRepository extends JpaRepository<StudentModel, Long
 	StudentModel findStudentByStudentId(Long studentId);
 
 	@Query("SELECT COUNT(s.studentId) FROM StudentModel s WHERE s.classOfStudy = :classOfStudy")
-	Integer findTotalCount(@Param("classOfStudy") Integer classOfStudy);
+	Long findTotalCount(@Param("classOfStudy") Integer classOfStudy);
 
 	@Query("select s.studentId from StudentModel s where s.classOfStudy = :classOfStudy")
 	List<Long> findStudentIdByClassOfStudy(@Param("classOfStudy") Integer classOfStudy);
 
-//	StudentModel findFirstNameAndMiddleNameAndLastNameAndEmailByStudentId(Long studentId);
-//
-//	StudentModel findFirstNameAndMiddleNameAndLastNameAndParentsEmailByStudentId(Long studentId);
+	StudentModel findByEmail(String email);
+
+	StudentModel findByPhoneNumber(String phoneNumber);
+
+
 
 }

@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "school_holidays")
-public class SchoolHolidaysModel {
+public class HolidayModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

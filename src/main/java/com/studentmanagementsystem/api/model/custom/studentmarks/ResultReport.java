@@ -5,13 +5,13 @@ public class ResultReport {
 	
 	private String quarter;
 	
+	private Integer classOfStudy;
+	
 	private Integer totalCount;
 	
 	private Long totalPass;
 	
 	private Long totalFail;
-	
-	private Long failDueToMark;
 	
 	private Long failDueToAttendance;
 
@@ -48,13 +48,6 @@ public class ResultReport {
 		this.totalFail = totalFail;
 	}
 
-	public Long getFailDueToMark() {
-		return failDueToMark;
-	}
-
-	public void setFailDueToMark(Long failDueToMark) {
-		this.failDueToMark = failDueToMark;
-	}
 
 	public Long getFailDueToAttendance() {
 		return failDueToAttendance;
@@ -63,15 +56,26 @@ public class ResultReport {
 	public void setFailDueToAttendance(Long failDueToAttendance) {
 		this.failDueToAttendance = failDueToAttendance;
 	}
-
-	public ResultReport(String quarter, Integer totalCount, Long totalPass, Long totalFail,
-			Long failDueToAttendance) {
 	
+	
+
+	public Integer getClassOfStudy() {
+		return classOfStudy;
+	}
+
+	public void setClassOfStudy(Integer classOfStudy) {
+		this.classOfStudy = classOfStudy;
+	}
+
+	public ResultReport(String quarter,Integer classOfStudy, Integer totalCount, Long totalPass, Long totalFail,
+			Long failDueToAttendance) {
+		
 		this.quarter = quarter;
+		this.classOfStudy = classOfStudy;
 		this.totalCount = totalCount;
 		this.totalPass = totalPass;
 		this.totalFail = totalFail;
-//		this.failDueToMark = failDueToMark;
+
 		this.failDueToAttendance = failDueToAttendance;
 	}
 

@@ -3,8 +3,8 @@ package com.studentmanagementsystem.api.dao;
 import java.util.Map;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 
-public interface StudentDao {
+public interface HolidayDao {
 
-	Map<String, Object> listStudentDetails(CommonFilterDto filterDto);
+	Map<String, Object> declaredHolidaysList(CommonFilterDto filterDto);
 
 }

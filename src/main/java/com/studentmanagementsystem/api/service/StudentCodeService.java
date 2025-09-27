@@ -9,5 +9,7 @@ public interface StudentCodeService {
 
 	Response addStudentCode(List<StudentCodeDto> studentCodeDto);
 
-	Response loadStudentCode(String groupCode);
+	
+
+	Response stuCodeList(String groupCode);
 }

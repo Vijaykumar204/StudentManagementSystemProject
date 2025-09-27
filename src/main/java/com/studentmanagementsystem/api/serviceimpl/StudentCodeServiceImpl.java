@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.studentmanagementsystem.api.dao.StudentCodeDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.studentcode.StudentCodeDto;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
@@ -18,6 +20,9 @@ public class StudentCodeServiceImpl implements StudentCodeService {
 	
 	@Autowired
 	private StudentCodeRespository studentCodeRespository;
+	
+	@Autowired
+	private StudentCodeDao studentCodeDao;
 	
 
 
@@ -68,11 +73,11 @@ public class StudentCodeServiceImpl implements StudentCodeService {
 
 
 	@Override
-	public Response loadStudentCode(String groupCode) {
+	public Response stuCodeList(String groupCode) {
 		
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setData(studentCodeRespository.findByGroupCode(groupCode));
+		response.setData(studentCodeDao.stuCodeList(groupCode));
 		
 		return response;
 	}

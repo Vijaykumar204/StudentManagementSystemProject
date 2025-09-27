@@ -28,7 +28,7 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 			@Param("studentId") Long studentId);
 
 	@Query("SELECT COUNT(d.attendanceId) FROM DailyAttendanceModel d WHERE d.studentModel.classOfStudy = :classOfStudy")
-	Integer findTotalCount(@Param("classOfStudy") Integer classOfStudy);
+	Long findTotalCount(@Param("classOfStudy") Integer classOfStudy);
 
 
 

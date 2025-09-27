@@ -170,7 +170,7 @@ public class StudentDto {
 	public StudentDto(Long studentId, String name, String gender,
 			LocalDate dateOfBirth, Integer classOfStudy, String residingStatus, String phoneNumber, String parentsName,
 			 String homeStreetName, String homeCityName, String homePostalCode, String status,
-			String email,String parentsEmail) {
+			String email,String parentsEmail,String firstName,String middleName,String lastName ) {
 
 		this.studentId = studentId;
 		this.name = name;
@@ -186,6 +186,9 @@ public class StudentDto {
 		this.status = status;
 		this.email = email;
 		this.parentsEmail = parentsEmail;
+		this.firstName=firstName;
+		this.middleName=middleName;
+		this.lastName=lastName;
 	}
 	public StudentDto() {
 	    }

@@ -28,7 +28,6 @@ public class SchoolHolidaysDto {
 	
 	private Long teacherId;
 	
-   ;
 
 	public Long getHolidayId() {
 		return holidayId;

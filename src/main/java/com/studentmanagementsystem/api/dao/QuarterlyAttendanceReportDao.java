@@ -1,7 +1,8 @@
 package com.studentmanagementsystem.api.dao;
 
 import java.util.List;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
+
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceReportDto;
 
 public interface QuarterlyAttendanceReportDao {
@@ -12,7 +13,7 @@ public interface QuarterlyAttendanceReportDao {
 
 	Long getTotalWorkingDays(List<Integer> quarterMonthEnd);
 
-	List<QuarterlyAttendanceReportDto> listQuarterlyAttendance(
-			QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto);
+	List<QuarterlyAttendanceReportDto> quarterlyAttendanceList(
+			CommonFilterDto filterDto);
 
 }

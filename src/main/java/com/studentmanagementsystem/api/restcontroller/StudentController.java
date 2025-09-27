@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
-import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
+
 import com.studentmanagementsystem.api.service.StudentService;
 
 @RestController
@@ -50,7 +51,7 @@ public class StudentController {
 	 */
 
 	@GetMapping("/list")
-	public ResponseEntity<?> listStudentDetails(@RequestBody StudentFilterDto filterDto){
+	public ResponseEntity<?> listStudentDetails(@RequestBody CommonFilterDto filterDto){
 		return new ResponseEntity<>( studentService.listStudentDetails(filterDto),HttpStatus.OK);
 	}
 	

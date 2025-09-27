@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.MarkDao;
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.Response;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
@@ -17,7 +17,7 @@ import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
 import com.studentmanagementsystem.api.repository.StudentCodeRespository;
 import com.studentmanagementsystem.api.repository.StudentMarksRepository;
-import com.studentmanagementsystem.api.repository.StudentModelRepository;
+import com.studentmanagementsystem.api.repository.StudentRepository;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.MarkService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
@@ -32,7 +32,7 @@ public class MarkServiceImpl implements MarkService {
 	private MarkDao studentMarksDao;
 
 	@Autowired
-	private StudentModelRepository studentModelRepository;
+	private StudentRepository studentModelRepository;
 	
 	@Autowired
 	private FieldValidation fieldValidation;
@@ -113,6 +113,11 @@ public class MarkServiceImpl implements MarkService {
 			Integer totalMark = tamil + english + maths + science + socialscience;
 			studentMark.setTotalMarks(totalMark);
 			
+			Integer percentage = totalMark/5;
+			
+			studentMark.setPercentage(percentage);
+			
+			
 			boolean allSubjectsPassed = tamil >= 35 && english >= 35 && maths >= 35 && science >= 35
 					&& socialscience >= 35;
 							
@@ -145,18 +150,36 @@ public class MarkServiceImpl implements MarkService {
 	 * Retrieve the list of all student marks for a given quarter and year.
 	 */
 	@Override
-	public Response listStudentMarks(QuarterlyAttendanceFilterDto markFilterDto) {
+	public Response listStudentMarks(CommonFilterDto filterDto) {
 		logger.info("Before getAllStudentMarks - Attempting to retriving the student mark list  ");
-
+		List<StudentMarksDto> markList = studentMarksDao.getAllStudentMarks(filterDto);
+		
+		Long totalCount = studentMarksRepository.findTotalCount(filterDto.getClassOfStudy(),filterDto.getQuarterAndYear());
+		int sno=1;
+		
+		for(StudentMarksDto mark : markList) {
+			mark.setSno(sno++);
+		}
+		
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);	
-		if ("REPORT".equals(markFilterDto.getFilter())) {
-			response.setData(studentMarksDao.getResultReport(markFilterDto));
-		}
-		else {
-		response.setData(studentMarksDao.getAllStudentMarks(markFilterDto));
-		}
+		response.setDraw(filterDto.getDraw());
+		response.setFilterCount((long) (sno-1));
+		response.setTotalCount(totalCount);
+		response.setData(markList);
+		
 		logger.info("After getAllStudentMarks - Successfully retrived the student mark list  ");
+		return response;
+	}
+
+
+	@Override
+	public Response resultSummaryReport(CommonFilterDto filterDto) {
+		logger.info("Before getAllStudentMarks - Attempting to retriving the mark summary report  ");
+		Response response = new Response();
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(studentMarksDao.resultSummaryReport(filterDto));
+		logger.info("After getAllStudentMarks - Successfully retrived the mark summary report  ");
 		return response;
 	}
 }

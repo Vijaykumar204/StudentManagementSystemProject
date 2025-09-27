@@ -9,16 +9,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidayFilterDto;
+
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
-import com.studentmanagementsystem.api.service.SchoolHolidaysService;
+import com.studentmanagementsystem.api.service.HolidayService;
 
 @RestController
 @RequestMapping(value = "holidays")
-public class SchoolHolidaysController {
+public class HolidayController {
 
 	@Autowired
-	private SchoolHolidaysService schoolHolidaysService;
+	private HolidayService schoolHolidaysService;
 
 	/**
 	 * Declare  holidays.
@@ -49,20 +50,14 @@ public class SchoolHolidaysController {
 	/**
 	 * Retrieves the list of active or canceled declared holidays.
 	 *
-	 * @param isHolidayCancelled Indicates the holiday status: 
-	 *                           true → canceled holidays, 
-	 *                           false → active holidays, 
-	 *                           null → all holidays.
-	 * @param month              The month for which holidays are to be retrieved.
-	 * @param year               The year for which holidays are to be retrieved.
-	 * @param searchValue        (optional) The search value, e.g., holiday reason.
+	 *@param filterDto (from request body)
 	 * @return Return list of active or canceled declared holidays.
 	 * @author Vijiyakumar
 	 */
 
 	@GetMapping("/list")
-	ResponseEntity<?> listDeclaredHolidays(@RequestBody SchoolHolidayFilterDto schoolHolidayFilterDto ) {
-		return new ResponseEntity<>(schoolHolidaysService.declaredHolidaysList(schoolHolidayFilterDto), HttpStatus.OK);
+	ResponseEntity<?> listDeclaredHolidays(@RequestBody CommonFilterDto filterDto ) {
+		return new ResponseEntity<>(schoolHolidaysService.declaredHolidaysList(filterDto), HttpStatus.OK);
 	}
 
 }

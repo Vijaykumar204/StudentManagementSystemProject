@@ -39,11 +39,11 @@ public class StudentModel {
 	@Column(name = "STU_Class",nullable = false)
 	private Integer classOfStudy;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="STU_Gender",referencedColumnName = "CODE",nullable = false )
 	private StudentCodeModel gender;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="STU_Residing_Status",referencedColumnName = "CODE",nullable = false )
 	private StudentCodeModel residingStatus;
 	
@@ -68,14 +68,14 @@ public class StudentModel {
 	@Column(name = "STU_Postal_Code",nullable = false,length=6)
 	private String homePostalCode;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="STU_Status",referencedColumnName = "CODE" ,columnDefinition ="CHAR DEFAULT 'A'")
 	private StudentCodeModel status;
 	
 	@Column(name = "STU_Last_Effective_Date")
-	private LocalDateTime lasteffectivedate;
+	private LocalDateTime lastEffectiveDate;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="STU_Create_Teacher",referencedColumnName = "TEACH_Id",nullable = false)
 	private TeacherModel createTeacher;
 	
@@ -83,7 +83,7 @@ public class StudentModel {
 	private LocalDateTime createDate;
 	
 //	@Column(name = "STU_Update_Teacher")
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="STU_Update_Teacher",referencedColumnName = "TEACH_Id")
 	private TeacherModel updateTeacher;
 	
@@ -190,14 +190,6 @@ public class StudentModel {
 		this.parentsName = parentsName;
 	}
 
-//	public String getEmergencyContactPhoneNumber() {
-//		return emergencyContactPhoneNumber;
-//	}
-//
-//	public void setEmergencyContactPhoneNumber(String emergencyContactPhoneNumber) {
-//		this.emergencyContactPhoneNumber = emergencyContactPhoneNumber;
-//	}
-
 	public String getParentsEmail() {
 		return parentsEmail;
 	}
@@ -238,12 +230,14 @@ public class StudentModel {
 		this.status = status;
 	}
 
-	public LocalDateTime getLasteffectivedate() {
-		return lasteffectivedate;
+
+
+	public LocalDateTime getLastEffectiveDate() {
+		return lastEffectiveDate;
 	}
 
-	public void setLasteffectivedate(LocalDateTime lasteffectivedate) {
-		this.lasteffectivedate = lasteffectivedate;
+	public void setLastEffectiveDate(LocalDateTime lastEffectiveDate) {
+		this.lastEffectiveDate = lastEffectiveDate;
 	}
 
 	public LocalDateTime getCreateDate() {

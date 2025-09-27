@@ -1,14 +1,32 @@
 package com.studentmanagementsystem.api.model.custom.quarterlyreport;
 
+import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 public class QuarterlyAttendanceReportDto {
 
 	
 	private Integer sno;
 
-	private Long quarterlyAttendanceId;
+    private Long studentId;
+    
+    private String name;
+    
+    private Integer classOfStudy;
+    
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
+    private LocalDate dateOfBirth;
 	
+	private String phoneNumber;
+	
+	private String email;
+	
+	private String quarterAndYear;
 	
 	private Long totalSchoolWorkingDays;
 	
@@ -27,11 +45,9 @@ public class QuarterlyAttendanceReportDto {
 
 	private String  attendanceComplianceStatus;
 	
-	private Long studentId;
+	private Integer attendancePercentage;
 	
-	private String phoneNumber;
-	
-	private String email;
+	private Long quarterlyAttendanceId;
 
 	public Long getQuarterlyAttendanceId() {
 		return quarterlyAttendanceId;
@@ -120,6 +136,50 @@ public class QuarterlyAttendanceReportDto {
 	public void setSno(Integer sno) {
 		this.sno = sno;
 	}
+	
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public String getQuarterAndYear() {
+		return quarterAndYear;
+	}
+
+	public void setQuarterAndYear(String quarterAndYear) {
+		this.quarterAndYear = quarterAndYear;
+	}
+	
+	
+
+	public Integer getAttendancePercentage() {
+		return attendancePercentage;
+	}
+
+	public void setAttendancePercentage(Integer attendancePercentage) {
+		this.attendancePercentage = attendancePercentage;
+	}
+
+	public Integer getClassOfStudy() {
+		return classOfStudy;
+	}
+
+	public void setClassOfStudy(Integer classOfStudy) {
+		this.classOfStudy = classOfStudy;
+	}
 
 	public QuarterlyAttendanceReportDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents, Long totalApprovedSickdays,
 			Long totalApprovedActivitiesPermissionDays ) {
@@ -159,6 +219,27 @@ public class QuarterlyAttendanceReportDto {
 		this.totalApprovedSickdays = totalApprovedSickdays;
 //		this.attendanceComplianceStatus = attendanceComplianceStatus;
 		
+	}
+
+	public QuarterlyAttendanceReportDto(Long studentId, String name, Integer classOfStudy, LocalDate dateOfBirth,
+			String phoneNumber, String email, String quarterAndYear, Long totalSchoolWorkingDays,
+			Long totalDaysOfPresent, Long totalDaysOfAbsents, Long totalApprovedActivitiesPermissionDays,
+			Long totalApprovedSickdays, String attendanceComplianceStatus,Integer attendancePercentage) {
+	
+		this.studentId = studentId;
+		this.name = name;
+		this.classOfStudy = classOfStudy;
+		this.dateOfBirth = dateOfBirth;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
+		this.quarterAndYear = quarterAndYear;
+		this.totalSchoolWorkingDays = totalSchoolWorkingDays;
+		this.totalDaysOfPresent = totalDaysOfPresent;
+		this.totalDaysOfAbsents = totalDaysOfAbsents;
+		this.totalApprovedActivitiesPermissionDays = totalApprovedActivitiesPermissionDays;
+		this.totalApprovedSickdays = totalApprovedSickdays;
+		this.attendanceComplianceStatus = attendanceComplianceStatus;
+		this.attendancePercentage = attendancePercentage;
 	}
 	
 	

@@ -45,6 +45,9 @@ public class QuarterlyAttendanceReportModel {
 	@JoinColumn(name ="QUARTER_Attendance_Compliance_Status",referencedColumnName = "CODE" ,nullable = false)
 	private StudentCodeModel  attendanceComplianceStatus;
 	
+	@Column(name = "QUARTER_Attendance_Percentage",nullable = false)
+	private Integer attendancePercentage;
+	
 	@Column(name="QUARTER_Attendance_Comments",length = 25)
 	private String comments;
 	
@@ -130,6 +133,14 @@ public class QuarterlyAttendanceReportModel {
 
 	public void setStudentModel(StudentModel studentModel) {
 		this.studentModel = studentModel;
+	}
+
+	public Integer getAttendancePercentage() {
+		return attendancePercentage;
+	}
+
+	public void setAttendancePercentage(Integer attendancePercentage) {
+		this.attendancePercentage = attendancePercentage;
 	}
 
 	

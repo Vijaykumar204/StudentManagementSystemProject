@@ -7,16 +7,13 @@ public class StudentCodeDto {
 	
 	
 	private String code;
-	
 
-	private String description;
-
-	
 	private String groupCode;
 	
-
 	private String subGroupCode;
 	
+	private String description;
+
 
 	private Boolean isActiveFlag = true;
 	
@@ -87,6 +84,15 @@ public class StudentCodeDto {
 
 	public StudentCodeDto() {
 		
+	}
+
+
+	public StudentCodeDto(String code, String groupCode, String subGroupCode, String description) {
+		
+		this.code = code;
+		this.groupCode = groupCode;
+		this.subGroupCode = subGroupCode;
+		this.description = description;
 	}
 	
 	

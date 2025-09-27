@@ -22,7 +22,7 @@ import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.DailyAttendanceRepository;
 import com.studentmanagementsystem.api.repository.EmailSentHistoryRepository;
 import com.studentmanagementsystem.api.repository.StudentMarksRepository;
-import com.studentmanagementsystem.api.repository.StudentModelRepository;
+import com.studentmanagementsystem.api.repository.StudentRepository;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.EmailSentService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
@@ -41,7 +41,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 	    private JavaMailSender mailSender;
 	  
 	  @Autowired
-	  private StudentModelRepository studentModelRepository;
+	  private StudentRepository studentModelRepository;
 	  
 	  @Autowired
 	  private EmailSentHistoryRepository emailSentHistoryRepository;

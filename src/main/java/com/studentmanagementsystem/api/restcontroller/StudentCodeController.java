@@ -38,7 +38,7 @@ public ResponseEntity<?> addStudentCode(@RequestBody List<StudentCodeDto> studen
 }
 
 @GetMapping
-public ResponseEntity<?> loadStudentCode(@RequestParam String groupCode){
-	return new ResponseEntity<>(studentCodeService.loadStudentCode(groupCode),HttpStatus.OK);
+public ResponseEntity<?> stuCodeList(@RequestParam(required = false) String groupCode){
+	return new ResponseEntity<>(studentCodeService.stuCodeList(groupCode),HttpStatus.OK);
 }
 }

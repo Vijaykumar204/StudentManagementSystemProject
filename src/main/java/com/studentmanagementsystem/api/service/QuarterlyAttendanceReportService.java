@@ -2,12 +2,12 @@ package com.studentmanagementsystem.api.service;
 
 import java.util.List;
 
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.Response;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
 
 public interface QuarterlyAttendanceReportService {
 
-	Response listQuarterlyAttendance(QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto);
+	Response quarterlyAttendanceList(CommonFilterDto filterDto);
 
 	void runQuarterlyAttendanceUpdate();
 

@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
 
 
@@ -32,25 +32,25 @@ public class DailyAttendanceController {
 	 * @author Vijiyakumar
 	 */
 	@PostMapping("/save/{classOfStudy}")
-	ResponseEntity<?> saveAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto,@PathVariable Integer classOfStudy) {
+	ResponseEntity<?> saveAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.saveAttendance(dailyAttendanceDto,classOfStudy), HttpStatus.OK);
+				dailyAttendanceService.saveAttendance(dailyAttendanceDto), HttpStatus.OK);
 	}
 
 	/**
 	 * Retrieve student attendance for a particular date 
 	 *
-	 *@param dailyAttendanceFilterDto   Filter criteria for retrieving  attendance.
+	 *@param filterDto   Filter criteria for retrieving  attendance.
 	 *                        
 	 *  
-	 * @return List of students with attendance status (marked or not marked) on the
+	 * @return List of students attendance on the
 	 *         given date
 	 * @author Vijiyakumar
 	 */
 	@GetMapping("/list")
-	ResponseEntity<?> attendanceList(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+	ResponseEntity<?> attendanceList(@RequestBody CommonFilterDto filterDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.attendanceList(dailyAttendanceFilterDto),
+				dailyAttendanceService.attendanceList(filterDto),
 				HttpStatus.OK);
 	}
 
@@ -63,9 +63,9 @@ public class DailyAttendanceController {
 	 * @author Vijiyakumar
 	 */
 	@GetMapping("/month-list")
-	ResponseEntity<?> monthlyAttendanceList(@RequestBody DailyAttendanceFilterDto dailyAttendanceFilterDto) {
+	ResponseEntity<?> monthlyAttendanceList(@RequestBody CommonFilterDto filterDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.monthliAttendanceList(dailyAttendanceFilterDto),
+				dailyAttendanceService.monthlyAttendanceList(filterDto),
 				HttpStatus.OK);
 	}
 	

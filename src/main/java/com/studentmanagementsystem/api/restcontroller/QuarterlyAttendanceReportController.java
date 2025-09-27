@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceFilterDto;
+
+import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
 
 @RestController
@@ -28,8 +29,8 @@ public class QuarterlyAttendanceReportController {
 	 * @author Vijiyakumar
 	 */	
 	@GetMapping("/list")
-	ResponseEntity<?> listQuarterlyAttendance(@RequestBody QuarterlyAttendanceFilterDto quarterlyAttendanceFilterDto){
-		return new ResponseEntity<>(quarterlyAttendanceReportService.listQuarterlyAttendance(quarterlyAttendanceFilterDto),HttpStatus.OK);
+	ResponseEntity<?> quarterlyAttendanceList(@RequestBody CommonFilterDto filterDto){
+		return new ResponseEntity<>(quarterlyAttendanceReportService.quarterlyAttendanceList(filterDto),HttpStatus.OK);
 	}
 	
 

@@ -18,8 +18,6 @@ public class DailyAttendanceDto {
 	
 	private String name;
 	
-	private Integer classOfStudy;
-	
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate dateOfBirth;
@@ -27,6 +25,8 @@ public class DailyAttendanceDto {
 	private String email;
 	
 	private String phoneNumber;
+	
+	private Integer classOfStudy;
 	
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
@@ -42,10 +42,6 @@ public class DailyAttendanceDto {
 	private Long teacherId;
 	
 	private Long attendanceId;
-	
-	
-	
-
 
 	public Long getAttendanceId() {
 		return attendanceId;
@@ -95,12 +91,6 @@ public class DailyAttendanceDto {
 		this.studentId = studentId;
 	}
 	
-
-
-
-
-
-	
 	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
@@ -124,10 +114,7 @@ public class DailyAttendanceDto {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	
-
-
 	public String getEmail() {
 		return email;
 	}
@@ -164,9 +151,7 @@ public class DailyAttendanceDto {
 	public DailyAttendanceDto() {
 		
 	}
-
-
-
+	
 	public DailyAttendanceDto(Long studentId,String name,Integer classOfStudy,LocalDate dateOfBirth ,String email,String phoneNumber,
 			LocalDate attendanceDate, String attendanceStatus,String longApprovedSickLeaveFlag,String approvedExtraCurricularActivitiesFlag ) {
 		
