@@ -114,34 +114,33 @@ public class TeacherServiceImpl implements TeacherService {
 	public Response teacherList(CommonFilterDto filterDto) {
 		logger.info("Before teacherList : Attempting to retrive list of teachers");
 		Response response = new Response();
-		Map<String,Object> result = teacherDao.filterTeacher(filterDto);
-			  
-		    List<TeacherDto> teacherList = (List<TeacherDto>) result.get("data");
-		    
-		    if(teacherList!=null) {
+		Map<String, Object> result = teacherDao.filterTeacher(filterDto);
 
-			if(WebServiceUtil.S_NO.equals(filterDto.getOrderColumn()) && WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType())) {
-				int sno=teacherList.size();
-				for(TeacherDto teacher : teacherList) {
-					 teacher.setSno(sno--);
+		List<TeacherDto> teacherList = (List<TeacherDto>) result.get("data");
+		    
+			if (teacherList != null) {
+
+				if (WebServiceUtil.S_NO.equals(filterDto.getOrderColumn())
+						&& WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType())) {
+					int sno = teacherList.size();
+					for (TeacherDto teacher : teacherList) {
+						teacher.setSno(sno--);
+					}
+				} else {
+					int sno = 1;
+					for (TeacherDto teacher : teacherList) {
+						teacher.setSno(sno++);
+					}
 				}
 			}
-			else {
-				int sno=1;
-				for(TeacherDto teacher : teacherList) {
-					teacher.setSno(sno++);
-				}
-			}
-		    }
-		Long totalCount = teacherRepository.findTotalCount();
-		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setDraw(filterDto.getDraw());
-		response.setTotalCount(totalCount);
-		response.setFilterCount( (Long) result.get("filterCount"));
-		response.setData(teacherList);
-		
-		logger.info("After teacherList :Successfully retrived");
-		return response;
+			Long totalCount = teacherRepository.findTotalCount();
+			response.setStatus(WebServiceUtil.SUCCESS);
+			response.setDraw(filterDto.getDraw());
+			response.setTotalCount(totalCount);
+			response.setFilterCount((Long) result.get("filterCount"));
+			response.setData(teacherList);
+			logger.info("After teacherList :Successfully retrived");
+			return response;
 	}
 
 	@Override

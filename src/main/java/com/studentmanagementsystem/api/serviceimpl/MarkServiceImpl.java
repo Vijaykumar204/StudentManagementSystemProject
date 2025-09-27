@@ -14,7 +14,7 @@ import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
-import com.studentmanagementsystem.api.repository.QuarterlyAttendanceModelRepository;
+import com.studentmanagementsystem.api.repository.QuarterlyAttendanceRepository;
 import com.studentmanagementsystem.api.repository.StudentCodeRespository;
 import com.studentmanagementsystem.api.repository.StudentMarksRepository;
 import com.studentmanagementsystem.api.repository.StudentRepository;
@@ -41,7 +41,7 @@ public class MarkServiceImpl implements MarkService {
 	private StudentMarksRepository studentMarksRepository;
 	
 	@Autowired
-	private QuarterlyAttendanceModelRepository quarterlyAttendanceModelRepository;
+	private QuarterlyAttendanceRepository quarterlyAttendanceModelRepository;
 	
 	@Autowired
 	private TeacherRepository teacherRepository;

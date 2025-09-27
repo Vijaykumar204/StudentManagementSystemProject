@@ -26,7 +26,7 @@ import com.studentmanagementsystem.api.repository.StudentRepository;
 import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
 import com.studentmanagementsystem.api.service.EmailSentService;
-import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
+import com.studentmanagementsystem.api.service.QuarterlyAttendanceService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
 
@@ -64,7 +64,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 	private EmailSentService emailSentService;
 
 	@Autowired
-	private  QuarterlyAttendanceReportService quarterlyAttendanceService;
+	private  QuarterlyAttendanceService quarterlyAttendanceService;
 
 
 

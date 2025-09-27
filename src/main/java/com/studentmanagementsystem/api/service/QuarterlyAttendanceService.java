@@ -5,11 +5,11 @@ import java.util.List;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.Response;
 
-public interface QuarterlyAttendanceReportService {
+public interface QuarterlyAttendanceService {
 
 	Response quarterlyAttendanceList(CommonFilterDto filterDto);
 
-	void runQuarterlyAttendanceUpdate();
+	//void runQuarterlyAttendanceUpdate();
 
 	void findQuarterToUpadte(List<Integer> quarterMonth);
 

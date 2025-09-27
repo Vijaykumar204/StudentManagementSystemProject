@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
-public class QuarterlyAttendanceReportDto {
+public class QuarterlyAttendanceDto {
 
 	
 	private Integer sno;
@@ -16,8 +16,6 @@ public class QuarterlyAttendanceReportDto {
     
     private String name;
     
-    private Integer classOfStudy;
-    
     @JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
     private LocalDate dateOfBirth;
@@ -25,6 +23,8 @@ public class QuarterlyAttendanceReportDto {
 	private String phoneNumber;
 	
 	private String email;
+	
+	 private Integer classOfStudy;
 	
 	private String quarterAndYear;
 	
@@ -181,7 +181,7 @@ public class QuarterlyAttendanceReportDto {
 		this.classOfStudy = classOfStudy;
 	}
 
-	public QuarterlyAttendanceReportDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents, Long totalApprovedSickdays,
+	public QuarterlyAttendanceDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents, Long totalApprovedSickdays,
 			Long totalApprovedActivitiesPermissionDays ) {
 		
 		this.studentId = studentId;
@@ -194,7 +194,7 @@ public class QuarterlyAttendanceReportDto {
 		
 	}
 
-	public QuarterlyAttendanceReportDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents,
+	public QuarterlyAttendanceDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents,
 			Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays, String attendanceComplianceStatus
 			) {
 		this.studentId = studentId;
@@ -208,7 +208,7 @@ public class QuarterlyAttendanceReportDto {
 	}
 
 	
-	public QuarterlyAttendanceReportDto(Long studentId, Long totalDaysOfPresent, Long totalDaysOfAbsents,
+	public QuarterlyAttendanceDto(Long studentId, Long totalDaysOfPresent, Long totalDaysOfAbsents,
 			Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays
 			) {
 		this.studentId = studentId;
@@ -221,7 +221,7 @@ public class QuarterlyAttendanceReportDto {
 		
 	}
 
-	public QuarterlyAttendanceReportDto(Long studentId, String name, Integer classOfStudy, LocalDate dateOfBirth,
+	public QuarterlyAttendanceDto(Long studentId, String name, Integer classOfStudy, LocalDate dateOfBirth,
 			String phoneNumber, String email, String quarterAndYear, Long totalSchoolWorkingDays,
 			Long totalDaysOfPresent, Long totalDaysOfAbsents, Long totalApprovedActivitiesPermissionDays,
 			Long totalApprovedSickdays, String attendanceComplianceStatus,Integer attendancePercentage) {

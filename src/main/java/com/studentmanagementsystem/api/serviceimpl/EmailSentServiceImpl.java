@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import com.studentmanagementsystem.api.dao.QuarterlyAttendanceReportDao;
+import com.studentmanagementsystem.api.dao.QuarterlyAttendanceDao;
 import com.studentmanagementsystem.api.model.custom.Response;
-import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceReportDto;
+import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.EmailSentHistory;
@@ -52,7 +52,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 	  
 	 
 	  @Autowired
-	  private QuarterlyAttendanceReportDao quarterlyAttendanceReportDao;
+	  private QuarterlyAttendanceDao quarterlyAttendanceReportDao;
 	  
 	  @Autowired
 	  private StudentMarksRepository studentMarksRepository;
@@ -73,10 +73,10 @@ public class EmailSentServiceImpl implements EmailSentService {
 		
 //		List<StudentMarksDto> studentMarklist = studentMarksDao.getAllStudentMarks(quarterAndResult);
 
-		 List<QuarterlyAttendanceReportDto> quarterAttendanceList = quarterlyAttendanceReportDao.getQuarterlyAttendanceReport(quarterAndResult,classOfStudy);
+		 List<QuarterlyAttendanceDto> quarterAttendanceList = quarterlyAttendanceReportDao.getQuarterlyAttendanceReport(quarterAndResult,classOfStudy);
 		
 		
-		 for(QuarterlyAttendanceReportDto quarter : quarterAttendanceList) {
+		 for(QuarterlyAttendanceDto quarter : quarterAttendanceList) {
 				
 			StudentModel student = studentModelRepository.findStudentByStudentId(quarter.getStudentId());
 			String name;

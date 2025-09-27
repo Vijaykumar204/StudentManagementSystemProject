@@ -9,23 +9,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
-import com.studentmanagementsystem.api.service.QuarterlyAttendanceReportService;
+import com.studentmanagementsystem.api.service.QuarterlyAttendanceService;
 
 @RestController
 @RequestMapping("quarterly")
-public class QuarterlyAttendanceReportController {
+public class QuarterlyAttendanceController {
 	
 	@Autowired
-	private QuarterlyAttendanceReportService quarterlyAttendanceReportService;
+	private QuarterlyAttendanceService quarterlyAttendanceReportService;
 
 
 	/**
-	 * Retrieve the list of compilance or non-compliance students for a given quarter and year.
+	 * Retrieve the list of quarter attendnace report.
 	 *
-	 * @param attendanceComplianceStatus The attendanceComplianceStatus value : True -> compliance ,false -> non compliance
-	 * @param quarterAndYear The quarter and year to fetch records for (e.g., 03/2025)
-	 * @param classOfStudy    The class of study for which attendance records need to be retrieved
-	 * @return List of compilance or  non-compliance student records
+	 * @param filterDto
+	 * @return Return list of quarterli attendance report
 	 * @author Vijiyakumar
 	 */	
 	@GetMapping("/list")
@@ -34,10 +32,10 @@ public class QuarterlyAttendanceReportController {
 	}
 	
 
-	@GetMapping("/save")
-	String updateQuarterlyReport(){
-		 quarterlyAttendanceReportService.runQuarterlyAttendanceUpdate();
-		 return "saved";
-	}
+//	@GetMapping("/save")
+//	String updateQuarterlyReport(){
+//		 quarterlyAttendanceReportService.runQuarterlyAttendanceUpdate();
+//		 return "saved";
+//	}
 
 }

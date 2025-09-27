@@ -10,7 +10,7 @@ import com.studentmanagementsystem.api.dao.MarkDao;
 import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ResultReport;
-import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceReportModel;
+import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 
@@ -212,7 +212,7 @@ public class MarkDaoImpl implements MarkDao {
 
 		Join<MarkModel, StudentModel> studentMarksAndStudent = studentMarkRoot.join("studentModel");
 
-		Join<StudentModel, QuarterlyAttendanceReportModel> studentAndQuarterlyReportJoin = studentMarksAndStudent
+		Join<StudentModel, QuarterlyAttendanceModel> studentAndQuarterlyReportJoin = studentMarksAndStudent
 				.join("quarterlyAttendanceReportModel");
 
 		

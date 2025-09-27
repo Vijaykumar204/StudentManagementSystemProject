@@ -20,7 +20,7 @@ public class DailyAttendanceModel {
 	@Column(name = "AT_Id")
 	private Long attendanceId;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "student_Id", referencedColumnName = "STU_Id", nullable = false)
 	private StudentModel studentModel;
 

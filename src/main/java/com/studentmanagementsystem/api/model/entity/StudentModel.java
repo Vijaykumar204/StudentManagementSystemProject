@@ -100,7 +100,7 @@ public class StudentModel {
 
     @OneToMany(mappedBy = "studentModel", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel;
+    private List<QuarterlyAttendanceModel> quarterlyAttendanceReportModel;
 
 	public Long getStudentId() {
 		return studentId;
@@ -287,11 +287,11 @@ public class StudentModel {
 		this.marks = marks;
 	}
 
-	public List<QuarterlyAttendanceReportModel> getQuarterlyAttendanceReportModel() {
+	public List<QuarterlyAttendanceModel> getQuarterlyAttendanceReportModel() {
 		return quarterlyAttendanceReportModel;
 	}
 
-	public void setQuarterlyAttendanceReportModel(List<QuarterlyAttendanceReportModel> quarterlyAttendanceReportModel) {
+	public void setQuarterlyAttendanceReportModel(List<QuarterlyAttendanceModel> quarterlyAttendanceReportModel) {
 		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
 	}
 
