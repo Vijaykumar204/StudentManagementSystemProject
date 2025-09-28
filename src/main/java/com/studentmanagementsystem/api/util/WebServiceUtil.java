@@ -155,6 +155,10 @@ public final class WebServiceUtil {
                         <td><b>Compliance Status</b></td>
                         <td>%s</td>
                     </tr>
+                    <tr>
+                        <td><b>Attendance Percentage</b></td>
+                        <td>%d</td>
+                    </tr>
                 </table>
                 
                 <p>Thank you for your continuous support in nurturing <b>%s</b>’s education.</p>
@@ -203,6 +207,10 @@ public final class WebServiceUtil {
                     </tr>
                     <tr>
                         <td><b>Total mark obtained</b></td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td><b>Percentage</b></td>
                         <td>%d</td>
                     </tr>
                     <tr>
@@ -294,6 +302,7 @@ public final class WebServiceUtil {
 	public static final String UPDATE_ATTENDANCE="Attendance update successfully";
 	public static final String FAILURE = "Failure";
 	public static final String DECLARE_MARK="Successfully declared mark";
+	public static final String UPDATE_MARK="Successfully updated mark";
 	public static final String STUDENT_ATTENDANCE_STATUS =" student attendance is non compliance,so does not declare the mark";
 	public static final String TEACHER_ID_ERROR = "Invalid Teacher ID. Please enter a valid one";
 	public static final String UNIQUE_ERROR ="%s already exist";

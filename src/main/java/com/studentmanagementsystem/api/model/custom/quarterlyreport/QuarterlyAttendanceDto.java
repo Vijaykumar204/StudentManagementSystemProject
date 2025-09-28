@@ -194,9 +194,9 @@ public class QuarterlyAttendanceDto {
 		
 	}
 
-	public QuarterlyAttendanceDto(Long studentId,Long totalSchoolWorkingDays, Long totalDaysOfPresent, Long totalDaysOfAbsents,
-			Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays, String attendanceComplianceStatus
-			) {
+	public QuarterlyAttendanceDto(Long studentId, Long totalSchoolWorkingDays, Long totalDaysOfPresent,
+			Long totalDaysOfAbsents, Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays,
+			String attendanceComplianceStatus, Integer attendancePercentage) {
 		this.studentId = studentId;
 		this.totalSchoolWorkingDays = totalSchoolWorkingDays;
 		this.totalDaysOfPresent = totalDaysOfPresent;
@@ -204,7 +204,8 @@ public class QuarterlyAttendanceDto {
 		this.totalApprovedActivitiesPermissionDays = totalApprovedActivitiesPermissionDays;
 		this.totalApprovedSickdays = totalApprovedSickdays;
 		this.attendanceComplianceStatus = attendanceComplianceStatus;
-		
+		this.attendancePercentage = attendancePercentage;
+
 	}
 
 	

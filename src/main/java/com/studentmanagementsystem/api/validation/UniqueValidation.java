@@ -27,101 +27,101 @@ public class UniqueValidation {
 	@Transactional
 	public List<String> uniqueCheckStudentUpdate(StudentDto studentDto) {
 		
-		List<String> unique = new ArrayList<>();
+		List<String> uniqueList = new ArrayList<>();
 					StudentModel isstudentUniqueCheck = studentRepository
 							.findByFirstNameAndMiddleNameAndLastNameAndDateOfBirth(studentDto.getFirstName(),
 									studentDto.getMiddleName(), studentDto.getLastName(), studentDto.getDateOfBirth());
 					if (isstudentUniqueCheck != null) {
 						
 						if(studentDto.getStudentId()!=null && !studentDto.getStudentId().equals(isstudentUniqueCheck.getStudentId()))
-						       unique.add(WebServiceUtil.STUDENT_EXISTS);	
+						       uniqueList.add(WebServiceUtil.STUDENT_EXISTS);	
 					}
 					
 					StudentModel email = studentRepository.findByEmail(studentDto.getEmail());
 					if (email != null) {	
 						
 						if(studentDto.getStudentId()!=null &&  !studentDto.getStudentId().equals(email.getStudentId()))
-							unique.add( String.format(WebServiceUtil.UNIQUE_ERROR,"email"));
+							uniqueList.add( String.format(WebServiceUtil.UNIQUE_ERROR,"email"));
 						
 					}
 					
 					StudentModel phoneNumber = studentRepository.findByPhoneNumber(studentDto.getPhoneNumber());
 					if (phoneNumber != null) {
 						if(studentDto.getStudentId()!=null && !studentDto.getStudentId().equals(phoneNumber.getStudentId()))
-								unique.add(String.format(WebServiceUtil.UNIQUE_ERROR,"phoneNumber"));
+								uniqueList.add(String.format(WebServiceUtil.UNIQUE_ERROR,"phoneNumber"));
 					}
 							
-		return unique;
+		return uniqueList;
 	}
 	
 	@Transactional
 	public List<String> uniqueCheckStudentSave(StudentDto studentDto) {
 		
-		List<String> unique = new ArrayList<>();
+		List<String> uniqueList = new ArrayList<>();
 		// isstudentUnique
 					StudentModel isstudentUniqueCheck = studentRepository
 							.findByFirstNameAndMiddleNameAndLastNameAndDateOfBirth(studentDto.getFirstName(),
 									studentDto.getMiddleName(), studentDto.getLastName(), studentDto.getDateOfBirth());
 					if (isstudentUniqueCheck != null) {
 						
-						       unique.add(WebServiceUtil.STUDENT_EXISTS);	
+						       uniqueList.add(WebServiceUtil.STUDENT_EXISTS);	
 					}
 					
 					StudentModel email = studentRepository.findByEmail(studentDto.getEmail());
 					if (email != null) {	
 						
-							unique.add( String.format(WebServiceUtil.UNIQUE_ERROR,"email"));
+							uniqueList.add( String.format(WebServiceUtil.UNIQUE_ERROR,"email"));
 						
 					}
 					
 					StudentModel phoneNumber = studentRepository.findByPhoneNumber(studentDto.getPhoneNumber());
 					if (phoneNumber != null) {
-								unique.add(String.format(WebServiceUtil.UNIQUE_ERROR,"phoneNumber"));
+								uniqueList.add(String.format(WebServiceUtil.UNIQUE_ERROR,"phoneNumber"));
 					}
 							
-		return unique;
+		return uniqueList;
 	}
 
 	@Transactional
 	public List<String> uniqueCheckTeacherSave(TeacherDto teacherDto) {
 		
-		List<String> unique = new ArrayList<>();
+		List<String> uniqueList = new ArrayList<>();
 		
 		TeacherModel email = teacherRepository.findByTeacherEmail(teacherDto.getEmail());
 		if (email != null) {
 			
-			unique.add(String.format(WebServiceUtil.UNIQUE_ERROR, "email"));
+			uniqueList.add(String.format(WebServiceUtil.UNIQUE_ERROR, "email"));
 			
 		}
 
 		TeacherModel phoneNumber = teacherRepository.findByTeacherPhoneNumber(teacherDto.getPhoneNumber());
 		if (phoneNumber != null) {
 		
-			unique.add(String.format(WebServiceUtil.UNIQUE_ERROR, "phoneNumber"));
+			uniqueList.add(String.format(WebServiceUtil.UNIQUE_ERROR, "phoneNumber"));
 			
 		}
-		return unique;
+		return uniqueList;
 	}
 	
 	@Transactional
 	public List<String> uniqueCheckTeacherUpdate(TeacherDto teacherDto) {
 		
-		List<String> unique = new ArrayList<>();
+		List<String> uniqueList = new ArrayList<>();
 		
 		TeacherModel email = teacherRepository.findByTeacherEmail(teacherDto.getEmail());
 		if (email != null) {
 		
 			if(teacherDto.getId()!=null && ! teacherDto.getId().equals(email.getTeacherId()))
-					unique.add(String.format(WebServiceUtil.UNIQUE_ERROR, "email"));
+					uniqueList.add(String.format(WebServiceUtil.UNIQUE_ERROR, "email"));
 		 }
 
 		TeacherModel phoneNumber = teacherRepository.findByTeacherPhoneNumber(teacherDto.getPhoneNumber());
 		if (phoneNumber != null) {
 			if(teacherDto.getId()!=null && ! teacherDto.getId().equals(phoneNumber.getTeacherId()))
-					unique.add(String.format(WebServiceUtil.UNIQUE_ERROR, "phoneNumber"));
+					uniqueList.add(String.format(WebServiceUtil.UNIQUE_ERROR, "phoneNumber"));
 			
 		}
-		return unique;
+		return uniqueList;
 	}
 
 }

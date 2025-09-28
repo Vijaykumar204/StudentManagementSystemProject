@@ -236,11 +236,11 @@ public class QuarterlyAttendanceDaoImp implements QuarterlyAttendanceDao {
 
 	@Override
 	public List<QuarterlyAttendanceDto> getQuarterlyAttendanceReport(String quarterAndYear,Integer classOfStudy) {
+		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<QuarterlyAttendanceDto> cq = cb.createQuery(QuarterlyAttendanceDto.class);
 		Root<QuarterlyAttendanceModel> quarterlyAttendanceRoot = cq.from(QuarterlyAttendanceModel.class);
-		Predicate quarterandYearCondition = cb.equal(quarterlyAttendanceRoot.get("quarterAndYear"),
-				quarterAndYear);
+		Predicate quarterandYearCondition = cb.equal(quarterlyAttendanceRoot.get("quarterAndYear"), quarterAndYear);
 		Predicate classCondition = cb.equal(quarterlyAttendanceRoot.get("studentModel").get("classOfStudy"),
 				classOfStudy);
 		cq.select(cb.construct(QuarterlyAttendanceDto.class,
@@ -251,7 +251,8 @@ public class QuarterlyAttendanceDaoImp implements QuarterlyAttendanceDao {
 				quarterlyAttendanceRoot.get("totalDaysOfAbsents"),				
 				quarterlyAttendanceRoot.get("totalApprovedActivitiesPermissionDays"),
 				quarterlyAttendanceRoot.get("totalApprovedSickdays"),
-				quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("description")
+				quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("description"),
+				quarterlyAttendanceRoot.get("attendancePercentage")
 				
 				)).where(quarterandYearCondition,classCondition)	;	
 		

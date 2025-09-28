@@ -3,7 +3,6 @@ package com.studentmanagementsystem.api.serviceimpl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceDao;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
 import com.studentmanagementsystem.api.model.entity.EmailSentHistory;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
@@ -70,8 +68,6 @@ public class EmailSentServiceImpl implements EmailSentService {
 		logger.info("Before sendQuarterlyAttendanceReport - Attempting sent the quarterly attendance report for TeacherId: {}", teacherId);
 		
 		Response response = new Response();
-		
-//		List<StudentMarksDto> studentMarklist = studentMarksDao.getAllStudentMarks(quarterAndResult);
 
 		 List<QuarterlyAttendanceDto> quarterAttendanceList = quarterlyAttendanceReportDao.getQuarterlyAttendanceReport(quarterAndResult,classOfStudy);
 		
@@ -81,27 +77,26 @@ public class EmailSentServiceImpl implements EmailSentService {
 			StudentModel student = studentModelRepository.findStudentByStudentId(quarter.getStudentId());
 			String name;
 			String attendanceStatus;
-			if(student.getMiddleName()!=null) {
-	        name =student.getFirstName()+" "+student.getMiddleName()+" "+student.getLastName();
-			}
-			else {
-			 name =student.getFirstName()+" "+student.getLastName();
+			
+			if (student.getMiddleName() != null) {
+				name = student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName();
+			} else {
+				name = student.getFirstName() + " " + student.getLastName();
 			}
 			
-			if(quarter.getAttendanceComplianceStatus() == WebServiceUtil.COMPLIANCE){
-				attendanceStatus="Compliance";
-			}
-			else {
-				attendanceStatus="Non - compliance";
+			if (quarter.getAttendanceComplianceStatus() == WebServiceUtil.COMPLIANCE) {
+				attendanceStatus = WebServiceUtil.COMPLIANCE;
+			} else {
+				attendanceStatus = WebServiceUtil.NON_COMPLIANCE;
 			}
 
 			MimeMessage message = mailSender.createMimeMessage();
 
-	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-	        helper.setTo(student.getEmail());
-	        String subject= WebServiceUtil.QUARTERLY_ATTENDANCE_REPORT_SUBJECT+ name +" " +quarterAndResult;
-	    		  helper.setSubject(subject);
+			helper.setTo(student.getEmail());
+			String subject = WebServiceUtil.QUARTERLY_ATTENDANCE_REPORT_SUBJECT + name + " " + quarterAndResult;
+			helper.setSubject(subject);
 	
 
 	        String body = String.format(WebServiceUtil.QUARTERLY_ATTENDANCE_REPORT_BODY,
@@ -111,16 +106,17 @@ public class EmailSentServiceImpl implements EmailSentService {
 	                quarter.getTotalDaysOfPresent(),
 	                quarter.getTotalDaysOfAbsents(),
 	                attendanceStatus,
-	                name
+	                name,
+	                quarter.getAttendancePercentage()
 	        );
 	       helper.setText(body, true);
 
 	        mailSender.send(message);    
 	        
 	        
-      LocalDateTime today = LocalDateTime.now();
+			LocalDateTime today = LocalDateTime.now();
       
-      TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
  
       // String plainTextBody = Jsoup.parse(body).text();
 	        
@@ -134,10 +130,9 @@ public class EmailSentServiceImpl implements EmailSentService {
 	        emailSentHistoryRepository.save(email);
 	
 		}
-		 logger.info("Before sendQuarterlyAttendanceReport - Successfully sended");
-		 
-		 response.setStatus(WebServiceUtil.SUCCESS);
-		 response.setData(WebServiceUtil.MAIL_SEND);
+		logger.info("Before sendQuarterlyAttendanceReport - Successfully sended");
+		response.setStatus(WebServiceUtil.SUCCESS);
+		response.setData(WebServiceUtil.MAIL_SEND);
 		 
 		return response;
 	}
@@ -153,27 +148,19 @@ public class EmailSentServiceImpl implements EmailSentService {
 		for(MarkModel mark : studentMarklist) {
 			StudentModel student = studentModelRepository.findStudentByStudentId(mark.getStudentModel().getStudentId());
 			String name;
-			if(student.getMiddleName()!=null) {
-	        name =student.getFirstName()+" "+student.getMiddleName()+" "+student.getLastName();
+			if (student.getMiddleName() != null) {
+				name = student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName();
+			} else {
+				name = student.getFirstName() + " " + student.getLastName();
 			}
-			else {
-			 name =student.getFirstName()+" "+student.getLastName();
-			}
-			
-//			if(mark.getResult() == WebServiceUtil.PASS){
-//				resultStatus="PASS";
-//			}
-//			else {
-//				resultStatus="FAIL";
-//			}
 
 			MimeMessage message = mailSender.createMimeMessage();
 
-	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 	        
-	        helper.setTo(student.getParentsEmail());
-		      String subject= WebServiceUtil.QUARTERLY_MARK_REPORT_SUBJECT+ name +" " +quarterAndResult;
-		    		  helper.setSubject(subject);
+			helper.setTo(student.getParentsEmail());
+			String subject = WebServiceUtil.QUARTERLY_MARK_REPORT_SUBJECT + name + " " + quarterAndResult;
+			helper.setSubject(subject);
 		    		  
 		         String body = String.format(WebServiceUtil.QUARTERLY_MARK_REPORT_BOBY,
 		  	                name,
@@ -184,6 +171,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 		  	                mark.getScience(),
 		  	                mark.getSocialScience(),
 		  	                mark.getTotalMarks(),
+		  	                mark.getPercentage(),
 		  	                mark.getResult().getCode(),
 		  	                name
 		  	        );
@@ -192,25 +180,24 @@ public class EmailSentServiceImpl implements EmailSentService {
 			      mailSender.send(message);    
 			        
 			        
-		      LocalDateTime today = LocalDateTime.now();
-		      TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+					LocalDateTime today = LocalDateTime.now();
+					TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
 		      // String plainTextBody = Jsoup.parse(body).text();
 			        
-			        EmailSentHistory email = new EmailSentHistory();
-			        
-			        email.setStudentId(student);
-			        email.setStudentEmail(student.getParentsEmail());
-			        email.setEmailSubject(subject);
-			        email.setEmailMessage(body);
-			        email.setMailSentDate(today);
-			       email.setTeacherId(teacher);
+				EmailSentHistory email = new EmailSentHistory();
+				email.setStudentId(student);
+				email.setStudentEmail(student.getParentsEmail());
+				email.setEmailSubject(subject);
+				email.setEmailMessage(body);
+				email.setMailSentDate(today);
+				email.setTeacherId(teacher);
 			        
 			        emailSentHistoryRepository.save(email);	
 	}
-	 logger.info("Before sendQuarterlyMarkResult - Successfully sended");
-	 
-	 response.setStatus(WebServiceUtil.SUCCESS);
-	 response.setData(WebServiceUtil.MAIL_SEND);
+	logger.info("Before sendQuarterlyMarkResult - Successfully sended");
+
+	response.setStatus(WebServiceUtil.SUCCESS);
+	response.setData(WebServiceUtil.MAIL_SEND);
 	return response;
 
 	}
@@ -291,54 +278,52 @@ public class EmailSentServiceImpl implements EmailSentService {
 	public void absentAlertEmail(List<Long> absentIdList,Long teacherId) throws MessagingException {
 		logger.info("Before absentAlertEmail - Attempting sent absence alert mail");
 		LocalDate attendanceDate = LocalDate.now();
-		for(Long studentId : absentIdList) {
-			DailyAttendanceModel absent =	dailyAttendanceRepository.findAbsentStatus(attendanceDate,studentId);
+		for (Long studentId : absentIdList) {
+			DailyAttendanceModel absent = dailyAttendanceRepository.findAbsentStatus(attendanceDate, studentId);
 
 			StudentModel student = studentModelRepository.findStudentByStudentId(studentId);
 	        String name = student.getMiddleName() != null
 	                ? student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName()
 	                : student.getFirstName() + " " + student.getLastName();
 			
-	        MimeMessage message = mailSender.createMimeMessage();
-	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-	        String subject = "";
-	        String body = "";
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			String subject = "";
+			String body = "";
 
-	        if (WebServiceUtil.NO.equals(absent.getLongApprovedSickLeaveFlag()) && 
-	            WebServiceUtil.NO.equals(absent.getApprovedExtraCurricularActivitiesFlag())) {
+			if (WebServiceUtil.NO.equals(absent.getLongApprovedSickLeaveFlag())
+					&& WebServiceUtil.NO.equals(absent.getApprovedExtraCurricularActivitiesFlag())) {
 
-	            subject = String.format(WebServiceUtil.ABSENT_ALERT_SUBJECT, name, attendanceDate);
-	            body = String.format(WebServiceUtil.ABSENT_ALERT_BODY, name, attendanceDate, student.getFirstName());
+				subject = String.format(WebServiceUtil.ABSENT_ALERT_SUBJECT, name, attendanceDate);
+				body = String.format(WebServiceUtil.ABSENT_ALERT_BODY, name, attendanceDate, student.getFirstName());
 
-	        } else if (WebServiceUtil.YES.equals(absent.getLongApprovedSickLeaveFlag())) {
-	            subject = String.format(WebServiceUtil.SICK_LEAVE_ALERT_SUBJECT, name);
-	            body = String.format(WebServiceUtil.SICK_LEAVE_ALERT_BODY, name, attendanceDate);
+			} else if (WebServiceUtil.YES.equals(absent.getLongApprovedSickLeaveFlag())) {
+				subject = String.format(WebServiceUtil.SICK_LEAVE_ALERT_SUBJECT, name);
+				body = String.format(WebServiceUtil.SICK_LEAVE_ALERT_BODY, name, attendanceDate);
 
-	        } else if (WebServiceUtil.YES.equals(absent.getApprovedExtraCurricularActivitiesFlag())) {
-	            subject = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_SUBJECT, name);
-	            body = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_BODY,name,attendanceDate,name,attendanceDate);
-	        }
-			    helper.setTo(student.getParentsEmail());
-		        helper.setSubject(subject);
-		        helper.setText(body, true);
-		        mailSender.send(message);
-		        
-		        LocalDateTime today = LocalDateTime.now();	
-		        TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
-		  	        EmailSentHistory email = new EmailSentHistory();
+			} else if (WebServiceUtil.YES.equals(absent.getApprovedExtraCurricularActivitiesFlag())) {
+				subject = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_SUBJECT, name);
+				body = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_BODY, name, attendanceDate, name,
+						attendanceDate);
+			}
+			helper.setTo(student.getParentsEmail());
+			helper.setSubject(subject);
+			helper.setText(body, true);
+			mailSender.send(message);
+
+				LocalDateTime today = LocalDateTime.now();
+				TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+				EmailSentHistory email = new EmailSentHistory();
 		  	        
-		  	        email.setStudentId(student);
-		  	        email.setStudentEmail(student.getParentsEmail()  );
-		  	        email.setEmailSubject(subject);
-		  	        email.setEmailMessage(body);
-		  	        email.setMailSentDate(today);
-		  	        email.setTeacherId(teacher);
-		  	        emailSentHistoryRepository.save(email);
-		}
+					email.setStudentId(student);
+					email.setStudentEmail(student.getParentsEmail());
+					email.setEmailSubject(subject);
+					email.setEmailMessage(body);
+					email.setMailSentDate(today);
+					email.setTeacherId(teacher);
+					emailSentHistoryRepository.save(email);
+				}
 		
 		logger.info("After absentAlertEmail - Successfully sended");
 	}
-	
-
-	
 }

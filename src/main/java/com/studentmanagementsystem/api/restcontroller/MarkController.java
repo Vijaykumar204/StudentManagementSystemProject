@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.service.MarkService;
 
 @RestController
@@ -30,8 +30,8 @@ public class MarkController {
 	 */
 	
 	@PostMapping("/save")
-	ResponseEntity<?> saveStudentMarks(@RequestBody List<StudentMarksDto> studentMarksDto){
-		return new ResponseEntity<>(studentMarksService.saveStudentMarks(studentMarksDto),HttpStatus.OK);
+	ResponseEntity<?> saveStudentMarks(@RequestBody List<markDto> markDto){
+		return new ResponseEntity<>(studentMarksService.saveStudentMarks(markDto),HttpStatus.OK);
 	}
 	
 	/**

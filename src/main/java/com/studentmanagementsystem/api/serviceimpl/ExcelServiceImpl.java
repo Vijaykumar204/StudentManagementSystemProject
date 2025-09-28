@@ -14,7 +14,7 @@ import com.studentmanagementsystem.api.dao.MarkDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ResultReport;
-import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.service.ExcelService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,112 +32,115 @@ public class ExcelServiceImpl implements ExcelService {
 /*
  * Download the monthly attendance report
  */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void downloadMonthlyAttendanceReport(CommonFilterDto filterDto,HttpServletResponse response) {
-		
-		Map<String, Object> result = dailyAttendanceDao.monthlyAttendanceList(filterDto);
+@SuppressWarnings("unchecked")
+@Override
+public void downloadMonthlyAttendanceReport(CommonFilterDto filterDto, HttpServletResponse response) {
 
-		List<MonthlyAbsenceDto> monthlyAttendanceList = (List<MonthlyAbsenceDto>) result.get("data");
-		
-		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet("monthlyAttendanceReport.xls");
-		Row header = sheet.createRow(0);
+	Map<String, Object> result = dailyAttendanceDao.monthlyAttendanceList(filterDto);
 
-		XSSFFont font = (XSSFFont) workbook.createFont();
-		font.setFontHeightInPoints((short) 10);
-		font.setFontName("Arial");
-		font.setColor(IndexedColors.BLACK.getIndex());
-		font.setBold(true);
-		font.setItalic(false);
+	List<MonthlyAbsenceDto> monthlyAttendanceList = (List<MonthlyAbsenceDto>) result.get("data");
 
-		CellStyle style = workbook.createCellStyle();
-		style.setFont(font);
-		style.setAlignment(HorizontalAlignment.CENTER);
-		
-		Cell sNoCell = header.createCell(0);
-		sNoCell.setCellValue("S.No");
-		sNoCell.setCellStyle(style);
-		
-		Cell nameCell = header.createCell(1);
-		nameCell.setCellValue("Name");
-		nameCell.setCellStyle(style);
-		
-		Cell dateOfBirthCell = header.createCell(3);
-		dateOfBirthCell.setCellValue("DOB");
-		dateOfBirthCell.setCellStyle(style);
-		
-		Cell emailCell = header.createCell(4);
-		emailCell.setCellValue("Email");
-		emailCell.setCellStyle(style);
-		
-		Cell phoneNumberCell = header.createCell(5);
-		phoneNumberCell.setCellValue("Phone Number");
-		phoneNumberCell.setCellStyle(style);
-		
-		Cell classOfStudyCell = header.createCell(2);
-		classOfStudyCell.setCellValue("Class of study");
-		classOfStudyCell.setCellStyle(style);
-			
-		Cell totalWorkingDaysCell = header.createCell(6);
-		totalWorkingDaysCell.setCellValue("Total Working Days");
-		totalWorkingDaysCell.setCellStyle(style);
-		
-		Cell attendanceCountCell = header.createCell(7);
-		if(WebServiceUtil.PRESENT.equals(filterDto.getStatus()))
-			attendanceCountCell.setCellValue("Present Count");
-		else if(WebServiceUtil.ABSENT.equals(filterDto.getStatus()))
-			attendanceCountCell.setCellValue("Absent Count");
-		else
-			attendanceCountCell.setCellValue("Attendance Count");
-		attendanceCountCell.setCellStyle(style);
-		
-		Cell dateCell = header.createCell(8);
-		dateCell.setCellValue("Dates");
-		dateCell.setCellStyle(style);
-		
-		int sno =1;
-		for(MonthlyAbsenceDto absent : monthlyAttendanceList) {
-			absent.setSno(sno);
-			Row row = sheet.createRow(sno++);
-			row.createCell(0).setCellValue(absent.getSno());
-			row.createCell(1).setCellValue(absent.getName());
-			row.createCell(2).setCellValue(absent.getClassOfStudy());
-			row.createCell(3).setCellValue(absent.getDateOfBirth().toString());
-			row.createCell(4).setCellValue(absent.getEmail());
-			row.createCell(5).setCellValue(absent.getPhoneNumber());
-			row.createCell(6).setCellValue(absent.getTotalWorkingDays());
-			row.createCell(7).setCellValue(absent.getAttendanceCount());
-			row.createCell(8).setCellValue(absent.getAttendanceDate().toString());	
-			
-		}
-		response.setContentType("application/xlsx");
-		response.setHeader("Content-Disposition", "attachment; filename = monthlyAttendanceReport.xlsx");
+	Workbook workbook = new XSSFWorkbook();
+	Sheet sheet = workbook.createSheet("monthlyAttendanceReport.xls");
+	Row header = sheet.createRow(0);
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	XSSFFont font = (XSSFFont) workbook.createFont();
+	font.setFontHeightInPoints((short) 10);
+	font.setFontName("Arial");
+	font.setColor(IndexedColors.BLACK.getIndex());
+	font.setBold(true);
+	font.setItalic(false);
 
-		try {
-			workbook.write(bos);
-			bos.close();
-			byte[] bytes = bos.toByteArray();
-			response.getOutputStream().write(bytes);
-			response.getOutputStream().flush();
-			workbook.close();
+	CellStyle style = workbook.createCellStyle();
+	style.setFont(font);
+	style.setAlignment(HorizontalAlignment.CENTER);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			
-		}	
-		
+	Cell sNoCell = header.createCell(0);
+	sNoCell.setCellValue("S.No");
+	sNoCell.setCellStyle(style);
+
+	Cell nameCell = header.createCell(1);
+	nameCell.setCellValue("Name");
+	nameCell.setCellStyle(style);
+
+	Cell dateOfBirthCell = header.createCell(3);
+	dateOfBirthCell.setCellValue("DOB");
+	dateOfBirthCell.setCellStyle(style);
+
+	Cell emailCell = header.createCell(4);
+	emailCell.setCellValue("Email");
+	emailCell.setCellStyle(style);
+
+	Cell phoneNumberCell = header.createCell(5);
+	phoneNumberCell.setCellValue("Phone Number");
+	phoneNumberCell.setCellStyle(style);
+
+	Cell classOfStudyCell = header.createCell(2);
+	classOfStudyCell.setCellValue("Class of study");
+	classOfStudyCell.setCellStyle(style);
+
+	Cell totalWorkingDaysCell = header.createCell(6);
+	totalWorkingDaysCell.setCellValue("Total Working Days");
+	totalWorkingDaysCell.setCellStyle(style);
+
+	Cell attendanceCountCell = header.createCell(7);
+	if (WebServiceUtil.PRESENT.equals(filterDto.getStatus()))
+		attendanceCountCell.setCellValue("Present Count");
+	else if (WebServiceUtil.ABSENT.equals(filterDto.getStatus()))
+		attendanceCountCell.setCellValue("Absent Count");
+	else
+		attendanceCountCell.setCellValue("Attendance Count");
+	attendanceCountCell.setCellStyle(style);
+
+	Cell dateCell = header.createCell(8);
+	dateCell.setCellValue("Dates");
+	dateCell.setCellStyle(style);
+
+	int sno = 1;
+	for (MonthlyAbsenceDto absent : monthlyAttendanceList) {
+		absent.setSno(sno);
+		Row row = sheet.createRow(sno++);
+		row.createCell(0).setCellValue(absent.getSno());
+		row.createCell(1).setCellValue(absent.getName());
+		row.createCell(2).setCellValue(absent.getClassOfStudy());
+		row.createCell(3).setCellValue(absent.getDateOfBirth().toString());
+		row.createCell(4).setCellValue(absent.getEmail());
+		row.createCell(5).setCellValue(absent.getPhoneNumber());
+		row.createCell(6).setCellValue(absent.getTotalWorkingDays());
+		row.createCell(7).setCellValue(absent.getAttendanceCount());
+		row.createCell(8).setCellValue(absent.getAttendanceDate().toString());
+
 	}
+	response.setContentType("application/xlsx");
+	response.setHeader("Content-Disposition", "attachment; filename = monthlyAttendanceReport.xlsx");
+
+	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+	try {
+		workbook.write(bos);
+		bos.close();
+		byte[] bytes = bos.toByteArray();
+		response.getOutputStream().write(bytes);
+		response.getOutputStream().flush();
+		workbook.close();
+
+	} catch (IOException e) {
+		e.printStackTrace();
+
+	}
+
+}
 
  /*
   * Download the mark detail report
   */
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public void downloadMarkDetailReport(CommonFilterDto filterDto, HttpServletResponse response) {
-		List<StudentMarksDto> markList = markDao.getAllStudentMarks(filterDto);
+		
+		Map<String,Object> result = markDao.listStudentMarks(filterDto);
+		List<markDto> markList = (List<markDto>) result.get("data");
+		
 		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet("markDetailReport.xls");
 		Row header = sheet.createRow(0);
@@ -216,7 +219,7 @@ public class ExcelServiceImpl implements ExcelService {
 		resultCell.setCellStyle(style);
 		
 		int sno =1;
-		for(StudentMarksDto mark : markList) {
+		for(markDto mark : markList) {
 			mark.setSno(sno);
 			Row row = sheet.createRow(sno++);
 			row.createCell(0).setCellValue(mark.getSno());
@@ -225,7 +228,6 @@ public class ExcelServiceImpl implements ExcelService {
 			row.createCell(3).setCellValue(mark.getDateOfBirth().toString());
 			row.createCell(4).setCellValue(mark.getEmail());
 			row.createCell(5).setCellValue(mark.getPhoneNumber());
-			row.createCell(6).setCellValue(mark.getQuarterAndYear());
 			row.createCell(7).setCellValue(mark.getTamil());
 			row.createCell(8).setCellValue(mark.getEnglish());
 			row.createCell(9).setCellValue(mark.getMaths());
@@ -260,83 +262,81 @@ public class ExcelServiceImpl implements ExcelService {
 	  * Download the mark summary report
 	  */
 
-	@Override
-	public void downloadMarkSummaryReport(CommonFilterDto filterDto, HttpServletResponse response) {
-	List<ResultReport> summaryReportList =	markDao.resultSummaryReport(filterDto);
-	
-	Workbook workbook = new XSSFWorkbook();
-	Sheet sheet = workbook.createSheet("markSummaryReport.xls");
-	Row header = sheet.createRow(0);
-	
-	XSSFFont font = (XSSFFont) workbook.createFont();
-	font.setFontHeightInPoints((short) 10);
-	font.setFontName("Arial");
-	font.setColor(IndexedColors.BLACK.getIndex());
-	font.setBold(true);
-	font.setItalic(false);
+		@Override
+		public void downloadMarkSummaryReport(CommonFilterDto filterDto, HttpServletResponse response) {
+			List<ResultReport> summaryReportList = markDao.resultSummaryReport(filterDto);
 
-	CellStyle style = workbook.createCellStyle();
-	style.setFont(font);
-	style.setAlignment(HorizontalAlignment.CENTER);
-	
-	Cell sNoCell = header.createCell(0);
-	sNoCell.setCellValue("S.No");
-	sNoCell.setCellStyle(style);
-	
-	Cell quarterCell = header.createCell(1);
-	quarterCell.setCellValue("Quarter and Year");
-	quarterCell.setCellStyle(style);
-	
-	Cell totalCell = header.createCell(2);
-	totalCell.setCellValue("Total Students");
-	totalCell.setCellStyle(style);
-	
-	Cell passCell = header.createCell(3);
-	passCell.setCellValue("Total Pass");
-	passCell.setCellStyle(style);
-	
-	Cell failCell = header.createCell(4);
-	failCell.setCellValue("Total Fail");
-	failCell.setCellStyle(style);
-	
-	Cell dueToAttendanceCell = header.createCell(5);
-	dueToAttendanceCell.setCellValue("Total Fail Due To Attendance");
-	dueToAttendanceCell.setCellStyle(style);
-	
-	int rowValue =1;
-	int sno =0;
-	for(ResultReport summary : summaryReportList) {
-		sno=rowValue;
-		Row row = sheet.createRow(rowValue++);
-		row.createCell(0).setCellValue(sno);
-		row.createCell(1).setCellValue(summary.getQuarter());
-		row.createCell(2).setCellValue(summary.getTotalCount());
-		row.createCell(3).setCellValue(summary.getTotalPass());
-		row.createCell(4).setCellValue(summary.getTotalFail());
-		row.createCell(5).setCellValue(summary.getFailDueToAttendance());
-	
-	
-		
-	}
-	response.setContentType("application/xlsx");
-	response.setHeader("Content-Disposition", "attachment; filename = markSummaryReport.xlsx");
+			Workbook workbook = new XSSFWorkbook();
+			Sheet sheet = workbook.createSheet("markSummaryReport.xls");
+			Row header = sheet.createRow(0);
 
-	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			XSSFFont font = (XSSFFont) workbook.createFont();
+			font.setFontHeightInPoints((short) 10);
+			font.setFontName("Arial");
+			font.setColor(IndexedColors.BLACK.getIndex());
+			font.setBold(true);
+			font.setItalic(false);
 
-	try {
-		workbook.write(bos);
-		bos.close();
-		byte[] bytes = bos.toByteArray();
-		response.getOutputStream().write(bytes);
-		response.getOutputStream().flush();
-		workbook.close();
+			CellStyle style = workbook.createCellStyle();
+			style.setFont(font);
+			style.setAlignment(HorizontalAlignment.CENTER);
 
-	} catch (IOException e) {
-		e.printStackTrace();
-		
-	}	
-		
-	}
+			Cell sNoCell = header.createCell(0);
+			sNoCell.setCellValue("S.No");
+			sNoCell.setCellStyle(style);
+
+			Cell quarterCell = header.createCell(1);
+			quarterCell.setCellValue("Quarter and Year");
+			quarterCell.setCellStyle(style);
+
+			Cell totalCell = header.createCell(2);
+			totalCell.setCellValue("Total Students");
+			totalCell.setCellStyle(style);
+
+			Cell passCell = header.createCell(3);
+			passCell.setCellValue("Total Pass");
+			passCell.setCellStyle(style);
+
+			Cell failCell = header.createCell(4);
+			failCell.setCellValue("Total Fail");
+			failCell.setCellStyle(style);
+
+			Cell dueToAttendanceCell = header.createCell(5);
+			dueToAttendanceCell.setCellValue("Total Fail Due To Attendance");
+			dueToAttendanceCell.setCellStyle(style);
+
+			int rowValue = 1;
+			int sno = 0;
+			for (ResultReport summary : summaryReportList) {
+				sno = rowValue;
+				Row row = sheet.createRow(rowValue++);
+				row.createCell(0).setCellValue(sno);
+				row.createCell(1).setCellValue(summary.getQuarter());
+				row.createCell(2).setCellValue(summary.getTotalCount());
+				row.createCell(3).setCellValue(summary.getTotalPass());
+				row.createCell(4).setCellValue(summary.getTotalFail());
+				row.createCell(5).setCellValue(summary.getFailDueToAttendance());
+
+			}
+			response.setContentType("application/xlsx");
+			response.setHeader("Content-Disposition", "attachment; filename = markSummaryReport.xlsx");
+
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+			try {
+				workbook.write(bos);
+				bos.close();
+				byte[] bytes = bos.toByteArray();
+				response.getOutputStream().write(bytes);
+				response.getOutputStream().flush();
+				workbook.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+
+			}
+
+		}
 }
 
 

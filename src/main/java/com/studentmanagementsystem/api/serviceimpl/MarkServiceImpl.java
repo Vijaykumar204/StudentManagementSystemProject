@@ -1,7 +1,9 @@
 package com.studentmanagementsystem.api.serviceimpl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +11,8 @@ import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.MarkDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.Response;
-import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
-import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.QuarterlyAttendanceRepository;
@@ -22,6 +23,7 @@ import com.studentmanagementsystem.api.repository.TeacherRepository;
 import com.studentmanagementsystem.api.service.MarkService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import com.studentmanagementsystem.api.validation.FieldValidation;
+import jakarta.transaction.Transactional;
 
 @Service
 public class MarkServiceImpl implements MarkService {
@@ -29,19 +31,19 @@ public class MarkServiceImpl implements MarkService {
 	private static final Logger logger = LoggerFactory.getLogger(MarkServiceImpl.class);
 
 	@Autowired
-	private MarkDao studentMarksDao;
+	private MarkDao markDao;
 
 	@Autowired
-	private StudentRepository studentModelRepository;
+	private StudentRepository studentRepository;
 	
 	@Autowired
 	private FieldValidation fieldValidation;
 	
 	@Autowired
-	private StudentMarksRepository studentMarksRepository;
+	private StudentMarksRepository markRepository;
 	
 	@Autowired
-	private QuarterlyAttendanceRepository quarterlyAttendanceModelRepository;
+	private QuarterlyAttendanceRepository quarterlyAttendanceRepository;
 	
 	@Autowired
 	private TeacherRepository teacherRepository;
@@ -53,57 +55,60 @@ public class MarkServiceImpl implements MarkService {
 	/**
 	 * Declare the marks of a student.
 	 */
-	
 	@Override
-	public Response saveStudentMarks(List<StudentMarksDto> studentMarksDto) {
-		
+	@Transactional
+	public Response saveStudentMarks(List<markDto> studentMarksDto) {
 
-		
+		logger.info("Before saveStudentMarks - Attempting to saving the student marks");
 		Response response = new Response();
 		LocalDateTime today = LocalDateTime.now();
 		MarkModel studentMark;
-		for (StudentMarksDto mark : studentMarksDto) {
-			logger.info("Before saveStudentMarks - Attempting to saving the student marks for TeacherId: {}",mark.getTeacherId());
+		List<MarkModel> markList = new ArrayList<>();
+		for (markDto mark : studentMarksDto) {
+
 			List<String> requestMissedFieldList = fieldValidation.checkValidationStudentMarkSave(mark);
 			if (!requestMissedFieldList.isEmpty()) {
-				response.setStatus(WebServiceUtil.WARNING);	
-				response.setData(requestMissedFieldList);		
+				response.setStatus(WebServiceUtil.WARNING);
+				response.setData(requestMissedFieldList);
 				return response;
 			}
-			
-			String ComplianceStatus = quarterlyAttendanceModelRepository.findAttendanceComplianceStatusByStudentIdandquarterAndYear(mark.getStudentId(),
-					mark.getQuarterAndYear());
-			if(ComplianceStatus == WebServiceUtil.NON_COMPLIANCE) {
-				response.setStatus(WebServiceUtil.WARNING);	
+
+			String ComplianceStatus = quarterlyAttendanceRepository
+					.findAttendanceComplianceStatusByStudentIdandquarterAndYear(mark.getStudentId(),
+							mark.getQuarterAndYear());
+			if (ComplianceStatus == WebServiceUtil.NON_COMPLIANCE) {
+				response.setStatus(WebServiceUtil.WARNING);
 				response.setData(WebServiceUtil.STUDENT_ATTENDANCE_STATUS);
 				return response;
 			}
-			
-			studentMark = studentMarksRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(),
+
+			studentMark = markRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(),
 					mark.getQuarterAndYear());
 			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(mark.getTeacherId());
-			if(teacher==null) {
-				response.setStatus(WebServiceUtil.WARNING);	
+			if (teacher == null) {
+				response.setStatus(WebServiceUtil.WARNING);
 				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 				return response;
 			}
-			
+
 			if (studentMark == null) {
 				studentMark = new MarkModel();
-				StudentModel student = studentModelRepository.findStudentByStudentId(mark.getStudentId());
-				
-				
+				StudentModel student = studentRepository.findStudentByStudentId(mark.getStudentId());
 				studentMark.setStudentModel(student);
 				studentMark.setQuarterAndYear(mark.getQuarterAndYear());
-
 				studentMark.setCreateDate(today);
 				studentMark.setCreateTeacher(teacher);
+
+				logger.info("After saveStudentMarks - Successfully saved student marks");
+
 			} else {
-				
+
 				studentMark.setUpdateTeacher(teacher);
 				studentMark.setUpdateTime(today);
+				response.setData(WebServiceUtil.UPDATE_MARK);
+				logger.info("After saveStudentMarks - Successfully updated student marks");
 			}
-			
+
 			Integer tamil = studentMark.setTamil(mark.getTamil());
 			Integer english = studentMark.setEnglish(mark.getEnglish());
 			Integer maths = studentMark.setMaths(mark.getMaths());
@@ -112,36 +117,22 @@ public class MarkServiceImpl implements MarkService {
 
 			Integer totalMark = tamil + english + maths + science + socialscience;
 			studentMark.setTotalMarks(totalMark);
-			
-			Integer percentage = totalMark/5;
-			
+
+			Integer percentage = totalMark / 5;
 			studentMark.setPercentage(percentage);
-			
-			
+
 			boolean allSubjectsPassed = tamil >= 35 && english >= 35 && maths >= 35 && science >= 35
 					&& socialscience >= 35;
-							
-	
-			if (allSubjectsPassed ) {
-				
-				StudentCodeModel resultStatus = studentCodeRespository.findStudentCodeByCode(WebServiceUtil.PASS);
-				
-				studentMark.setResult(resultStatus);
-			} else {			
-				StudentCodeModel resultStatus = studentCodeRespository.findStudentCodeByCode(WebServiceUtil.FAIL);
-				
-				studentMark.setResult(resultStatus);
+
+			if (allSubjectsPassed) {
+				studentMark.setResult(studentCodeRespository.findStudentCodeByCode(WebServiceUtil.PASS));
+			} else {
+				studentMark.setResult(studentCodeRespository.findStudentCodeByCode(WebServiceUtil.FAIL));
 			}
-
-			studentMarksRepository.save(studentMark);
-			response.setStatus(WebServiceUtil.SUCCESS);	
-			response.setData(WebServiceUtil.DECLARE_MARK);
-			
-			logger.info("After saveStudentMarks - Successfully saved student marks");
-
-
+			markList.add(studentMark);
 		}
-
+		markRepository.saveAll(markList);
+		response.setStatus(WebServiceUtil.SUCCESS);
 		return response;
 	}
 	
@@ -149,36 +140,54 @@ public class MarkServiceImpl implements MarkService {
 	/**
 	 * Retrieve the list of all student marks for a given quarter and year.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	public Response listStudentMarks(CommonFilterDto filterDto) {
-		logger.info("Before getAllStudentMarks - Attempting to retriving the student mark list  ");
-		List<StudentMarksDto> markList = studentMarksDao.getAllStudentMarks(filterDto);
-		
-		Long totalCount = studentMarksRepository.findTotalCount(filterDto.getClassOfStudy(),filterDto.getQuarterAndYear());
-		int sno=1;
-		
-		for(StudentMarksDto mark : markList) {
-			mark.setSno(sno++);
+		logger.info("Before listStudentMarks - Attempting to retriving the student mark list  ");
+
+		Map<String, Object> result = markDao.listStudentMarks(filterDto);
+
+		List<markDto> markList = (List<markDto>) result.get("data");
+
+		Long totalCount = markRepository.findTotalCount(filterDto.getClassOfStudy(), filterDto.getQuarterAndYear());
+
+		if (markList != null) {
+
+			if (WebServiceUtil.S_NO.equals(filterDto.getOrderColumn())
+					&& WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType())) {
+				int sno = markList.size();
+				for (markDto mark : markList) {
+					mark.setSno(sno--);
+				}
+			} else {
+				int sno = 1;
+				for (markDto student : markList) {
+					student.setSno(sno++);
+				}
+			}
 		}
-		
+
 		Response response = new Response();
-		response.setStatus(WebServiceUtil.SUCCESS);	
+		response.setStatus(WebServiceUtil.SUCCESS);
 		response.setDraw(filterDto.getDraw());
-		response.setFilterCount((long) (sno-1));
+		response.setFilterCount((Long) result.get("filterCount"));
 		response.setTotalCount(totalCount);
 		response.setData(markList);
-		
-		logger.info("After getAllStudentMarks - Successfully retrived the student mark list  ");
+		logger.info("After listStudentMarks - Successfully retrived the student mark list  ");
 		return response;
 	}
 
-
+	/*
+	 * Retrive mark summary report
+	 */
 	@Override
+	@Transactional
 	public Response resultSummaryReport(CommonFilterDto filterDto) {
 		logger.info("Before getAllStudentMarks - Attempting to retriving the mark summary report  ");
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);
-		response.setData(studentMarksDao.resultSummaryReport(filterDto));
+		response.setData(markDao.resultSummaryReport(filterDto));
 		logger.info("After getAllStudentMarks - Successfully retrived the mark summary report  ");
 		return response;
 	}

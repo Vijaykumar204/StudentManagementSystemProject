@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
-public class StudentMarksDto {
+public class markDto {
 	
 
 	private Integer sno;
@@ -15,9 +15,7 @@ public class StudentMarksDto {
 	private Long studentId;
 	
 	private String name;
-	    
-	private Integer classOfStudy;
-	    
+	      
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =WebServiceUtil.APP_DATE_FORMAT)
 	private LocalDate dateOfBirth;
@@ -25,6 +23,8 @@ public class StudentMarksDto {
 	private String phoneNumber;
 		
 	private String email;
+	
+	private Integer classOfStudy;
 	
 	private String quarterAndYear;
 	
@@ -215,7 +215,7 @@ public class StudentMarksDto {
 	
 
 
-//	public StudentMarksDto(Long studentId, String quarterAndYear, Integer tamil, Integer english, Integer maths, int science,
+//	public markDto(Long studentId, String quarterAndYear, Integer tamil, Integer english, Integer maths, int science,
 //			Integer socialScience, Integer totalMarks, String result) {
 //	
 //		StudentId = studentId;
@@ -242,7 +242,7 @@ public class StudentMarksDto {
 	}
 
 
-	public StudentMarksDto(Long studentId, String name, Integer classOfStudy, LocalDate dateOfBirth, String phoneNumber,
+	public markDto(Long studentId, String name, Integer classOfStudy, LocalDate dateOfBirth, String phoneNumber,
 			String email, String quarterAndYear, Integer tamil, Integer english, Integer maths, Integer science,
 			Integer socialScience, Integer totalMarks, Integer percentage, String result) {
 //		super();
@@ -264,7 +264,7 @@ public class StudentMarksDto {
 	}
 
 
-	public StudentMarksDto() {
+	public markDto() {
 		
 	}
 	

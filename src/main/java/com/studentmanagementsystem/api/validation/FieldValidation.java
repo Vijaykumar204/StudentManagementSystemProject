@@ -1,16 +1,12 @@
 package com.studentmanagementsystem.api.validation;
-
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher; // optional if you use Matcher
 import java.util.regex.Pattern;
-
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.StudentMarksDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherDto;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 
@@ -20,7 +16,6 @@ public class FieldValidation {
 	private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z ]+$");
 	private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
 	private static final Pattern EMAIL_PATTERN =Pattern.compile("^[a-z0-9]+@[a-z0-9]+[.](com|in)$");
-//	        Pattern.compile("^[A-Za-z0-9._%+-]+@(gmail\\.com|mailinator\\.in)$");
 
 	public List<String> studentFieldValidation(StudentDto studentDto) {
 		List<String> requestMissedFieldList = new ArrayList<>();
@@ -127,10 +122,6 @@ public class FieldValidation {
 		return requestMissedFieldList;
 	}
 
-//	public List<String> checkValidationActiveOrDeactiveByStudentId(String studentActiveStatus, Long studentId,
-//	Long teacherId) {
-//		return statusFieldValidation(studentActiveStatus, studentId, teacherId);
-//	}
 
 	public List<String> statusFieldValidation(String studentActiveStatus, Long studentId,
 			Long teacherId) {
@@ -211,7 +202,7 @@ public class FieldValidation {
 		return requestMissedFieldList;
 	}
 
-	public List<String> checkValidationStudentMarkSave(StudentMarksDto mark) {
+	public List<String> checkValidationStudentMarkSave(markDto mark) {
 		List<String> requestMissedFieldList = new ArrayList<>();
 		if (mark.getStudentId() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentId"));
@@ -219,17 +210,16 @@ public class FieldValidation {
 		if (mark.getTeacherId() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "teacherId"));
 		}
-		
-		if (mark.getQuarterAndYear() == null) {
+
+		if (mark.getQuarterAndYear() == null || mark.getQuarterAndYear().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "quarterAndYear"));
-		}
-		else if(!mark.getQuarterAndYear().equals(WebServiceUtil.QUART_MARCH_AND_YEAR)
+		} else if (!mark.getQuarterAndYear().equals(WebServiceUtil.QUART_MARCH_AND_YEAR)
 				&& !mark.getQuarterAndYear().equals(WebServiceUtil.QUART_JUNE_AND_YEAR)
-						&& !mark.getQuarterAndYear().equals(WebServiceUtil.QUART_SEP_AND_YEAR)
-								&& !mark.getQuarterAndYear().equals(WebServiceUtil.QUART_DEC_AND_YEAR)){
-					requestMissedFieldList.add(String.format(WebServiceUtil.INVALID_CODE, "quarterAndYear"));
-						}
-				
+				&& !mark.getQuarterAndYear().equals(WebServiceUtil.QUART_SEP_AND_YEAR)
+				&& !mark.getQuarterAndYear().equals(WebServiceUtil.QUART_DEC_AND_YEAR)) {
+			requestMissedFieldList.add(String.format(WebServiceUtil.INVALID_CODE, "quarterAndYear"));
+		}
+
 		if (mark.getTamil() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "tamil"));
 		}
