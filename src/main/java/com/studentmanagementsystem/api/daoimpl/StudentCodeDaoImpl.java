@@ -23,7 +23,7 @@ public class StudentCodeDaoImpl implements StudentCodeDao {
 
 	@Override
 	public List<StudentCodeDto> stuCodeList(String groupCode) {
-		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<StudentCodeDto> cq = cb.createQuery(StudentCodeDto.class);
 		Root<StudentCodeModel> codeRoot = cq.from(StudentCodeModel.class);
 		
@@ -34,12 +34,12 @@ public class StudentCodeDaoImpl implements StudentCodeDao {
 				codeRoot.get("description")
 				));
 		
-		if(groupCode!=null) {
-			Predicate groupCodeCondition = cb.equal(codeRoot.get("groupCode"), groupCode);
-			cq.where(groupCodeCondition);
-		}
+				if (groupCode != null) {
+					Predicate groupCodeCondition = cb.equal(codeRoot.get("groupCode"), groupCode);
+					cq.where(groupCodeCondition);
+				}
 		
-		return entityManager.createQuery(cq).getResultList();
+				return entityManager.createQuery(cq).getResultList();
 	}
 }
 

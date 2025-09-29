@@ -74,23 +74,30 @@ public class MarkServiceImpl implements MarkService {
 				return response;
 			}
 
-			String ComplianceStatus = quarterlyAttendanceRepository
+			String complianceStatus = quarterlyAttendanceRepository
 					.findAttendanceComplianceStatusByStudentIdandquarterAndYear(mark.getStudentId(),
 							mark.getQuarterAndYear());
-			if (ComplianceStatus == WebServiceUtil.NON_COMPLIANCE) {
+
+			if (complianceStatus == null || complianceStatus.isEmpty()) {
 				response.setStatus(WebServiceUtil.WARNING);
-				response.setData(WebServiceUtil.STUDENT_ATTENDANCE_STATUS);
+				response.setData(String.format(WebServiceUtil.QUARTERLY_ATTENDANCE_NOT_FOUND, mark.getStudentId(),
+						mark.getQuarterAndYear()));
+				return response;
+
+			} else if (WebServiceUtil.NON_COMPLIANCE.equals(complianceStatus)) {
+				response.setStatus(WebServiceUtil.WARNING);
+				response.setData(String.format(WebServiceUtil.NON_COMPLIANCE_STUDENT_ERROR, mark.getStudentId()));
 				return response;
 			}
-
-			studentMark = markRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(),
-					mark.getQuarterAndYear());
+			 
 			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(mark.getTeacherId());
 			if (teacher == null) {
 				response.setStatus(WebServiceUtil.WARNING);
 				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 				return response;
 			}
+			studentMark = markRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(),
+					mark.getQuarterAndYear());
 
 			if (studentMark == null) {
 				studentMark = new MarkModel();

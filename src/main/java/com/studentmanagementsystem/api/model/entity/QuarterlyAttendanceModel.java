@@ -42,7 +42,7 @@ public class QuarterlyAttendanceModel {
 	@Column(name = "QUARTER_Tot_Approved_Extra_Cur_Activities",nullable = false)
 	private Long totalApprovedActivitiesPermissionDays;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name ="QUARTER_Attendance_Compliance_Status",referencedColumnName = "CODE" ,nullable = false)
 	private StudentCodeModel  attendanceComplianceStatus;
 	

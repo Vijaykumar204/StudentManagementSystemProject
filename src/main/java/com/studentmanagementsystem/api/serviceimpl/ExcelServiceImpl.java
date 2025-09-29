@@ -234,7 +234,7 @@ public void downloadMonthlyAttendanceReport(CommonFilterDto filterDto, HttpServl
 			row.createCell(10).setCellValue(mark.getScience());
 			row.createCell(11).setCellValue(mark.getSocialScience());
 			row.createCell(12).setCellValue(mark.getTotalMarks());
-			row.createCell(13).setCellValue(mark.getPercentage());
+			row.createCell(13).setCellValue(mark.getPercentage()+" %");
 			row.createCell(14).setCellValue(mark.getResult());
 			
 		}
@@ -262,81 +262,81 @@ public void downloadMonthlyAttendanceReport(CommonFilterDto filterDto, HttpServl
 	  * Download the mark summary report
 	  */
 
-		@Override
-		public void downloadMarkSummaryReport(CommonFilterDto filterDto, HttpServletResponse response) {
-			List<ResultReport> summaryReportList = markDao.resultSummaryReport(filterDto);
-
-			Workbook workbook = new XSSFWorkbook();
-			Sheet sheet = workbook.createSheet("markSummaryReport.xls");
-			Row header = sheet.createRow(0);
-
-			XSSFFont font = (XSSFFont) workbook.createFont();
-			font.setFontHeightInPoints((short) 10);
-			font.setFontName("Arial");
-			font.setColor(IndexedColors.BLACK.getIndex());
-			font.setBold(true);
-			font.setItalic(false);
-
-			CellStyle style = workbook.createCellStyle();
-			style.setFont(font);
-			style.setAlignment(HorizontalAlignment.CENTER);
-
-			Cell sNoCell = header.createCell(0);
-			sNoCell.setCellValue("S.No");
-			sNoCell.setCellStyle(style);
-
-			Cell quarterCell = header.createCell(1);
-			quarterCell.setCellValue("Quarter and Year");
-			quarterCell.setCellStyle(style);
-
-			Cell totalCell = header.createCell(2);
-			totalCell.setCellValue("Total Students");
-			totalCell.setCellStyle(style);
-
-			Cell passCell = header.createCell(3);
-			passCell.setCellValue("Total Pass");
-			passCell.setCellStyle(style);
-
-			Cell failCell = header.createCell(4);
-			failCell.setCellValue("Total Fail");
-			failCell.setCellStyle(style);
-
-			Cell dueToAttendanceCell = header.createCell(5);
-			dueToAttendanceCell.setCellValue("Total Fail Due To Attendance");
-			dueToAttendanceCell.setCellStyle(style);
-
-			int rowValue = 1;
-			int sno = 0;
-			for (ResultReport summary : summaryReportList) {
-				sno = rowValue;
-				Row row = sheet.createRow(rowValue++);
-				row.createCell(0).setCellValue(sno);
-				row.createCell(1).setCellValue(summary.getQuarter());
-				row.createCell(2).setCellValue(summary.getTotalCount());
-				row.createCell(3).setCellValue(summary.getTotalPass());
-				row.createCell(4).setCellValue(summary.getTotalFail());
-				row.createCell(5).setCellValue(summary.getFailDueToAttendance());
-
-			}
-			response.setContentType("application/xlsx");
-			response.setHeader("Content-Disposition", "attachment; filename = markSummaryReport.xlsx");
-
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-			try {
-				workbook.write(bos);
-				bos.close();
-				byte[] bytes = bos.toByteArray();
-				response.getOutputStream().write(bytes);
-				response.getOutputStream().flush();
-				workbook.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-
-			}
-
-		}
+//		@Override
+//		public void downloadMarkSummaryReport(CommonFilterDto filterDto, HttpServletResponse response) {
+//			List<ResultReport> summaryReportList = markDao.resultSummaryReport(filterDto);
+//
+//			Workbook workbook = new XSSFWorkbook();
+//			Sheet sheet = workbook.createSheet("markSummaryReport.xls");
+//			Row header = sheet.createRow(0);
+//
+//			XSSFFont font = (XSSFFont) workbook.createFont();
+//			font.setFontHeightInPoints((short) 10);
+//			font.setFontName("Arial");
+//			font.setColor(IndexedColors.BLACK.getIndex());
+//			font.setBold(true);
+//			font.setItalic(false);
+//
+//			CellStyle style = workbook.createCellStyle();
+//			style.setFont(font);
+//			style.setAlignment(HorizontalAlignment.CENTER);
+//
+//			Cell sNoCell = header.createCell(0);
+//			sNoCell.setCellValue("S.No");
+//			sNoCell.setCellStyle(style);
+//
+//			Cell quarterCell = header.createCell(1);
+//			quarterCell.setCellValue("Quarter and Year");
+//			quarterCell.setCellStyle(style);
+//
+//			Cell totalCell = header.createCell(2);
+//			totalCell.setCellValue("Total Students");
+//			totalCell.setCellStyle(style);
+//
+//			Cell passCell = header.createCell(3);
+//			passCell.setCellValue("Total Pass");
+//			passCell.setCellStyle(style);
+//
+//			Cell failCell = header.createCell(4);
+//			failCell.setCellValue("Total Fail");
+//			failCell.setCellStyle(style);
+//
+//			Cell dueToAttendanceCell = header.createCell(5);
+//			dueToAttendanceCell.setCellValue("Total Fail Due To Attendance");
+//			dueToAttendanceCell.setCellStyle(style);
+//
+//			int rowValue = 1;
+//			int sno = 0;
+//			for (ResultReport summary : summaryReportList) {
+//				sno = rowValue;
+//				Row row = sheet.createRow(rowValue++);
+//				row.createCell(0).setCellValue(sno);
+//				row.createCell(1).setCellValue(summary.getQuarter());
+//				row.createCell(2).setCellValue(summary.getTotalCount());
+//				row.createCell(3).setCellValue(summary.getTotalPass());
+//				row.createCell(4).setCellValue(summary.getTotalFail());
+//				row.createCell(5).setCellValue(summary.getFailDueToAttendance());
+//
+//			}
+//			response.setContentType("application/xlsx");
+//			response.setHeader("Content-Disposition", "attachment; filename = markSummaryReport.xlsx");
+//
+//			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//
+//			try {
+//				workbook.write(bos);
+//				bos.close();
+//				byte[] bytes = bos.toByteArray();
+//				response.getOutputStream().write(bytes);
+//				response.getOutputStream().flush();
+//				workbook.close();
+//
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//
+//			}
+//
+//		}
 }
 
 

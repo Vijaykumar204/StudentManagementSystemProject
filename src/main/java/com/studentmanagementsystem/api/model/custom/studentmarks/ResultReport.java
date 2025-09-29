@@ -7,7 +7,7 @@ public class ResultReport {
 	
 	private Integer classOfStudy;
 	
-	private Integer totalCount;
+	private Long totalCount;
 	
 	private Long totalPass;
 	
@@ -23,12 +23,12 @@ public class ResultReport {
 		this.quarter = quarter;
 	}
 
-	
-	public Integer getTotalCount() {
+
+	public Long getTotalCount() {
 		return totalCount;
 	}
 
-	public void setTotalCount(Integer totalCount) {
+	public void setTotalCount(Long totalCount) {
 		this.totalCount = totalCount;
 	}
 
@@ -66,8 +66,8 @@ public class ResultReport {
 	public void setClassOfStudy(Integer classOfStudy) {
 		this.classOfStudy = classOfStudy;
 	}
+	public ResultReport(String quarter,Integer classOfStudy, Long totalCount, Long totalPass, Long totalFail,
 
-	public ResultReport(String quarter,Integer classOfStudy, Integer totalCount, Long totalPass, Long totalFail,
 			Long failDueToAttendance) {
 		
 		this.quarter = quarter;
@@ -75,7 +75,6 @@ public class ResultReport {
 		this.totalCount = totalCount;
 		this.totalPass = totalPass;
 		this.totalFail = totalFail;
-
 		this.failDueToAttendance = failDueToAttendance;
 	}
 

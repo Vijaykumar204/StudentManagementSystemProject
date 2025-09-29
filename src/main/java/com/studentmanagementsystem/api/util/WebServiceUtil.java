@@ -67,8 +67,8 @@ public final class WebServiceUtil {
 	public static final String 	GREATER_THAN_EQUAL_TO = ">=";
 	public static final String 	LESS_THAN_EQAUL_TO ="<=";
 	public static final String 	IN_BETWEEN="between";
-	public static final String 	SICK_LEAVE_FILTER ="sickLeave";
-	public static final String 	 EXTRA_CURRICULAR_ACTIVITY_FILTER = "extraActivity";
+	public static final String 	SICK_LEAVE_FILTER ="sickleave";
+	public static final String 	 EXTRA_CURRICULAR_ACTIVITY_FILTER = "extra_activity";
 	
 	public static final String ASCENDING_ORDER = "asc";
 	public static final String DESCENDING_ORDER="desc";
@@ -157,7 +157,7 @@ public final class WebServiceUtil {
                     </tr>
                     <tr>
                         <td><b>Attendance Percentage</b></td>
-                        <td>%d</td>
+                        <td>%d %%</td>
                     </tr>
                 </table>
                 
@@ -211,7 +211,7 @@ public final class WebServiceUtil {
                     </tr>
                     <tr>
                         <td><b>Percentage</b></td>
-                        <td>%d</td>
+                        <td>%d %%</td>
                     </tr>
                     <tr>
                         <td><b>Result</b></td>
@@ -303,13 +303,18 @@ public final class WebServiceUtil {
 	public static final String FAILURE = "Failure";
 	public static final String DECLARE_MARK="Successfully declared mark";
 	public static final String UPDATE_MARK="Successfully updated mark";
-	public static final String STUDENT_ATTENDANCE_STATUS =" student attendance is non compliance,so does not declare the mark";
+	public static final String NON_COMPLIANCE_STUDENT_ERROR =" Student attendance is non compliance,so does not declare the mark StudentId : %d";
+	public static final String STUDENT_ATTENDANCE_STATUS =NON_COMPLIANCE_STUDENT_ERROR;
 	public static final String TEACHER_ID_ERROR = "Invalid Teacher ID. Please enter a valid one";
 	public static final String UNIQUE_ERROR ="%s already exist";
 	
+	public static final String SUBJECT_MARK_ERROR = "%s subject mark required Student Id %d";
+	
+	public static final String QUARTERLY_ATTENDANCE_NOT_FOUND = "No quarterly attendance record found for StudentId: %d and QuarterAndYear: %s";
+	
 	public static final String INVALID_CODE = "%s invalid";
 	
-	public static final String MAIL_SEND = "Successfully sent mail";
+	public static final String MAIL_SEND = "Successfully send mail";
 
 	
 	
@@ -317,7 +322,22 @@ public final class WebServiceUtil {
 
 	public static final String INVAILD = " %s invalid";
 	
-
+	
+	public static final String PDF_INTRODUCTION ="Introduction\r\n"
+			+ "\r\n"
+			+ "This report presents the overall academic performance of Class %d for the current quarter. The data highlights the total number of students, along with the count of those who passed and those who need further improvement.";
+	
+	public static final String PDF_OVERVIEW ="Performance Overview\r\n"
+			+ "\r\n"
+			+ "The results indicate that a majority of students have successfully cleared their examinations, reflecting their consistent efforts and understanding of the subjects. A smaller group of students has not met the required standards, which points to areas where additional focus and remedial support may be necessary.";
+	
+	public static final String PDF_TEACHER_NOTE ="\r\nTeacher’s Note\r\n"
+			+ "\r\n"
+			+ "The overall performance of Class %d shows a positive trend. However, it is important to provide extra attention to students who are struggling. Teachers may consider targeted interventions, personalized study plans, and regular assessments to ensure that every student progresses steadily in the next quarter.";
+	
+	public static final String PDF_CONCLUSION ="Conclusion\r\n"
+			+ "\r\n"
+			+ "In summary, the academic results of Class %d demonstrate strong achievements, while also identifying students who require guidance. With continued support from teachers and parents, the class is expected to perform even better in the upcoming examinations.";
 //	public static final String NAME_ERROR = "Name is null";
 //	public static final String NAME_REGEX_ERROR = "Name  can contain only letters ";
 //	public static final String GENDER_ERROR = "Gender is null";

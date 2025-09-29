@@ -56,19 +56,19 @@ public class TeacherDaoImpl  implements TeacherDao{
 
 			case WebServiceUtil.NAME:
 				Predicate fullName = cb.like(cb.lower(teacherRoot.get("teacherName")),
-						"%" + filterDto.getSearchValue().toLowerCase() + "%");
+						 filterDto.getSearchValue().toLowerCase() + "%");
 
 				predicates.add(fullName);
 				break;
 
 			case WebServiceUtil.EMAIL:
 				Predicate email = cb.like(cb.lower(teacherRoot.get("teacherEmail")),
-						"%" + filterDto.getSearchValue().toLowerCase() + "%");
+						 filterDto.getSearchValue().toLowerCase() + "%");
 				predicates.add(email);
 				break;
 
 			case WebServiceUtil.PHONE_NUMBER:
-				Predicate phoneNumber = cb.like(teacherRoot.get("teacherPhoneNumber"), "%" + filterDto.getSearchValue() + "%");
+				Predicate phoneNumber = cb.like(teacherRoot.get("teacherPhoneNumber"), filterDto.getSearchValue() + "%");
 				predicates.add(phoneNumber);
 				break;
 			}

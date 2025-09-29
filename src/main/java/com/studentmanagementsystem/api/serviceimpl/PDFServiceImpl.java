@@ -7,6 +7,7 @@ import com.studentmanagementsystem.api.dao.MarkDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ResultReport;
 import com.studentmanagementsystem.api.service.PDFService;
+import com.studentmanagementsystem.api.util.WebServiceUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -44,14 +45,27 @@ public class PDFServiceImpl implements PDFService {
 		        Document document = new Document(pdfDoc);
 
 		        // Set font
-		        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+		        PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN);	
 
-		        // Title
+		        
 		        Paragraph title = new Paragraph("Mark Summary Report")
 		                .setFont(font)
 		                .setFontSize(14);
 		        document.add(title);
-		        document.add(new Paragraph("\n")); // empty line
+		        document.add(new Paragraph("\n"));
+		        
+		        Paragraph introduction = new Paragraph(String.format(WebServiceUtil.PDF_INTRODUCTION,filterDto.getClassOfStudy()))
+		                .setFont(font)
+		                .setFontSize(12);
+		        document.add(introduction);
+		        document.add(new Paragraph("\n"));
+		        
+		        Paragraph overview = new Paragraph(WebServiceUtil.PDF_OVERVIEW)
+		                .setFont(font)
+		                .setFontSize(12);
+		        document.add(overview);
+		        document.add(new Paragraph("\n"));
+		        
 
 		        // Table with 6 columns
 		        float[] columnWidths = {50F, 120F, 100F,100F, 100F, 100F, 150F};
@@ -84,6 +98,19 @@ public class PDFServiceImpl implements PDFService {
 		        }
 
 		        document.add(table);
+		        
+		        Paragraph teacherNote = new Paragraph(String.format(WebServiceUtil.PDF_TEACHER_NOTE,filterDto.getClassOfStudy()))
+		                .setFont(font)
+		                .setFontSize(12	);
+		        document.add(teacherNote);
+		        document.add(new Paragraph("\n"));
+		        
+		        Paragraph conclusion = new Paragraph(String.format(WebServiceUtil.PDF_CONCLUSION,filterDto.getClassOfStudy()))
+		                .setFont(font)
+		                .setFontSize(12	);
+		        document.add(conclusion);
+		        document.add(new Paragraph("\n"));
+		        
 		        document.close();
 
 		    } catch (IOException e) {

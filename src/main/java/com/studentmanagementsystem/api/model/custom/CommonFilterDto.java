@@ -23,6 +23,8 @@ public class CommonFilterDto {
 	
 	private String status;
 	
+	private String gender;
+	
 	private String role;
 	
 	private String residingStatus;
@@ -209,6 +211,14 @@ public class CommonFilterDto {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 	
 	

@@ -31,7 +31,7 @@ public class DailyAttendanceController {
 	 * @return Confirmation message indicating successful attendance marking
 	 * @author Vijiyakumar
 	 */
-	@PostMapping("/save/{classOfStudy}")
+	@PostMapping("/save")
 	ResponseEntity<?> saveAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto) {
 		return new ResponseEntity<>(
 				dailyAttendanceService.saveAttendance(dailyAttendanceDto), HttpStatus.OK);

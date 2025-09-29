@@ -11,6 +11,7 @@ import com.studentmanagementsystem.api.dao.TeacherDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
+import com.studentmanagementsystem.api.model.custom.teacher.PasswordChangeDto;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherDto;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
 import com.studentmanagementsystem.api.repository.StudentCodeRespository;
@@ -146,6 +147,7 @@ public class TeacherServiceImpl implements TeacherService {
 	@Override
 	@Transactional
 	public MessageResponse teacherLogin(String email,String password) {
+		logger.info("Before teacherLogin : Attempting to login teacherEmail : {}",email);
 		
 		MessageResponse response = new MessageResponse();
 		
@@ -170,6 +172,35 @@ public class TeacherServiceImpl implements TeacherService {
 			response.setData("Invalid email");
 		
 		response.setStatus(WebServiceUtil.SUCCESS);
+		logger.info("Before teacherLogin : Successfully login");
+		return response;
+	}
+
+
+	@Override
+	public MessageResponse passwordChange(PasswordChangeDto passwordChangeDto) {
+		
+		logger.info("Before passwordChange : Attempting to change password teacherEmail : {}",passwordChangeDto.getEmail());
+		
+		MessageResponse response = new MessageResponse();
+		
+		TeacherModel teacher = teacherRepository.findTeacherPasswordByTeacherEmail(passwordChangeDto.getEmail());
+		if(teacher!=null) {
+			if(teacher.getTeacherPassword().equals(passwordChangeDto.getOldPassword())) {
+				
+				teacher.setTeacherPassword(passwordChangeDto.getNewPassword());
+				teacherRepository.save(teacher);
+				response.setData("Successfully password changed");
+			}
+			else {
+				response.setData("Old password mismatch");
+			}
+		}
+		else {
+			response.setData("Invalid email");
+		}
+		response.setStatus(WebServiceUtil.SUCCESS);
+		logger.info("Before passwordChange : Successfully changed");
 		return response;
 	}
 }

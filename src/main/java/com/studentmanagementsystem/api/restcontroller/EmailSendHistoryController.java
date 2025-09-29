@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.studentmanagementsystem.api.service.EmailSentService;
-import com.studentmanagementsystem.api.serviceimpl.EmailSentServiceImpl;
-
 import jakarta.mail.MessagingException;
 
 @RestController
@@ -50,15 +47,15 @@ public class EmailSendHistoryController {
 		return new ResponseEntity<>(emailSentService.sendQuarterlyMarkResult(quarterAndYear,classOfStudy,teacherId),HttpStatus.OK);
 	}
 	
-	/**
-	 * Send the absent alert to student parents via email.
-	 *
-	 * @return Confirmation message indicating that the alert were sent successfully
-	 * @author Vijiyakumar
-	 */
-	@GetMapping("/absentAlert")
-	ResponseEntity<?> runAbsentAlertMessage(@RequestParam Long teacherId) throws MessagingException{
-		return new ResponseEntity<>(emailSentService.runAbsentAlertMessage(teacherId),HttpStatus.OK);
-	}
+//	/**
+//	 * Send the absent alert to student parents via email.
+//	 *
+//	 * @return Confirmation message indicating that the alert were sent successfully
+//	 * @author Vijiyakumar
+//	 */
+//	@GetMapping("/absentAlert")
+//	ResponseEntity<?> runAbsentAlertMessage(@RequestParam Long teacherId) throws MessagingException{
+//		return new ResponseEntity<>(emailSentService.runAbsentAlertMessage(teacherId),HttpStatus.OK);
+//	}
 	
 }

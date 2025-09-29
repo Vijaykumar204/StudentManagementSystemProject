@@ -83,8 +83,9 @@ public class QuarterlyAttendanceDaoImp implements QuarterlyAttendanceDao {
 		        studentJoin.get("studentId"),
 		        totalPresent,
 		        totalAbsent,
-		        totalSick,
-		        totalExtra
+		        totalExtra,
+		        totalSick
+		        
 		).where(cb.and(monthPredicate, yearPredicate))
 		 .groupBy(studentJoin.get("studentId"));
 		
@@ -251,7 +252,7 @@ public class QuarterlyAttendanceDaoImp implements QuarterlyAttendanceDao {
 				quarterlyAttendanceRoot.get("totalDaysOfAbsents"),				
 				quarterlyAttendanceRoot.get("totalApprovedActivitiesPermissionDays"),
 				quarterlyAttendanceRoot.get("totalApprovedSickdays"),
-				quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("description"),
+				quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("code"),
 				quarterlyAttendanceRoot.get("attendancePercentage")
 				
 				)).where(quarterandYearCondition,classCondition)	;	

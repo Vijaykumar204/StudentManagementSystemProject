@@ -51,21 +51,24 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		 predicates.add(cb.equal(dailyAttendanceRoot.get("attendanceDate"),filterDto.getDate() ));
 		 
 		 //status filter
-			if (filterDto.getStatus() != null) {
+			if (filterDto.getStatus() != null && !filterDto.getStatus().isBlank()) {
 				predicates
 						.add(cb.equal(dailyAttendanceRoot.get("attendanceStatus").get("code"), filterDto.getStatus()));
 			}
 			
 			// ApprovedStatus filter
-			if (WebServiceUtil.EXTRA_CURRICULAR_ACTIVITY_FILTER.equals(filterDto.getApprovedStatus())) {
-				predicates.add(
-						cb.equal(dailyAttendanceRoot.get("approvedExtraCurricularActivitiesFlag"), WebServiceUtil.YES));
-			} else if (WebServiceUtil.SICK_LEAVE_FILTER.equals(filterDto.getApprovedStatus())) {
-				predicates.add(cb.equal(dailyAttendanceRoot.get("longApprovedSickLeaveFlag"), WebServiceUtil.YES));
+			if (filterDto.getApprovedStatus() != null && !filterDto.getApprovedStatus().isBlank()) {
+				if (WebServiceUtil.EXTRA_CURRICULAR_ACTIVITY_FILTER
+						.equals(filterDto.getApprovedStatus().toLowerCase())) {
+					predicates.add(cb.equal(dailyAttendanceRoot.get("approvedExtraCurricularActivitiesFlag"),
+							WebServiceUtil.YES));
+				} else if (WebServiceUtil.SICK_LEAVE_FILTER.equals(filterDto.getApprovedStatus().toLowerCase())) {
+					predicates.add(cb.equal(dailyAttendanceRoot.get("longApprovedSickLeaveFlag"), WebServiceUtil.YES));
+				}
 			}
-			
+
 			// Search filters (name, email, phone)
-			if (filterDto.getSearchBy() != null && filterDto.getSearchValue() != null) {
+			if (filterDto.getSearchBy() != null && filterDto.getSearchValue() != null && !filterDto.getSearchBy().isBlank() && !filterDto.getSearchValue().isBlank()) {
 
 				switch (filterDto.getSearchBy().toLowerCase()) {
 				case WebServiceUtil.NAME:
@@ -76,7 +79,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 											" ")),
 
 							dailyAttendanceRoot.get("studentModel").get("lastName"))),
-							"%" + filterDto.getSearchValue().toLowerCase() + "%");
+							 filterDto.getSearchValue().toLowerCase() + "%");
 
 					predicates.add(fullName);
 					break;
@@ -84,13 +87,13 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 				case WebServiceUtil.EMAIL:
 					
 					predicates.add(cb.like(cb.lower(dailyAttendanceRoot.get("studentModel").get("email")),
-							"%" + filterDto.getSearchValue().toLowerCase() + "%"));
+							 filterDto.getSearchValue().toLowerCase() + "%"));
 					break;
 
 				case WebServiceUtil.PHONE_NUMBER:
 					
 					predicates.add( cb.like(dailyAttendanceRoot.get("studentModel").get("phoneNumber"),
-							"%" + filterDto.getSearchValue() + "%"));
+							 filterDto.getSearchValue() + "%"));
 					break;
 				}
 			}
@@ -119,7 +122,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 									Arrays.asList("firstName", "email", "phoneNumber", "dateOfBirth")
 							);
 
-							if (filterDto.getOrderColumn() != null && filterDto.getOrderType() != null) {
+							if (filterDto.getOrderColumn() != null && filterDto.getOrderType() != null && !filterDto.getOrderColumn().isBlank() && !filterDto.getOrderType().isBlank()) {
 
 								if (stuOrderColumnList.contains(filterDto.getOrderColumn())) {
 
@@ -206,20 +209,24 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 				filterDto.getYear()));
 		
 		// status filter
-		if (filterDto.getStatus() != null) {
+		if (filterDto.getStatus() != null && !filterDto.getStatus().isBlank()) {
 			conditions.add(cb.equal(dailyAttendnaceRoot.get("attendanceStatus").get("code"), filterDto.getStatus()));
 		}
 	    
 		// Approvedstatus filters
-		if (WebServiceUtil.SICK_LEAVE_FILTER.equals(filterDto.getApprovedStatus())) {
-			conditions.add(cb.equal(dailyAttendnaceRoot.get(WebServiceUtil.SICK_LEAVE), WebServiceUtil.YES));
-		} else if (WebServiceUtil.EXTRA_CURRICULAR_ACTIVITY_FILTER.equals(filterDto.getApprovedStatus())) {
-			conditions.add(
-					cb.equal(dailyAttendnaceRoot.get(WebServiceUtil.EXTRA_CURRICULAR_ACTIVITIES), WebServiceUtil.YES));
+		if (filterDto.getApprovedStatus() != null && !filterDto.getApprovedStatus().isBlank()) {
+
+			if (WebServiceUtil.SICK_LEAVE_FILTER.equals(filterDto.getApprovedStatus().toLowerCase())) {
+				conditions.add(cb.equal(dailyAttendnaceRoot.get(WebServiceUtil.SICK_LEAVE), WebServiceUtil.YES));
+			} else if (WebServiceUtil.EXTRA_CURRICULAR_ACTIVITY_FILTER
+					.equals(filterDto.getApprovedStatus().toLowerCase())) {
+				conditions.add(cb.equal(dailyAttendnaceRoot.get(WebServiceUtil.EXTRA_CURRICULAR_ACTIVITIES),
+						WebServiceUtil.YES));
+			}
 		}
 	    
 		// Search filters (name, email, phone)
-		if (filterDto.getSearchBy() != null && filterDto.getSearchValue() != null) {
+		if (filterDto.getSearchBy() != null && filterDto.getSearchValue() != null && !filterDto.getSearchBy().isBlank() && !filterDto.getSearchValue().isBlank() ) {
 			switch (filterDto.getSearchBy().toLowerCase()) {
 			case WebServiceUtil.NAME:
 				Predicate fullName = cb.like(
@@ -230,16 +237,16 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 														""), " ")),
 
 										dailyAttendnaceRoot.get("studentModel").get("lastName"))),
-						"%" + filterDto.getSearchValue().toLowerCase() + "%");
+						 filterDto.getSearchValue().toLowerCase() + "%");
 
 				conditions.add(fullName);
 				break;
 			case WebServiceUtil.EMAIL:
 				conditions.add(cb.like(cb.lower(dailyAttendnaceRoot.get("studentModel").get("email")),
-						"%" + filterDto.getSearchValue().toLowerCase() + "%"));
+						 filterDto.getSearchValue().toLowerCase() + "%"));
 				break;
 			case WebServiceUtil.PHONE_NUMBER:
-				conditions.add(cb.like(dailyAttendnaceRoot.get("studentModel").get("phoneNumber"), "%" + filterDto.getSearchValue() + "%"));
+				conditions.add(cb.like(dailyAttendnaceRoot.get("studentModel").get("phoneNumber"), filterDto.getSearchValue() + "%"));
 				break;
 			}
 		}
@@ -281,7 +288,7 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		}
 
 		// Sorting filter
-		if (filterDto.getOrderColumn() != null && filterDto.getOrderType() != null) {
+		if (filterDto.getOrderColumn() != null && filterDto.getOrderType() != null && !filterDto.getOrderColumn().isBlank() && !filterDto.getOrderType().isBlank()) {
 			if (WebServiceUtil.ASCENDING_ORDER.equals(filterDto.getOrderType()))
 				cq.orderBy(cb.asc(dailyAttendnaceRoot.get("studentModel").get(filterDto.getOrderColumn())));
 			else if (WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType()))

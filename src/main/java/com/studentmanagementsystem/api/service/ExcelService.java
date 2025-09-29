@@ -10,6 +10,6 @@ public interface ExcelService {
 
 	void downloadMarkDetailReport(CommonFilterDto dailyAttendanceFilterDto, HttpServletResponse response);
 
-	void downloadMarkSummaryReport(CommonFilterDto dailyAttendanceFilterDto, HttpServletResponse response);
+	//void downloadMarkSummaryReport(CommonFilterDto dailyAttendanceFilterDto, HttpServletResponse response);
 
 }

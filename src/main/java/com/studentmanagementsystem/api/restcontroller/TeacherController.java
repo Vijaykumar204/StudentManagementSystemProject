@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.teacher.PasswordChangeDto;
 import com.studentmanagementsystem.api.model.custom.teacher.TeacherDto;
 import com.studentmanagementsystem.api.service.TeacherService;
 
@@ -57,6 +58,11 @@ public class TeacherController {
 	@PostMapping("/login")
 	public ResponseEntity<?>  teacherLogin(@RequestParam String email,@RequestParam String password){
 		return new ResponseEntity<>( teacherService.teacherLogin(email,password),HttpStatus.OK);
+	}
+	
+	@PostMapping("/password-change")
+	public ResponseEntity<?>  passwordChange(@RequestBody PasswordChangeDto passwordChangeDto){
+		return new ResponseEntity<>( teacherService.passwordChange(passwordChangeDto),HttpStatus.OK);
 	}
 
 }

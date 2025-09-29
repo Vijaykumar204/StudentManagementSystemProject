@@ -21,4 +21,6 @@ public interface TeacherRepository extends JpaRepository<TeacherModel, Long> {
 
 	TeacherModel findByTeacherPhoneNumber(String phoneNumber);
 
+	//TeacherModel findTeacherPasswordByTeacherEmail(String email);
+
 }

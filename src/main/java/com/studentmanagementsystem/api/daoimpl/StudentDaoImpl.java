@@ -39,48 +39,52 @@ public class StudentDaoImpl implements StudentDao {
 		Map<String, Object> result = new HashMap<>();
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
-        //Status filter
-		if (filterDto.getStatus() != null && !filterDto.getStatus().isBlank()) {
-			predicates.add(cb.equal(studentRoot.get("status").get("code"), filterDto.getStatus()));
-		}
-		
-        //Residing status filter
-		if (filterDto.getResidingStatus() != null && !filterDto.getResidingStatus().isBlank()) {
-			predicates.add(cb.equal(studentRoot.get("residingStatus").get("code"), filterDto.getResidingStatus()));
-		}
-        
 		//Class of study filter
 		if (filterDto.getClassOfStudy() != null) {
 			predicates.add(cb.equal(studentRoot.get("classOfStudy"), filterDto.getClassOfStudy()));
 		}
 		
+        //Status filter
+		if (filterDto.getStatus() != null && !filterDto.getStatus().isBlank()) {
+			predicates.add(cb.equal(studentRoot.get("status").get("code"), filterDto.getStatus()));
+		}
+		
+       
+		if (filterDto.getGender() != null && !filterDto.getGender().isBlank()) {
+			predicates.add(cb.equal(studentRoot.get("gender").get("code"), filterDto.getGender()));
+		}
+		
+		 //Residing status filter
+		if (filterDto.getResidingStatus() != null && !filterDto.getResidingStatus().isBlank()) {
+			predicates.add(cb.equal(studentRoot.get("residingStatus").get("code"), filterDto.getResidingStatus()));
+		}
+		
 		// Name , email , phone number filter
-		if (filterDto.getSearchBy() != null && filterDto.getSearchValue() != null && !filterDto.getSearchBy().isBlank() && !filterDto.getSearchValue().isBlank() ) {
+		if (filterDto.getSearchBy() != null && filterDto.getSearchValue() != null && !filterDto.getSearchBy().isBlank()
+				&& !filterDto.getSearchValue().isBlank()) {
 			switch (filterDto.getSearchBy().toLowerCase()) {
 
 			case WebServiceUtil.NAME:
 
-				predicates
-						.add(cb.like(
-								cb.lower(cb.concat(
-										cb.concat(cb.concat(studentRoot.get("firstName"), " "),
-												cb.concat(cb.coalesce(studentRoot.get("middleName"), ""), " ")),
-										studentRoot.get("lastName"))),
-								"%" + filterDto.getSearchValue().toLowerCase() + "%"));
+				predicates.add(cb.like(cb.lower(cb.concat(
+						cb.concat(cb.concat(studentRoot.get("firstName"), " "),
+								cb.concat(cb.coalesce(studentRoot.get("middleName"), ""), " ")),
+						studentRoot.get("lastName"))), filterDto.getSearchValue().toLowerCase() + "%"));
 				break;
 
 			case WebServiceUtil.EMAIL:
-				predicates.add(cb.like(cb.lower(studentRoot.get("email")),
-						"%" + filterDto.getSearchValue().toLowerCase() + "%"));
+				predicates.add(
+						cb.like(cb.lower(studentRoot.get("email")), filterDto.getSearchValue().toLowerCase() + "%"));
 				break;
 
 			case WebServiceUtil.PHONE_NUMBER:
-				predicates.add(cb.like(studentRoot.get("phoneNumber"), "%" + filterDto.getSearchValue() + "%"));
+				predicates.add(cb.like(studentRoot.get("phoneNumber"), filterDto.getSearchValue() + "%"));
 				break;
-				
+
 			case WebServiceUtil.ID:
 				predicates.add(cb.equal(studentRoot.get("studentId"), filterDto.getSearchValue()));
 				break;
+
 			}
 		}
         

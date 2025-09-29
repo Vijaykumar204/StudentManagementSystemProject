@@ -222,19 +222,19 @@ public class FieldValidation {
 		}
 
 		if (mark.getTamil() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "tamil"));
+			requestMissedFieldList.add(String.format(WebServiceUtil.SUBJECT_MARK_ERROR, "tamil",mark.getStudentId()));
 		}
 		if (mark.getEnglish() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "english"));
+			requestMissedFieldList.add(String.format(WebServiceUtil.SUBJECT_MARK_ERROR, "english",mark.getStudentId()));
 		}
 		if (mark.getMaths() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "maths"));
+			requestMissedFieldList.add(String.format(WebServiceUtil.SUBJECT_MARK_ERROR, "maths",mark.getStudentId()));
 		}
 		if (mark.getScience() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "science"));
+			requestMissedFieldList.add(String.format(WebServiceUtil.SUBJECT_MARK_ERROR, "science",mark.getStudentId()));
 		}
 		if (mark.getSocialScience() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "socialScience"));
+			requestMissedFieldList.add(String.format(WebServiceUtil.SUBJECT_MARK_ERROR, "socialScience",mark.getStudentId()));
 		}
 		return requestMissedFieldList;
 	}
@@ -246,7 +246,7 @@ public class FieldValidation {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "createTeacher"));
 		}
 
-		if (teacherModelListDto.getName() == null && teacherModelListDto.getName().isBlank()) {
+		if (teacherModelListDto.getName() == null || teacherModelListDto.getName().isBlank()) {
 
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "name"));
 		} else if (!NAME_PATTERN.matcher(teacherModelListDto.getName()).matches()) {
@@ -258,12 +258,12 @@ public class FieldValidation {
 			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "email"));
 		}
 
-		if (teacherModelListDto.getPhoneNumber() == null && teacherModelListDto.getPhoneNumber().isBlank()) {
+		if (teacherModelListDto.getPhoneNumber() == null || teacherModelListDto.getPhoneNumber().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "PhoneNumber"));
 		} else if (!PHONE_PATTERN.matcher(teacherModelListDto.getPhoneNumber()).matches()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "phoneNumber"));
 		}
-		if (teacherModelListDto.getDepartment() == null && teacherModelListDto.getPhoneNumber().isBlank()) {
+		if (teacherModelListDto.getDepartment() == null || teacherModelListDto.getDepartment().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "department"));
 		}
 		if(!WebServiceUtil.ADMIN_TEACHER.equals(teacherModelListDto.getRole()) && !WebServiceUtil.TEACHER.equals(teacherModelListDto.getRole())) {

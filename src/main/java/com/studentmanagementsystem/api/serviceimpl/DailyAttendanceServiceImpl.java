@@ -1,4 +1,5 @@
 package com.studentmanagementsystem.api.serviceimpl;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 					attendance.getAttendanceDate());
 
 			// save the daily attendance
-			if (dailyAttendanceModel == null) {
+			if (dailyAttendanceModel==null) {
 
 				// Verify if attendanceDate is holiday
 				HolidayModel schoolHolidayModel = schoolHolidaysRepository
@@ -133,6 +134,14 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 				if (schoolHolidayModel != null && Boolean.FALSE.equals(schoolHolidayModel.getIsHolidayCancelled())) {
 					response.setStatus(WebServiceUtil.WARNING);
 					response.setData(attendance.getAttendanceDate() + WebServiceUtil.DO_NOT_MARK_ATTENDANCE);
+				}
+				
+				 // Verify if attendanceDate is Sunday
+
+				if (attendance.getAttendanceDate().getDayOfWeek() == DayOfWeek.SUNDAY) {
+					response.setStatus(WebServiceUtil.WARNING);	
+		  			response.setData(date + WebServiceUtil.SUNDAY);
+					return response;
 				}
 
 				dailyAttendanceModel = new DailyAttendanceModel();
@@ -147,8 +156,8 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 				attendanceDate = attendance.getAttendanceDate();
 				
 				//collect absent and ECA student id
-				if (date.equals(attendance.getAttendanceDate()) && attendance.getAttendanceStatus().equals(WebServiceUtil.ABSENT)
-						|| dailyAttendanceModel.getApprovedExtraCurricularActivitiesFlag().equals(WebServiceUtil.YES)
+				if (date.equals(attendance.getAttendanceDate()) && (WebServiceUtil.ABSENT.equals(attendance.getAttendanceStatus())
+						|| WebServiceUtil.YES.equals(attendance.getApprovedExtraCurricularActivitiesFlag()))
 								 ) {
 					absentStuIdList.add(attendance.getStudentId());
 				}
@@ -227,6 +236,8 @@ public class DailyAttendanceServiceImpl implements DailyAttendanceService {
 
 		// update the quarterly attendance report
 		quarterlyAttendanceService.findQuarterToUpadte(quarterMonthList);
+		
+		System.out.println("Student Id : " + absentStuIdList.toString());
 
 		// send mail to absent students
 		if (!absentStuIdList.isEmpty()) {

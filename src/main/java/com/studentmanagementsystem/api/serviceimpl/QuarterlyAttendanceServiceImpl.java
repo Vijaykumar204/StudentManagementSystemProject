@@ -137,15 +137,17 @@ public class QuarterlyAttendanceServiceImpl implements QuarterlyAttendanceServic
 			quarterlyAttendanceModel.setTotalSchoolWorkingDays(totalWorkingDays);
 			quarterlyAttendanceModel.setTotalDaysOfPresent(quarterlyAttendance.getTotalDaysOfPresent());
 			quarterlyAttendanceModel.setTotalDaysOfAbsents(quarterlyAttendance.getTotalDaysOfAbsents());
+			
 			quarterlyAttendanceModel.setTotalApprovedActivitiesPermissionDays(
 					quarterlyAttendance.getTotalApprovedActivitiesPermissionDays());
+			
 			quarterlyAttendanceModel.setTotalApprovedSickdays(quarterlyAttendance.getTotalApprovedSickdays());
 			
 			Long present = quarterlyAttendance.getTotalDaysOfPresent();
-			Long activities = quarterlyAttendance.getTotalApprovedActivitiesPermissionDays();
+			//Long activities = quarterlyAttendance.getTotalApprovedActivitiesPermissionDays();
 			Long sick = quarterlyAttendance.getTotalApprovedSickdays();		
 
-			int percentageOfPresent = (int) Math.ceil((((present + activities + sick) / totalWorkingDays) * 100));
+			int percentageOfPresent = (int) Math.ceil((((present + sick) / totalWorkingDays) * 100));
 	       		
 			quarterlyAttendanceModel.setAttendancePercentage(percentageOfPresent);
 

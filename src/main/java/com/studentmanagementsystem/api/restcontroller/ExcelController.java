@@ -45,17 +45,17 @@ public class ExcelController {
     
     }
 	
-	/*
-	 * Download the mark summary report
-	 * 
-	 * @param filterDto Filter criteria for retrieving report.
-	 * @author Vijiyakumar
-	 */
-	@PostMapping("mark/summary-report")
-    public void downloadMarkSummaryReport(@RequestBody CommonFilterDto filterDto,HttpServletResponse response) throws IOException {  
-    		  excelService.downloadMarkSummaryReport(filterDto,response);
-    
-    }
+//	/*
+//	 * Download the mark summary report
+//	 * 
+//	 * @param filterDto Filter criteria for retrieving report.
+//	 * @author Vijiyakumar
+//	 */
+//	@PostMapping("mark/summary-report")
+//    public void downloadMarkSummaryReport(@RequestBody CommonFilterDto filterDto,HttpServletResponse response) throws IOException {  
+//    		  excelService.downloadMarkSummaryReport(filterDto,response);
+//    
+//    }
 
 
 

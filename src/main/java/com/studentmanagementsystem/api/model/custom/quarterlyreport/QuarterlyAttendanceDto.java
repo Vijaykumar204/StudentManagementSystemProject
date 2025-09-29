@@ -213,12 +213,10 @@ public class QuarterlyAttendanceDto {
 			Long totalApprovedActivitiesPermissionDays, Long totalApprovedSickdays
 			) {
 		this.studentId = studentId;
-		
 		this.totalDaysOfPresent = totalDaysOfPresent;
 		this.totalDaysOfAbsents = totalDaysOfAbsents;
 		this.totalApprovedActivitiesPermissionDays = totalApprovedActivitiesPermissionDays;
 		this.totalApprovedSickdays = totalApprovedSickdays;
-//		this.attendanceComplianceStatus = attendanceComplianceStatus;
 		
 	}
 
