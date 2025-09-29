@@ -28,11 +28,12 @@ public class FieldValidation {
 		}
 
 		// student middle name
-		if (studentDto.getMiddleName() != null && !NAME_PATTERN.matcher(studentDto.getMiddleName()).matches()) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "studentMiddleName"));
-		} else if (studentDto.getMiddleName().isBlank()) {
+		  if (studentDto.getMiddleName() != null && studentDto.getMiddleName().isBlank()) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "studentMiddleName"));
-		}
+		   }
+		  else if (studentDto.getMiddleName() != null && !NAME_PATTERN.matcher(studentDto.getMiddleName()).matches()) {
+				requestMissedFieldList.add(String.format(WebServiceUtil.REGEX_ERROR, "studentMiddleName"));
+			}
 
 		// student last name
 		if (studentDto.getLastName() == null || studentDto.getLastName().isBlank()) {

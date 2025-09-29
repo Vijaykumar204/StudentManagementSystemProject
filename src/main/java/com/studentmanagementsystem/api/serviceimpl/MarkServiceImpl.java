@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.studentmanagementsystem.api.dao.MarkDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
@@ -57,10 +58,10 @@ public class MarkServiceImpl implements MarkService {
 	 */
 	@Override
 	@Transactional
-	public Response saveStudentMarks(List<markDto> studentMarksDto) {
+	public MessageResponse saveStudentMarks(List<markDto> studentMarksDto) {
 
 		logger.info("Before saveStudentMarks - Attempting to saving the student marks");
-		Response response = new Response();
+		MessageResponse response = new MessageResponse();
 		LocalDateTime today = LocalDateTime.now();
 		MarkModel studentMark;
 		List<MarkModel> markList = new ArrayList<>();
@@ -98,7 +99,7 @@ public class MarkServiceImpl implements MarkService {
 				studentMark.setQuarterAndYear(mark.getQuarterAndYear());
 				studentMark.setCreateDate(today);
 				studentMark.setCreateTeacher(teacher);
-
+				response.setData(WebServiceUtil.DECLARE_MARK);
 				logger.info("After saveStudentMarks - Successfully saved student marks");
 
 			} else {

@@ -191,30 +191,31 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 
 		// Student Attendance Query
 		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-		Root<StudentModel> studentRoot = cq.from(StudentModel.class);
-		Join<StudentModel, DailyAttendanceModel> dailyAttendanceJoin = studentRoot.join("dailyAttendanceModel");
+		Root<DailyAttendanceModel> dailyAttendnaceRoot = cq.from(DailyAttendanceModel.class);
+	//	Root<StudentModel> studentRoot = cq.from(StudentModel.class);
+	//	Join<StudentModel, DailyAttendanceModel> dailyAttendnaceRoot = studentRoot.join("dailyAttendanceModel");
 		
 		Map<String, Object> result = new HashMap<>();
 		List<Predicate> conditions = new ArrayList<>();
 	    
 		// Month, Year, Class filters
-		conditions.add(cb.equal(studentRoot.get("classOfStudy"), filterDto.getClassOfStudy()));
-		conditions.add(cb.equal(cb.function("MONTH", Integer.class, dailyAttendanceJoin.get("attendanceDate")),
+		conditions.add(cb.equal(dailyAttendnaceRoot.get("studentModel").get("classOfStudy"), filterDto.getClassOfStudy()));
+		conditions.add(cb.equal(cb.function("MONTH", Integer.class, dailyAttendnaceRoot.get("attendanceDate")),
 				filterDto.getMonth()));
-		conditions.add(cb.equal(cb.function("YEAR", Integer.class, dailyAttendanceJoin.get("attendanceDate")),
+		conditions.add(cb.equal(cb.function("YEAR", Integer.class, dailyAttendnaceRoot.get("attendanceDate")),
 				filterDto.getYear()));
 		
 		// status filter
 		if (filterDto.getStatus() != null) {
-			conditions.add(cb.equal(dailyAttendanceJoin.get("attendanceStatus").get("code"), filterDto.getStatus()));
+			conditions.add(cb.equal(dailyAttendnaceRoot.get("attendanceStatus").get("code"), filterDto.getStatus()));
 		}
 	    
 		// Approvedstatus filters
 		if (WebServiceUtil.SICK_LEAVE_FILTER.equals(filterDto.getApprovedStatus())) {
-			conditions.add(cb.equal(dailyAttendanceJoin.get(WebServiceUtil.SICK_LEAVE), WebServiceUtil.YES));
+			conditions.add(cb.equal(dailyAttendnaceRoot.get(WebServiceUtil.SICK_LEAVE), WebServiceUtil.YES));
 		} else if (WebServiceUtil.EXTRA_CURRICULAR_ACTIVITY_FILTER.equals(filterDto.getApprovedStatus())) {
 			conditions.add(
-					cb.equal(dailyAttendanceJoin.get(WebServiceUtil.EXTRA_CURRICULAR_ACTIVITIES), WebServiceUtil.YES));
+					cb.equal(dailyAttendnaceRoot.get(WebServiceUtil.EXTRA_CURRICULAR_ACTIVITIES), WebServiceUtil.YES));
 		}
 	    
 		// Search filters (name, email, phone)
@@ -224,31 +225,31 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 				Predicate fullName = cb.like(
 						cb.lower(
 								cb.concat(
-										cb.concat(cb.concat(studentRoot.get("firstName"), " "),
-												cb.concat(cb.coalesce(studentRoot.get("middleName"),
+										cb.concat(cb.concat(dailyAttendnaceRoot.get("studentModel").get("firstName"), " "),
+												cb.concat(cb.coalesce(dailyAttendnaceRoot.get("studentModel").get("middleName"),
 														""), " ")),
 
-										studentRoot.get("lastName"))),
+										dailyAttendnaceRoot.get("studentModel").get("lastName"))),
 						"%" + filterDto.getSearchValue().toLowerCase() + "%");
 
 				conditions.add(fullName);
 				break;
 			case WebServiceUtil.EMAIL:
-				conditions.add(cb.like(cb.lower(studentRoot.get("email")),
+				conditions.add(cb.like(cb.lower(dailyAttendnaceRoot.get("studentModel").get("email")),
 						"%" + filterDto.getSearchValue().toLowerCase() + "%"));
 				break;
 			case WebServiceUtil.PHONE_NUMBER:
-				conditions.add(cb.like(studentRoot.get("phoneNumber"), "%" + filterDto.getSearchValue() + "%"));
+				conditions.add(cb.like(dailyAttendnaceRoot.get("studentModel").get("phoneNumber"), "%" + filterDto.getSearchValue() + "%"));
 				break;
 			}
 		}
 	    
-		Expression<Long> attendanceCount = cb.countDistinct(dailyAttendanceJoin.get("attendanceDate"));
+		Expression<Long> attendanceCount = cb.countDistinct(dailyAttendnaceRoot.get("attendanceDate"));
 	    
 	  
 	 
 	    // Group by
-		cq.groupBy(studentRoot.get("studentId"));
+		cq.groupBy(dailyAttendnaceRoot.get("studentModel").get("studentId"));
 
 	    //  HAVING condition
 		if (filterDto.getOperationBy() != null && filterDto.getOperationValue() != null) {
@@ -282,25 +283,25 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 		// Sorting filter
 		if (filterDto.getOrderColumn() != null && filterDto.getOrderType() != null) {
 			if (WebServiceUtil.ASCENDING_ORDER.equals(filterDto.getOrderType()))
-				cq.orderBy(cb.asc(studentRoot.get(filterDto.getOrderColumn())));
+				cq.orderBy(cb.asc(dailyAttendnaceRoot.get("studentModel").get(filterDto.getOrderColumn())));
 			else if (WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType()))
-				cq.orderBy(cb.desc(studentRoot.get(filterDto.getOrderColumn())));
+				cq.orderBy(cb.desc(dailyAttendnaceRoot.get("studentModel").get(filterDto.getOrderColumn())));
 		}
 		
 		  //  Select fields 
 		   cq.multiselect(
-		            studentRoot.get("studentId").alias("studentId"),
+				   dailyAttendnaceRoot.get("studentModel").get("studentId").alias("studentId"),
 		            cb.concat(
 		                    cb.concat(
-		                            cb.concat(studentRoot.get("firstName"), " "),
-		                            cb.concat(cb.coalesce(studentRoot.get("middleName"), ""), " ")
+		                            cb.concat(dailyAttendnaceRoot.get("studentModel").get("firstName"), " "),
+		                            cb.concat(cb.coalesce(dailyAttendnaceRoot.get("studentModel").get("middleName"), ""), " ")
 		                    ),
-		                   studentRoot.get("lastName")
+		                    dailyAttendnaceRoot.get("studentModel").get("lastName")
 		            ).alias("name"),
-		            studentRoot.get("classOfStudy").alias("classOfStudy"),
-		            studentRoot.get("dateOfBirth").alias("dateOfBirth"),
-		            studentRoot.get("email").alias("email"),
-		            studentRoot.get("phoneNumber").alias("phoneNumber"),
+		            dailyAttendnaceRoot.get("studentModel").get("classOfStudy").alias("classOfStudy"),
+		            dailyAttendnaceRoot.get("studentModel").get("dateOfBirth").alias("dateOfBirth"),
+		            dailyAttendnaceRoot.get("studentModel").get("email").alias("email"),
+		            dailyAttendnaceRoot.get("studentModel").get("phoneNumber").alias("phoneNumber"),
 		            attendanceCount.alias("attendanceCount")
 		    ).where(conditions.toArray(new Predicate[0]));
 
@@ -353,15 +354,15 @@ public class DailyAttendanceDaoImpl implements DailyAttendanceDao {
 	        ));
 	    }
 	    
-//		CriteriaQuery<Long> filterCountQuery = cb.createQuery(Long.class);
-//		Root<StudentModel> filterCountRoot = filterCountQuery.from(StudentModel.class);
-//	//	Join<StudentModel, DailyAttendanceModel> filterCountJoin = filterCountRoot.join("dailyAttendanceModel");
-//
-//		filterCountQuery.multiselect(cb.count(filterCountRoot)).where(cb.and(conditions.toArray(new Predicate[0])));
-//
-//		Long filterCount = entityManager.createQuery(filterCountQuery).getSingleResult();
-//		 
-//		result.put("filterCount", filterCount);
+		CriteriaQuery<Long> filterCountQuery = cb.createQuery(Long.class);
+		Root<DailyAttendanceModel> filterCountRoot = filterCountQuery.from(DailyAttendanceModel.class);
+	//	Join<StudentModel, DailyAttendanceModel> filterCountJoin = filterCountRoot.join("dailyAttendanceModel");
+
+		filterCountQuery.multiselect(cb.count(filterCountRoot)).where(cb.and(conditions.toArray(new Predicate[0])));
+
+		Long filterCount = entityManager.createQuery(filterCountQuery).getSingleResult();
+		 
+		result.put("filterCount", filterCount);
 		result.put("data", monthlyAttendanceList);
 		
 	    return result;
