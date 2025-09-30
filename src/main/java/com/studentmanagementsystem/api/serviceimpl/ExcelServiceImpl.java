@@ -1,22 +1,32 @@
 package com.studentmanagementsystem.api.serviceimpl;
 
-import java.util.List;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.studentmanagementsystem.api.dao.DailyAttendanceDao;
 import com.studentmanagementsystem.api.dao.MarkDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
-import com.studentmanagementsystem.api.model.custom.studentmarks.ResultReport;
+import com.studentmanagementsystem.api.model.custom.studentmarks.MarkFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.service.ExcelService;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
+
 import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class ExcelServiceImpl implements ExcelService {
@@ -34,9 +44,9 @@ public class ExcelServiceImpl implements ExcelService {
  */
 @SuppressWarnings("unchecked")
 @Override
-public void downloadMonthlyAttendanceReport(CommonFilterDto filterDto, HttpServletResponse response) {
+public void downloadMonthlyAttendanceReport(DailyAttendanceFilterDto filterDto, HttpServletResponse response) {
 
-	Map<String, Object> result = dailyAttendanceDao.monthlyAttendanceList(filterDto);
+	Map<String, Object> result = dailyAttendanceDao.monthlyDailyAttendanceList(filterDto);
 
 	List<MonthlyAbsenceDto> monthlyAttendanceList = (List<MonthlyAbsenceDto>) result.get("data");
 
@@ -84,9 +94,9 @@ public void downloadMonthlyAttendanceReport(CommonFilterDto filterDto, HttpServl
 	totalWorkingDaysCell.setCellStyle(style);
 
 	Cell attendanceCountCell = header.createCell(7);
-	if (WebServiceUtil.PRESENT.equals(filterDto.getStatus()))
+	if (WebServiceUtil.PRESENT.equals(filterDto.getAttendnaceStatus()))
 		attendanceCountCell.setCellValue("Present Count");
-	else if (WebServiceUtil.ABSENT.equals(filterDto.getStatus()))
+	else if (WebServiceUtil.ABSENT.equals(filterDto.getAttendnaceStatus()))
 		attendanceCountCell.setCellValue("Absent Count");
 	else
 		attendanceCountCell.setCellValue("Attendance Count");
@@ -136,7 +146,7 @@ public void downloadMonthlyAttendanceReport(CommonFilterDto filterDto, HttpServl
   */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void downloadMarkDetailReport(CommonFilterDto filterDto, HttpServletResponse response) {
+	public void downloadMarkDetailReport(MarkFilterDto filterDto, HttpServletResponse response) {
 		
 		Map<String,Object> result = markDao.listStudentMarks(filterDto);
 		List<markDto> markList = (List<markDto>) result.get("data");

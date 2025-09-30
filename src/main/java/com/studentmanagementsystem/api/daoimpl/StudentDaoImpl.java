@@ -7,8 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.dao.StudentDao;
-import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import jakarta.persistence.EntityManager;
@@ -30,7 +30,7 @@ public class StudentDaoImpl implements StudentDao {
 	 */
 
 	@Override
-	public Map<String, Object>  listStudentDetails(CommonFilterDto filterDto) {
+	public Map<String, Object>  listStudentDetails(StudentFilterDto filterDto) {
 		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<StudentDto> cq = cb.createQuery(StudentDto.class);
@@ -65,20 +65,17 @@ public class StudentDaoImpl implements StudentDao {
 			switch (filterDto.getSearchBy().toLowerCase()) {
 
 			case WebServiceUtil.NAME:
-
-				predicates.add(cb.like(cb.lower(cb.concat(
-						cb.concat(cb.concat(studentRoot.get("firstName"), " "),
-								cb.concat(cb.coalesce(studentRoot.get("middleName"), ""), " ")),
-						studentRoot.get("lastName"))), filterDto.getSearchValue().toLowerCase() + "%"));
+				String fullName = filterDto.getSearchValue().replaceAll(" ", "").toLowerCase();
+				predicates.add(cb.like(cb.lower(studentRoot.get("fullNameSearch")), "%" + fullName + "%"));
 				break;
 
 			case WebServiceUtil.EMAIL:
-				predicates.add(
-						cb.like(cb.lower(studentRoot.get("email")), filterDto.getSearchValue().toLowerCase() + "%"));
+				predicates.add(cb.like(cb.lower(studentRoot.get("email")),
+						"%" + filterDto.getSearchValue().toLowerCase() + "%"));
 				break;
 
 			case WebServiceUtil.PHONE_NUMBER:
-				predicates.add(cb.like(studentRoot.get("phoneNumber"), filterDto.getSearchValue() + "%"));
+				predicates.add(cb.like(studentRoot.get("phoneNumber"),"%"+ filterDto.getSearchValue() + "%"));
 				break;
 
 			case WebServiceUtil.ID:
@@ -91,11 +88,7 @@ public class StudentDaoImpl implements StudentDao {
 			cq.select(cb.construct(StudentDto.class, 
 						
 						studentRoot.get("studentId"),   
-					cb.concat(
-							cb.concat(cb.concat(studentRoot.get("firstName"), " "),
-									cb.concat(cb.coalesce(studentRoot.get("middleName"), ""), " ")),
-							studentRoot.get(
-									"lastName")),
+						studentRoot.get("fullName"),
 						studentRoot.get("gender").get("description"),
 						studentRoot.get("dateOfBirth"),
 						studentRoot.get("classOfStudy"),

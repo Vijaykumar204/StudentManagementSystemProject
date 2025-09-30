@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.MarkFilterDto;
 import com.studentmanagementsystem.api.service.ExcelService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,7 +30,7 @@ public class ExcelController {
 	 */
 	
 	@PostMapping("attendance/monthly-report")
-    public void downloadMonthlyAttendanceReport(@RequestBody CommonFilterDto filterDto,HttpServletResponse response) throws IOException {  
+    public void downloadMonthlyAttendanceReport(@RequestBody DailyAttendanceFilterDto filterDto,HttpServletResponse response) throws IOException {  
     		  excelService.downloadMonthlyAttendanceReport(filterDto,response);
     
     }
@@ -40,7 +42,7 @@ public class ExcelController {
 	 * @author Vijiyakumar
 	 */
 	@PostMapping("mark/detail-report")
-    public void downloadMarkDetailReport(@RequestBody CommonFilterDto filterDto,HttpServletResponse response) throws IOException {  
+    public void downloadMarkDetailReport(@RequestBody MarkFilterDto filterDto,HttpServletResponse response) throws IOException {  
     		  excelService.downloadMarkDetailReport(filterDto,response);
     
     }

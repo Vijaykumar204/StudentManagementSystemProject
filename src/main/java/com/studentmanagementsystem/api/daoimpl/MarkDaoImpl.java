@@ -8,13 +8,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.dao.MarkDao;
-import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
-import com.studentmanagementsystem.api.model.custom.dailyattendance.MonthlyAbsenceDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.MarkFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.ResultReport;
-import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceModel;
+import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
-import com.studentmanagementsystem.api.model.entity.StudentModel;
+import com.studentmanagementsystem.api.model.entity.QuarterlyAttendanceModel;
 import com.studentmanagementsystem.api.repository.StudentRepository;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
 import jakarta.persistence.EntityManager;
@@ -22,11 +21,10 @@ import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import jakarta.transaction.Transactional;
 
 @Repository
 public class MarkDaoImpl implements MarkDao {
@@ -41,7 +39,8 @@ public class MarkDaoImpl implements MarkDao {
 	 */
 	
 	@Override
-	public Map<String,Object>  listStudentMarks(CommonFilterDto filterDto) {
+	@Transactional
+	public Map<String,Object>  listStudentMarks(MarkFilterDto filterDto) {
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<markDto> cq = cb.createQuery(markDto.class);
@@ -59,15 +58,15 @@ public class MarkDaoImpl implements MarkDao {
 		
 		
 		// Result status filter
-		if ((filterDto.getStatus() != null && !filterDto.getStatus().isBlank()) && filterDto.getTopper() == null) {
+		if ((filterDto.getResultStatus() != null && !filterDto.getResultStatus().isBlank()) && filterDto.getTopper() == null) {
 
-			if (filterDto.getStatus().equals(WebServiceUtil.PASS)) {
+			if (filterDto.getResultStatus().equalsIgnoreCase(WebServiceUtil.PASS)) {
 				predicates.add(cb.equal(markRoot.get("result").get("code"), WebServiceUtil.PASS));
-			} else if (filterDto.getStatus().equals(WebServiceUtil.FAIL)) {
+			} else if (filterDto.getResultStatus().equalsIgnoreCase(WebServiceUtil.FAIL)) {
 				predicates.add(cb.equal(markRoot.get("result").get("code"), WebServiceUtil.FAIL));
 			}
 		} else {
-			if (WebServiceUtil.TOPPER.equals(filterDto.getTopper())) {
+			if (WebServiceUtil.TOPPER.equalsIgnoreCase(filterDto.getTopper())) {
 				sq.select(cb.max(sqMarkRoot.get("totalMarks"))).where(
 						cb.equal(sqMarkRoot.get("quarterAndYear"), filterDto.getQuarterAndYear()),
 						cb.equal(sqMarkRoot.get("studentModel").get("classOfStudy"), filterDto.getClassOfStudy()),
@@ -81,16 +80,8 @@ public class MarkDaoImpl implements MarkDao {
 
 			switch (filterDto.getSearchBy().toLowerCase()) {
 			case WebServiceUtil.NAME:
-				Predicate fullName = cb.like(
-						cb.lower(cb.concat(
-								cb.concat(cb.concat(markRoot.get("studentModel").get("firstName"), " "),
-										cb.concat(cb.coalesce(markRoot.get("studentModel").get("middleName"), ""),
-												" ")),
-
-								markRoot.get("studentModel").get("lastName"))),
-						filterDto.getSearchValue().toLowerCase() + "%");
-
-				predicates.add(fullName);
+				String fullName = filterDto.getSearchValue().replaceAll(" ", "").toLowerCase();
+				predicates.add(cb.like(cb.lower(markRoot.get("studentModel").get("fullNameSearch")), "%" + fullName + "%"));
 				break;
 
 			case WebServiceUtil.EMAIL:
@@ -107,10 +98,7 @@ public class MarkDaoImpl implements MarkDao {
        
 		cq.select(cb.construct(markDto.class,
 				markRoot.get("studentModel").get("studentId"),
-				cb.concat(
-						cb.concat(cb.concat(markRoot.get("studentModel").get("firstName"), " "),
-								cb.concat(cb.coalesce(markRoot.get("studentModel").get("middleName"), ""), " ")),
-						markRoot.get("studentModel").get("lastName")),
+				markRoot.get("studentModel").get("fullName"),
 				markRoot.get("studentModel").get("classOfStudy"),
 				markRoot.get("studentModel").get("dateOfBirth"),
 				markRoot.get("studentModel").get("phoneNumber"),
@@ -159,7 +147,7 @@ public class MarkDaoImpl implements MarkDao {
 		CriteriaQuery<Long> filterCountQuery = cb.createQuery(Long.class);
 		Root<MarkModel> filterCountRoot = filterCountQuery.from(MarkModel.class);
 
-		filterCountQuery.multiselect(cb.count(filterCountRoot)).where(cb.and(predicates.toArray(new Predicate[0])));
+		filterCountQuery.select(cb.count(filterCountRoot)).where(cb.and(predicates.toArray(new Predicate[0])));
 
 		Long filterCount = entityManager.createQuery(filterCountQuery).getSingleResult();
 		 
@@ -239,14 +227,13 @@ public class MarkDaoImpl implements MarkDao {
 	
 	
 	@Override
-	public List<ResultReport> resultSummaryReport(CommonFilterDto filterDto) {
+	@Transactional
+	public List<ResultReport> resultSummaryReport(MarkFilterDto filterDto) {
 
 	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-	  //  CriteriaQuery<ResultReport> cq = cb.createQuery(ResultReport.class);
 	    CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 	    Root<MarkModel> studentMarkRoot = cq.from(MarkModel.class);
 	    
-	  //  Join<MarkModel, StudentModel> studentMarksAndStudent = studentMarkRoot.join("studentModel");
 
 	    // Expressions for total count, pass, fail
 	    Long totalCount = studentRepository.findTotalCount(filterDto.getClassOfStudy());
@@ -305,19 +292,17 @@ public class MarkDaoImpl implements MarkDao {
 	    
 	    for (Tuple tuple : results) {
 	    	 markSummaryReport.add(new ResultReport(
-		                
-		                tuple.get("quarter", String.class),
-		                tuple.get("classOfStudy", Integer.class),
-		                totalCount,
-		                tuple.get("totalPass", Long.class),
-		                tuple.get("totalFail", Long.class),
-		                tuple.get("dueToAttendancFail", Long.class)
+                
+				tuple.get("quarter", String.class),
+				tuple.get("classOfStudy", Integer.class), 
+				totalCount,
+				tuple.get("totalPass", Long.class),
+				tuple.get("totalFail", Long.class),
+				tuple.get("dueToAttendancFail", Long.class)
 		                
 		        ));
 	    }
 		return markSummaryReport;
 	    
 	}
-
-	
 }

@@ -2,6 +2,9 @@ package com.studentmanagementsystem.api.model.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.Formula;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +35,13 @@ public class StudentModel {
 	
 	@Column(name ="STU_Last_Name",nullable = false,length=5)
 	private String lastName;
+	
+	@Formula("concat(STU_First_Name, ifnull(STU_Middle_Name, ''), STU_Last_Name)")
+	private String fullNameSearch;
+
+	@Formula("concat(STU_First_Name, ' ', ifnull(STU_Middle_Name, ''), ' ', STU_Last_Name)")
+	private String fullName;
+
 	
 	@Column(name ="STU_DOB",nullable = false)
 	private LocalDate dateOfBirth;
@@ -293,6 +303,22 @@ public class StudentModel {
 
 	public void setQuarterlyAttendanceReportModel(List<QuarterlyAttendanceModel> quarterlyAttendanceReportModel) {
 		this.quarterlyAttendanceReportModel = quarterlyAttendanceReportModel;
+	}
+
+	public String getFullNameSearch() {
+		return fullNameSearch;
+	}
+
+	public void setFullNameSearch(String fullNameSearch) {
+		this.fullNameSearch = fullNameSearch;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	

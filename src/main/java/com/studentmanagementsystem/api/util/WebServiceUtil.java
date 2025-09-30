@@ -28,8 +28,6 @@ public final class WebServiceUtil {
 	public static final String S_NO="createDate";
 	public static final String TOPPER ="topper";
 	
-	
-	
 
 //******************** Student Message *********************************
 	
@@ -74,7 +72,7 @@ public final class WebServiceUtil {
 	public static final String DESCENDING_ORDER="desc";
 //******************** DailyAttendance Message  *********************************
 	
-	public static final String SUNDAY = " is Sunday,so no need to declare";
+	public static final String SUNDAY_ERROR = " is Sunday,so no need to declare";
 	public static final String DO_NOT_MARK_ATTENDANCE = " is declare holiday,so can't mark the Attendance";
 	public static final String ALREADY_HOLIDAY_CANCELLED = "Declare date already cancelled : ";
 
@@ -287,7 +285,8 @@ public final class WebServiceUtil {
 	
 	public static final String NULL_ERROR = "%s is required ";
 	public static final String STUDENT_CODE_ERROR = " %s is invalid data";
-	
+	public static final String PRESENT_AND_SICK_LEAVE_ERROR = "if the attendance status is present then sick leave is N";
+	public static final String ABSENT_AND_ECA_ERROR ="if the attendance status is absent then extra curricular activity is N";
 	public static final String CLASS_OF_STUDY_ERROR = "Class of study must be between 6 and 10";
 	public static final String REGEX_ERROR = "Invalid %s format";
 	
@@ -323,56 +322,21 @@ public final class WebServiceUtil {
 	public static final String INVAILD = " %s invalid";
 	
 	
-	public static final String PDF_INTRODUCTION ="Introduction\r\n"
-			+ "\r\n"
-			+ "This report presents the overall academic performance of Class %d for the current quarter. The data highlights the total number of students, along with the count of those who passed and those who need further improvement.";
+	public static final String PDF_INTRODUCTION ="Introduction";
+			
+	public static final String PDF_INTRODUCTION_CONTENT = "This report presents the overall academic performance of Class %d for the quarter. The data highlights the total number of students, along with the count of those who passed and those who need further improvement.";
 	
-	public static final String PDF_OVERVIEW ="Performance Overview\r\n"
-			+ "\r\n"
-			+ "The results indicate that a majority of students have successfully cleared their examinations, reflecting their consistent efforts and understanding of the subjects. A smaller group of students has not met the required standards, which points to areas where additional focus and remedial support may be necessary.";
+	public static final String PDF_OVERVIEW ="Performance Overview";
+			
+	public static final String PDF_OVERVIEW_CONTENT = "The results indicate that a majority of students have successfully cleared their examinations, reflecting their consistent efforts and understanding of the subjects. A smaller group of students has not met the required standards, which points to areas where additional focus and remedial support may be necessary.";
+
+	public static final String PDF_TEACHER_NOTE ="Teacher’s Note";
+			
+	public static final String PDF_TEACHER_NOTE_CONTENT ="The overall performance of Class %d shows a positive trend. However, it is important to provide extra attention to students who are struggling. Teachers may consider targeted interventions, personalized study plans, and regular assessments to ensure that every student progresses steadily in the next quarter.";
+
+	public static final String PDF_CONCLUSION ="Conclusion";
 	
-	public static final String PDF_TEACHER_NOTE ="\r\nTeacher’s Note\r\n"
-			+ "\r\n"
-			+ "The overall performance of Class %d shows a positive trend. However, it is important to provide extra attention to students who are struggling. Teachers may consider targeted interventions, personalized study plans, and regular assessments to ensure that every student progresses steadily in the next quarter.";
-	
-	public static final String PDF_CONCLUSION ="Conclusion\r\n"
-			+ "\r\n"
-			+ "In summary, the academic results of Class %d demonstrate strong achievements, while also identifying students who require guidance. With continued support from teachers and parents, the class is expected to perform even better in the upcoming examinations.";
-//	public static final String NAME_ERROR = "Name is null";
-//	public static final String NAME_REGEX_ERROR = "Name  can contain only letters ";
-//	public static final String GENDER_ERROR = "Gender is null";
-//	public static final String GENDER_VALIDATION_ERROR ="Gender  should only accept the values: Male(M), Female(F), or Unknown(U)";
-//	public static final String STUDENT_CLASS_OF_STUDY_ERROR ="Student class os study must be 6 to 10";
-//	public static final String DOB_ERROR = "Date of birth is null";
-//	public static final String RESIDING_STATUS_VALIDATION_ERROR = "Residing status should only accept the values : Hostel(H) or Dayscholar(D)";
-//	public static final String RESIDING_STATUS_ERROR = "Residing status is null";
-//	public static final String PH_NO_ERROR = "Phone number is null";
-//	public static final String PH_NO_REGEX_ERROR ="Phone number can contain only number(10 digit)";
-//	public static final String EMAIL_ERROR ="Email is null";
-//	public static final String EMAIL_REGEX_ERROR = "Email format error";
-//	public static final String STREET_NAME_ERROR = "Street name is null";
-//	public static final String CITY_NAME_ERROR = "% is null";
-//	public static final String POSTAL_CODE_ERROR = "Postal code name is null";
-	
+	public static final String PDF_CONCLUSION_CONTENT ="In summary, the academic results of Class %d demonstrate strong achievements, while also identifying students who require guidance. With continued support from teachers and parents, the class is expected to perform even better in the upcoming examinations.";
 
 
-	// School Holidays 
-//	public static final String HOL_DATE_ERROR = "Holiday date is null";
-//	public static final String HOL_REASON_ERROR = " Holiday reason is null ";
-//	public static final String HOL_CANCALLED_REASON_ERROR = "Holiday cancalled  reason is null";
-//	
-//	
-	
-// Attendance
-
-//	public static final String ATTENDANCE_DATE_ERROR = "Attendance date is null";
-//	public static final String ATTENDANCE_STATUS_ERROR = "Attendance Status is null,must have presnt or absent";
-//	public static final String STUDENT_ID_ERROR ="Student Id is null";
-//	public static final String TEACHER_ID_ERROR = "Teacher Id is null";
-	
-	
-//Student Mark
-//	public static final String QUARTER_AND_YEAR_ERROR = "Quater and year is null";
-//	public static final String TEACHER_DEPARTMENT ="Teacher department is null";
-	
 }

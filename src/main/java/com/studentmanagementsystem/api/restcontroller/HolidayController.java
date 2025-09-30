@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.schoolholidays.HolidayFilterDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.service.HolidayService;
 
@@ -56,7 +57,7 @@ public class HolidayController {
 	 */
 
 	@GetMapping("/list")
-	ResponseEntity<?> listDeclaredHolidays(@RequestBody CommonFilterDto filterDto ) {
+	ResponseEntity<?> listDeclaredHolidays(@RequestBody HolidayFilterDto filterDto ) {
 		return new ResponseEntity<>(schoolHolidaysService.declaredHolidaysList(filterDto), HttpStatus.OK);
 	}
 

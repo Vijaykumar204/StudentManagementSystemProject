@@ -113,57 +113,57 @@ public class QuarterlyAttendanceServiceImpl implements QuarterlyAttendanceServic
 		
 		logger.info("Before updateQuarterlyAttendanceReport - Update the quarterly Attendance , quarter : {} ",quarterAndYear);
 
-		List<QuarterlyAttendanceDto> quarterlyAttendanceList = quartlyAttendanceDao
+		List<QuarterlyAttendanceDto> quarterlyAttendanceCountList = quartlyAttendanceDao
 				.getAttendanceSummary(quarterMonthEnd);
 
-		Long totalWorkingDays = quartlyAttendanceDao.getTotalWorkingDays(quarterMonthEnd);
+	//	Long totalWorkingDays = quartlyAttendanceDao.getTotalWorkingDays(quarterMonthEnd);
+		
+		Long totalWorkingDays = quarterlyAttendanceCountList.get(0).getTotalDaysOfPresent() + quarterlyAttendanceCountList.get(0).getTotalDaysOfAbsents();
 		
 		List<QuarterlyAttendanceModel> quarterlyModelList = new ArrayList<>();
 
-		for (QuarterlyAttendanceDto quarterlyAttendance : quarterlyAttendanceList) {
+		for (QuarterlyAttendanceDto quarterlyAttendanceCount : quarterlyAttendanceCountList) {
 			
-			QuarterlyAttendanceModel quarterlyAttendanceModel = quarterlyRepository
-					.findByStudentAndQuarterAndYear(quarterlyAttendance.getStudentId(), quarterAndYear);
+			QuarterlyAttendanceModel existsQuarterlyAttendanceModel = quarterlyRepository
+					.findByStudentAndQuarterAndYear(quarterlyAttendanceCount.getStudentId(), quarterAndYear);
 			
-			if (quarterlyAttendanceModel == null) {
-				quarterlyAttendanceModel = new QuarterlyAttendanceModel();
+			if (existsQuarterlyAttendanceModel == null) {
+				
+				existsQuarterlyAttendanceModel = new QuarterlyAttendanceModel();
 
-				quarterlyAttendanceModel.setStudentModel(
-						studentModelRepository.findStudentByStudentId(quarterlyAttendance.getStudentId()));
+				existsQuarterlyAttendanceModel.setStudentModel(
+						studentModelRepository.findByStudentId(quarterlyAttendanceCount.getStudentId()));
 
-				quarterlyAttendanceModel.setQuarterAndYear(quarterAndYear);
+				existsQuarterlyAttendanceModel.setQuarterAndYear(quarterAndYear);
 			}
 						
-			quarterlyAttendanceModel.setTotalSchoolWorkingDays(totalWorkingDays);
-			quarterlyAttendanceModel.setTotalDaysOfPresent(quarterlyAttendance.getTotalDaysOfPresent());
-			quarterlyAttendanceModel.setTotalDaysOfAbsents(quarterlyAttendance.getTotalDaysOfAbsents());
+			existsQuarterlyAttendanceModel.setTotalSchoolWorkingDays(totalWorkingDays);
+			existsQuarterlyAttendanceModel.setTotalDaysOfPresent(quarterlyAttendanceCount.getTotalDaysOfPresent());
+			existsQuarterlyAttendanceModel.setTotalDaysOfAbsents(quarterlyAttendanceCount.getTotalDaysOfAbsents());
 			
-			quarterlyAttendanceModel.setTotalApprovedActivitiesPermissionDays(
-					quarterlyAttendance.getTotalApprovedActivitiesPermissionDays());
+			existsQuarterlyAttendanceModel.setTotalApprovedActivitiesPermissionDays(
+					quarterlyAttendanceCount.getTotalApprovedActivitiesPermissionDays());
 			
-			quarterlyAttendanceModel.setTotalApprovedSickdays(quarterlyAttendance.getTotalApprovedSickdays());
+			existsQuarterlyAttendanceModel.setTotalApprovedSickdays(quarterlyAttendanceCount.getTotalApprovedSickdays());
 			
-			Long present = quarterlyAttendance.getTotalDaysOfPresent();
+			Long present = quarterlyAttendanceCount.getTotalDaysOfPresent();
 			//Long activities = quarterlyAttendance.getTotalApprovedActivitiesPermissionDays();
-			Long sick = quarterlyAttendance.getTotalApprovedSickdays();		
+			Long sick = quarterlyAttendanceCount.getTotalApprovedSickdays();		
 
 			int percentageOfPresent = (int) Math.ceil((((present + sick) / totalWorkingDays) * 100));
 	       		
-			quarterlyAttendanceModel.setAttendancePercentage(percentageOfPresent);
-
+			existsQuarterlyAttendanceModel.setAttendancePercentage(percentageOfPresent);
+			StudentCodeModel complianceStatus;
 			if (percentageOfPresent < 75) {
-				StudentCodeModel nonCompliance = studentCodeRespository
-						.findStudentCodeByCode(WebServiceUtil.NON_COMPLIANCE);
-				quarterlyAttendanceModel.setAttendanceComplianceStatus(nonCompliance);
-				quarterlyAttendanceModel.setComments(WebServiceUtil.NON_COMPLIANCE_COMMENT);
+				complianceStatus = studentCodeRespository
+						.findByCode(WebServiceUtil.NON_COMPLIANCE);
+				existsQuarterlyAttendanceModel.setComments(WebServiceUtil.NON_COMPLIANCE_COMMENT);
 			} else {
-				StudentCodeModel compliance = studentCodeRespository.findStudentCodeByCode(WebServiceUtil.COMPLIANCE);
-				quarterlyAttendanceModel.setAttendanceComplianceStatus(compliance);
-				quarterlyAttendanceModel.setComments(WebServiceUtil.COMPLIANCE_COMMENT);
+			    complianceStatus = studentCodeRespository.findByCode(WebServiceUtil.COMPLIANCE);
+				existsQuarterlyAttendanceModel.setComments(WebServiceUtil.COMPLIANCE_COMMENT);
 			}
-			quarterlyModelList.add(quarterlyAttendanceModel);
-			
-			
+			existsQuarterlyAttendanceModel.setAttendanceComplianceStatus(complianceStatus);
+			quarterlyModelList.add(existsQuarterlyAttendanceModel);
 		}
 		quarterlyRepository.saveAll(quarterlyModelList);
 		logger.info("After updateQuarterlyAttendanceReport - SuccessFully updated");
@@ -189,12 +189,12 @@ public class QuarterlyAttendanceServiceImpl implements QuarterlyAttendanceServic
 
 			if (WebServiceUtil.S_NO.equals(filterDto.getOrderColumn())
 					&& WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType())) {
-				int sno = quarterlyAttendanceList.size();
+				int sno = (int) ((filterDto.getLength() <= totalCount) ? filterDto.getLength() : totalCount);
 				for (QuarterlyAttendanceDto attendance : quarterlyAttendanceList) {
 					attendance.setSno(sno--);
 				}
 			} else {
-				int sno = 1;
+				int sno = (filterDto.getStart() > 0) ? filterDto.getStart() : 1;
 				for (QuarterlyAttendanceDto attendance : quarterlyAttendanceList) {
 					attendance.setSno(sno++);
 				}

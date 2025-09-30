@@ -7,7 +7,7 @@ import com.studentmanagementsystem.api.model.entity.TeacherModel;
 
 public interface TeacherRepository extends JpaRepository<TeacherModel, Long> {
 
-	TeacherModel findTeacherByTeacherId(Long teacherId);
+	TeacherModel findByTeacherId(Long teacherId);
 
 	TeacherModel findTeacherIdByTeacherId(Long teacherId);
 	

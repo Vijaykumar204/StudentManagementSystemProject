@@ -4,6 +4,7 @@ import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
 
 public interface StudentService {
 
@@ -11,6 +12,6 @@ public interface StudentService {
 
 	MessageResponse activeOrDeactiveByStudentId(String status, Long studentId, Long teacherId);
 
-	Response listStudentDetails(CommonFilterDto filterDto);
+	Response listStudentDetails(StudentFilterDto filterDto);
 
 }

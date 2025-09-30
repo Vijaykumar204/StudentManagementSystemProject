@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.studentmanagementsystem.api.dao.HolidayDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.schoolholidays.HolidayFilterDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.entity.HolidayModel;
 import com.studentmanagementsystem.api.util.WebServiceUtil;
@@ -32,7 +33,8 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@Override
 	@Transactional
-	public Map<String, Object> declaredHolidaysList(CommonFilterDto filterDto) {
+	public Map<String, Object> declaredHolidaysList(HolidayFilterDto filterDto) {
+		
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<SchoolHolidaysDto> cq = cb.createQuery(SchoolHolidaysDto.class);
 		Root<HolidayModel> holidaysRoot = cq.from(HolidayModel.class);
@@ -65,30 +67,30 @@ public class HolidayDaoImpl implements HolidayDao {
 				
 				));
 		
-				if (!predicates.isEmpty()) {
-					cq.where(cb.and(predicates.toArray(new Predicate[0])));
-				}
-				
-				if (filterDto.getOrderColumn() != null && filterDto.getOrderType() != null) {
-					if (WebServiceUtil.ASCENDING_ORDER.equals(filterDto.getOrderType()))
-						cq.orderBy(cb.asc(holidaysRoot.get(filterDto.getOrderColumn())));
-					else if (WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType()))
-						cq.orderBy(cb.desc(holidaysRoot.get(filterDto.getOrderColumn())));
-				}
+		if (!predicates.isEmpty()) {
+			cq.where(cb.and(predicates.toArray(new Predicate[0])));
+		}
+
+		if (filterDto.getOrderColumn() != null && filterDto.getOrderType() != null) {
+			if (WebServiceUtil.ASCENDING_ORDER.equals(filterDto.getOrderType()))
+				cq.orderBy(cb.asc(holidaysRoot.get(filterDto.getOrderColumn())));
+			else if (WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType()))
+				cq.orderBy(cb.desc(holidaysRoot.get(filterDto.getOrderColumn())));
+		}
 		
-				List<SchoolHolidaysDto> holidaysList = entityManager.createQuery(cq)
-											.setFirstResult(filterDto.getStart())
-											.setMaxResults(filterDto.getLength())
-											.getResultList();
-				//find the fiter count
-				CriteriaQuery<Long> filterCountQuery = cb.createQuery(Long.class);
-				Root<HolidayModel> filterCountRoot = filterCountQuery.from(HolidayModel.class);
-				filterCountQuery.multiselect(cb.count(filterCountRoot))
-						.where(cb.and(predicates.toArray(new Predicate[0])));
-				Long filterCount = entityManager.createQuery(filterCountQuery).getSingleResult();
-				 
-				result.put("filterCount", filterCount);
-				result.put("data", holidaysList);
+		List<SchoolHolidaysDto> holidaysList = entityManager.createQuery(cq)
+									.setFirstResult(filterDto.getStart())
+									.setMaxResults(filterDto.getLength())
+									.getResultList();
+		//find the fiter count
+		CriteriaQuery<Long> filterCountQuery = cb.createQuery(Long.class);
+		Root<HolidayModel> filterCountRoot = filterCountQuery.from(HolidayModel.class);
+		filterCountQuery.select(cb.count(filterCountRoot))
+				.where(cb.and(predicates.toArray(new Predicate[0])));
+		Long filterCount = entityManager.createQuery(filterCountQuery).getSingleResult();
+		 
+		result.put("filterCount", filterCount);
+		result.put("data", holidaysList);
 		 
 		 return result;
 	}

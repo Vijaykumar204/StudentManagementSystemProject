@@ -16,6 +16,8 @@ public interface EmailSentService {
 
 	//Response runAbsentAlertMessage(Long teacherId) throws MessagingException;
 
-	void absentAlertEmail(List<Long> absentIdList, Long teacherId) throws MessagingException;
+	//void absentAlertEmail(List<Long> absentIdList, Long teacherId) throws MessagingException;
+
+	void attendanceStatusAlertEmail(List<Long> absentIdList, Long teacherId) throws MessagingException;
 
 }

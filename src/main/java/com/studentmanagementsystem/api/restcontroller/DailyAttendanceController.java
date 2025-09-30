@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
 import com.studentmanagementsystem.api.service.DailyAttendanceService;
 
 
 @RestController
-@RequestMapping(value = "attendance")
+@RequestMapping(value = "daily-attendance")
 public class DailyAttendanceController {
 
 	@Autowired
@@ -32,9 +33,9 @@ public class DailyAttendanceController {
 	 * @author Vijiyakumar
 	 */
 	@PostMapping("/save")
-	ResponseEntity<?> saveAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto) {
+	ResponseEntity<?> saveDailyAttendance(@RequestBody List<DailyAttendanceDto> dailyAttendanceDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.saveAttendance(dailyAttendanceDto), HttpStatus.OK);
+				dailyAttendanceService.saveDailyAttendance(dailyAttendanceDto), HttpStatus.OK);
 	}
 
 	/**
@@ -48,9 +49,9 @@ public class DailyAttendanceController {
 	 * @author Vijiyakumar
 	 */
 	@GetMapping("/list")
-	ResponseEntity<?> attendanceList(@RequestBody CommonFilterDto filterDto) {
+	ResponseEntity<?> dailyAttendanceList(@RequestBody DailyAttendanceFilterDto filterDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.attendanceList(filterDto),
+				dailyAttendanceService.dailyAttendanceList(filterDto),
 				HttpStatus.OK);
 	}
 
@@ -63,9 +64,9 @@ public class DailyAttendanceController {
 	 * @author Vijiyakumar
 	 */
 	@GetMapping("/month-list")
-	ResponseEntity<?> monthlyAttendanceList(@RequestBody CommonFilterDto filterDto) {
+	ResponseEntity<?> monthlyDailyAttendanceList(@RequestBody DailyAttendanceFilterDto filterDto) {
 		return new ResponseEntity<>(
-				dailyAttendanceService.monthlyAttendanceList(filterDto),
+				dailyAttendanceService.monthlyDailyAttendanceList(filterDto),
 				HttpStatus.OK);
 	}
 	

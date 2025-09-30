@@ -9,8 +9,6 @@ public interface QuarterlyAttendanceService {
 
 	Response quarterlyAttendanceList(CommonFilterDto filterDto);
 
-	//void runQuarterlyAttendanceUpdate();
-
 	void findQuarterToUpadte(List<Integer> quarterMonth);
 
 }

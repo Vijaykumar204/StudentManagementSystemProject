@@ -165,7 +165,7 @@ public class FieldValidation {
 		List<String> requestMissedFieldList = new ArrayList<>();
 
 		if (schoolHolidaysDto.getHolidayDate() == null) {
-			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "HolidayDate"));
+			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "holidayDate"));
 		}
 
 		if (schoolHolidaysDto.getHolidayCancelledReason() == null
@@ -198,6 +198,14 @@ public class FieldValidation {
 
 		if (dailyAttendanceDto.getClassOfStudy() == null) {
 			requestMissedFieldList.add(String.format(WebServiceUtil.NULL_ERROR, "classOfStudy"));
+		}
+		
+		if(dailyAttendanceDto.getAttendanceStatus().equalsIgnoreCase(WebServiceUtil.PRESENT) && WebServiceUtil.YES.equalsIgnoreCase(dailyAttendanceDto.getLongApprovedSickLeaveFlag())){
+			requestMissedFieldList.add(WebServiceUtil.PRESENT_AND_SICK_LEAVE_ERROR);
+		}
+		
+		if(dailyAttendanceDto.getAttendanceStatus().equalsIgnoreCase(WebServiceUtil.ABSENT) && WebServiceUtil.YES.equalsIgnoreCase(dailyAttendanceDto.getApprovedExtraCurricularActivitiesFlag() )){
+			requestMissedFieldList.add(WebServiceUtil.ABSENT_AND_ECA_ERROR);
 		}
 
 		return requestMissedFieldList;

@@ -12,6 +12,7 @@ import com.studentmanagementsystem.api.dao.MarkDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
+import com.studentmanagementsystem.api.model.custom.studentmarks.MarkFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
@@ -58,14 +59,14 @@ public class MarkServiceImpl implements MarkService {
 	 */
 	@Override
 	@Transactional
-	public MessageResponse saveStudentMarks(List<markDto> studentMarksDto) {
+	public MessageResponse saveStudentMarks(List<markDto> studentMarksDtoList) {
 
 		logger.info("Before saveStudentMarks - Attempting to saving the student marks");
 		MessageResponse response = new MessageResponse();
-		LocalDateTime today = LocalDateTime.now();
-		MarkModel studentMark;
-		List<MarkModel> markList = new ArrayList<>();
-		for (markDto mark : studentMarksDto) {
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		MarkModel markModel;
+		List<MarkModel> markModelList = new ArrayList<>();
+		for (markDto mark : studentMarksDtoList) {
 
 			List<String> requestMissedFieldList = fieldValidation.checkValidationStudentMarkSave(mark);
 			if (!requestMissedFieldList.isEmpty()) {
@@ -84,62 +85,61 @@ public class MarkServiceImpl implements MarkService {
 						mark.getQuarterAndYear()));
 				return response;
 
-			} else if (WebServiceUtil.NON_COMPLIANCE.equals(complianceStatus)) {
+			} else if (WebServiceUtil.NON_COMPLIANCE.equalsIgnoreCase(complianceStatus)) {
 				response.setStatus(WebServiceUtil.WARNING);
 				response.setData(String.format(WebServiceUtil.NON_COMPLIANCE_STUDENT_ERROR, mark.getStudentId()));
 				return response;
 			}
-			 
-			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(mark.getTeacherId());
+
+			TeacherModel teacher = teacherRepository.findByTeacherId(mark.getTeacherId());
 			if (teacher == null) {
 				response.setStatus(WebServiceUtil.WARNING);
 				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 				return response;
 			}
-			studentMark = markRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(),
-					mark.getQuarterAndYear());
+			markModel = markRepository.findByStudentIdAndQuarterAndYear(mark.getStudentId(), mark.getQuarterAndYear());
 
-			if (studentMark == null) {
-				studentMark = new MarkModel();
-				StudentModel student = studentRepository.findStudentByStudentId(mark.getStudentId());
-				studentMark.setStudentModel(student);
-				studentMark.setQuarterAndYear(mark.getQuarterAndYear());
-				studentMark.setCreateDate(today);
-				studentMark.setCreateTeacher(teacher);
+			if (markModel == null) {
+				markModel = new MarkModel();
+				StudentModel student = studentRepository.findByStudentId(mark.getStudentId());
+				markModel.setStudentModel(student);
+				markModel.setQuarterAndYear(mark.getQuarterAndYear());
+				markModel.setCreateDate(currentDateTime);
+				markModel.setCreateTeacher(teacher);
 				response.setData(WebServiceUtil.DECLARE_MARK);
 				logger.info("After saveStudentMarks - Successfully saved student marks");
 
 			} else {
 
-				studentMark.setUpdateTeacher(teacher);
-				studentMark.setUpdateTime(today);
+				markModel.setUpdateTeacher(teacher);
+				markModel.setUpdateTime(currentDateTime);
 				response.setData(WebServiceUtil.UPDATE_MARK);
 				logger.info("After saveStudentMarks - Successfully updated student marks");
 			}
 
-			Integer tamil = studentMark.setTamil(mark.getTamil());
-			Integer english = studentMark.setEnglish(mark.getEnglish());
-			Integer maths = studentMark.setMaths(mark.getMaths());
-			Integer science = studentMark.setScience(mark.getScience());
-			Integer socialscience = studentMark.setSocialScience(mark.getSocialScience());
+			Integer tamil = markModel.setTamil(mark.getTamil());
+			Integer english = markModel.setEnglish(mark.getEnglish());
+			Integer maths = markModel.setMaths(mark.getMaths());
+			Integer science = markModel.setScience(mark.getScience());
+			Integer socialscience = markModel.setSocialScience(mark.getSocialScience());
 
 			Integer totalMark = tamil + english + maths + science + socialscience;
-			studentMark.setTotalMarks(totalMark);
+			markModel.setTotalMarks(totalMark);
 
 			Integer percentage = totalMark / 5;
-			studentMark.setPercentage(percentage);
+			markModel.setPercentage(percentage);
 
 			boolean allSubjectsPassed = tamil >= 35 && english >= 35 && maths >= 35 && science >= 35
 					&& socialscience >= 35;
 
 			if (allSubjectsPassed) {
-				studentMark.setResult(studentCodeRespository.findStudentCodeByCode(WebServiceUtil.PASS));
+				markModel.setResult(studentCodeRespository.findByCode(WebServiceUtil.PASS));
 			} else {
-				studentMark.setResult(studentCodeRespository.findStudentCodeByCode(WebServiceUtil.FAIL));
+				markModel.setResult(studentCodeRespository.findByCode(WebServiceUtil.FAIL));
 			}
-			markList.add(studentMark);
+			markModelList.add(markModel);
 		}
-		markRepository.saveAll(markList);
+		markRepository.saveAll(markModelList);
 		response.setStatus(WebServiceUtil.SUCCESS);
 		return response;
 	}
@@ -151,7 +151,7 @@ public class MarkServiceImpl implements MarkService {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public Response listStudentMarks(CommonFilterDto filterDto) {
+	public Response listStudentMarks(MarkFilterDto filterDto) {
 		logger.info("Before listStudentMarks - Attempting to retriving the student mark list  ");
 
 		Map<String, Object> result = markDao.listStudentMarks(filterDto);
@@ -164,12 +164,12 @@ public class MarkServiceImpl implements MarkService {
 
 			if (WebServiceUtil.S_NO.equals(filterDto.getOrderColumn())
 					&& WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType())) {
-				int sno = markList.size();
+				int sno = (int) ((filterDto.getLength() <= totalCount) ? filterDto.getLength() : totalCount);
 				for (markDto mark : markList) {
 					mark.setSno(sno--);
 				}
 			} else {
-				int sno = 1;
+				int sno = (filterDto.getStart() > 0) ? filterDto.getStart() : 1;
 				for (markDto student : markList) {
 					student.setSno(sno++);
 				}
@@ -191,7 +191,7 @@ public class MarkServiceImpl implements MarkService {
 	 */
 	@Override
 	@Transactional
-	public Response resultSummaryReport(CommonFilterDto filterDto) {
+	public Response resultSummaryReport(MarkFilterDto filterDto) {
 		logger.info("Before getAllStudentMarks - Attempting to retriving the mark summary report  ");
 		Response response = new Response();
 		response.setStatus(WebServiceUtil.SUCCESS);

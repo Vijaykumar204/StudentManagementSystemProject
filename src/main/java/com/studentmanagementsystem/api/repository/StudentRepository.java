@@ -17,13 +17,13 @@ public interface StudentRepository extends JpaRepository<StudentModel, Long> {
 	StudentModel findByFirstNameAndMiddleNameAndLastNameAndDateOfBirth(
 			String studentFirstName, String studentMiddleName, String studentLastName, LocalDate studentDateOfBirth);
 
-	StudentModel findStudentByStudentId(Long studentId);
+	StudentModel findByStudentId(Long studentId);
 
 	@Query("SELECT COUNT(s.studentId) FROM StudentModel s WHERE s.classOfStudy = :classOfStudy")
 	Long findTotalCount(@Param("classOfStudy") Integer classOfStudy);
 
-	@Query("select s.studentId from StudentModel s where s.classOfStudy = :classOfStudy")
-	List<Long> findStudentIdByClassOfStudy(@Param("classOfStudy") Integer classOfStudy);
+	@Query("select s.studentId from StudentModel s where s.classOfStudy = :classOfStudy and s.status.code =:status")
+	List<Long> findStudentIdByClassOfStudyAndStatus(@Param("classOfStudy") Integer classOfStudy,@Param("status") String status);
 
 	StudentModel findByEmail(String email);
 

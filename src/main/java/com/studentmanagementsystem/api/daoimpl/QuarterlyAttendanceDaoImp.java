@@ -125,10 +125,10 @@ public class QuarterlyAttendanceDaoImp implements QuarterlyAttendanceDao {
 		
 		
 		// Compliance and Non compliance status filter
-		if (WebServiceUtil.COMPLIANCE.equals(filterDto.getStatus())) {
+		if (WebServiceUtil.COMPLIANCE.equalsIgnoreCase(filterDto.getStatus())) {
 			predicates.add(cb.equal(quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("code"),
 					WebServiceUtil.COMPLIANCE));
-		} else if (WebServiceUtil.NON_COMPLIANCE.equals(filterDto.getStatus())) {
+		} else if (WebServiceUtil.NON_COMPLIANCE.equalsIgnoreCase(filterDto.getStatus())) {
 			predicates.add(cb.equal(quarterlyAttendanceRoot.get("attendanceComplianceStatus").get("code"),
 					WebServiceUtil.NON_COMPLIANCE));
 		}
@@ -139,13 +139,8 @@ public class QuarterlyAttendanceDaoImp implements QuarterlyAttendanceDao {
 			switch (filterDto.getSearchBy().toLowerCase()) {
 
 			case WebServiceUtil.NAME:
-				Predicate fullName = cb.like(cb.lower(cb.concat(cb.concat(
-						cb.concat(cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("firstName"), ""), " "),
-						cb.concat(cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("middleName"), ""), " ")),
-						cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("lastName"), ""))),
-						"%" + filterDto.getSearchValue().toLowerCase() + "%");
-
-				predicates.add(fullName);
+				String fullName = filterDto.getSearchValue().replaceAll(" ", "").toLowerCase();
+				predicates.add(cb.like(cb.lower(quarterlyAttendanceRoot.get("studentModel").get("fullNameSearch")), "%" + fullName + "%"));
 				break;
 
 			case WebServiceUtil.EMAIL:
@@ -165,13 +160,7 @@ public class QuarterlyAttendanceDaoImp implements QuarterlyAttendanceDao {
 		    cq.select(cb.construct(QuarterlyAttendanceDto.class,
 				 
 					quarterlyAttendanceRoot.get("studentModel").get("studentId"),
-					 cb.concat(
-				                cb.concat(
-				                        cb.concat(quarterlyAttendanceRoot.get("studentModel").get("firstName"), " "),
-				                        cb.concat(cb.coalesce(quarterlyAttendanceRoot.get("studentModel").get("middleName"), ""), " ")
-				                ),
-				                quarterlyAttendanceRoot.get("studentModel").get("lastName")
-				        ),
+					quarterlyAttendanceRoot.get("studentModel"),
 					quarterlyAttendanceRoot.get("studentModel").get("classOfStudy"),
 					quarterlyAttendanceRoot.get("studentModel").get("dateOfBirth"),
 					quarterlyAttendanceRoot.get("studentModel").get("phoneNumber"),

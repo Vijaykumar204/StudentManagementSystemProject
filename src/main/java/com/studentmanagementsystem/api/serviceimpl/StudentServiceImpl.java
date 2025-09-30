@@ -12,6 +12,7 @@ import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.student.StudentDto;
+import com.studentmanagementsystem.api.model.custom.student.StudentFilterDto;
 import com.studentmanagementsystem.api.model.entity.StudentCodeModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
@@ -60,7 +61,7 @@ public class StudentServiceImpl implements StudentService {
 		//Logger
 		logger.info("Before saveStudent - Attempting to saving the student for TeacherId: {}", studentDto.getTeacherId());
 
-		LocalDateTime today = LocalDateTime.now();
+		LocalDateTime currentDateTime = LocalDateTime.now();
 		// Declaration
 		StudentModel studentModel;
 		
@@ -74,7 +75,7 @@ public class StudentServiceImpl implements StudentService {
 		}
 		
 		//Verify if the teacher ID exists
-		TeacherModel teacher = teacherRepository.findTeacherByTeacherId(studentDto.getTeacherId());
+		TeacherModel teacher = teacherRepository.findByTeacherId(studentDto.getTeacherId());
 		if (teacher == null) {
 			response.setStatus(WebServiceUtil.WARNING);
 			response.setData(WebServiceUtil.TEACHER_ID_ERROR);
@@ -83,16 +84,16 @@ public class StudentServiceImpl implements StudentService {
 		//Create new student
 		if (studentDto.getStudentId() == null) {
 			//Unique vaildation
-			List<String> uniqueField =uniqueValidation.uniqueCheckStudentSave(studentDto);
-			if(!uniqueField.isEmpty()) {
+			List<String> uniqueFieldList =uniqueValidation.uniqueCheckStudentSave(studentDto);
+			if(!uniqueFieldList.isEmpty()) {
 				response.setStatus(WebServiceUtil.WARNING);
-				response.setData(uniqueField);
+				response.setData(uniqueFieldList);
 				return response;
 			}
 			studentModel = new StudentModel();
-			studentModel.setCreateDate(today);
+			studentModel.setCreateDate(currentDateTime);
 			studentModel.setCreateTeacher(teacher);	
-			studentModel.setStatus(studentCodeRespository.findStudentCodeByCode(studentDto.getStatus()));
+			studentModel.setStatus(studentCodeRespository.findByCode(studentDto.getStatus()));
 			response.setData( String.format(WebServiceUtil.SAVE ,"Student"));
 			logger.info("After saveStudent - Succeccfully saved Student");
 			}
@@ -100,14 +101,14 @@ public class StudentServiceImpl implements StudentService {
 		// Update the exists student
 		else {
 			//Unique Vaildation
-			List<String> uniqueField =uniqueValidation.uniqueCheckStudentUpdate(studentDto);
-			if(!uniqueField.isEmpty()) {
+			List<String> uniqueFieldList =uniqueValidation.uniqueCheckStudentUpdate(studentDto);
+			if(!uniqueFieldList.isEmpty()) {
 				response.setStatus(WebServiceUtil.WARNING);
-				response.setData(uniqueField);
+				response.setData(uniqueFieldList);
 				return response;
 			}	
 			//Verify if student ID exists
-			studentModel = studentRepository.findStudentByStudentId(studentDto.getStudentId());
+			studentModel = studentRepository.findByStudentId(studentDto.getStudentId());
 			if (studentModel == null) {
 				response.setStatus(WebServiceUtil.FAILURE);
 				response.setData(String.format(WebServiceUtil.STUDENT_NOT_FOUND, studentDto.getStudentId()));
@@ -115,7 +116,7 @@ public class StudentServiceImpl implements StudentService {
 			}
 
 			studentModel.setUpdateTeacher(teacher);
-			studentModel.setUpdateDate(today);
+			studentModel.setUpdateDate(currentDateTime);
 			response.setData(String.format(WebServiceUtil.UPDATE,"Student"));
 			logger.info("After saveStudent - Succeccfully Updates StudentId: {}", studentDto.getStudentId());
 		}
@@ -124,8 +125,8 @@ public class StudentServiceImpl implements StudentService {
 		studentModel.setLastName(studentDto.getLastName());
 		studentModel.setDateOfBirth(studentDto.getDateOfBirth());
 		studentModel.setClassOfStudy(studentDto.getClassOfStudy());
-		studentModel.setGender(studentCodeRespository.findStudentCodeByCode(studentDto.getGender()));
-		studentModel.setResidingStatus(studentCodeRespository.findStudentCodeByCode(studentDto.getResidingStatus()));
+		studentModel.setGender(studentCodeRespository.findByCode(studentDto.getGender()));
+		studentModel.setResidingStatus(studentCodeRespository.findByCode(studentDto.getResidingStatus()));
 		studentModel.setPhoneNumber(studentDto.getPhoneNumber());
 		studentModel.setParentsName(studentDto.getParentsName());
 		studentModel.setHomeStreetName(studentDto.getHomeStreetName());
@@ -145,7 +146,7 @@ public class StudentServiceImpl implements StudentService {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public Response listStudentDetails(CommonFilterDto filterDto) {
+	public Response listStudentDetails(StudentFilterDto filterDto) {
 
 		logger.info("Before listStudentDetails - Attempting to retrive student details ");
 
@@ -157,14 +158,15 @@ public class StudentServiceImpl implements StudentService {
 
 		if (studentList != null) {
 
-			if (WebServiceUtil.S_NO.equals(filterDto.getOrderColumn())
+			if (WebServiceUtil.S_NO.equalsIgnoreCase(filterDto.getOrderColumn())
 					&& WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType())) {
-				int sno = studentList.size();
+
+				int sno = (int) ((filterDto.getLength() <= totalCount) ? filterDto.getLength() : totalCount);
 				for (StudentDto student : studentList) {
 					student.setSno(sno--);
 				}
 			} else {
-				int sno = 1;
+				int sno = (filterDto.getStart() > 0) ? filterDto.getStart() : 1;
 				for (StudentDto student : studentList) {
 					student.setSno(sno++);
 				}
@@ -177,9 +179,7 @@ public class StudentServiceImpl implements StudentService {
 		response.setTotalCount(totalCount);
 		response.setFilterCount((Long) result.get("filterCount"));
 		response.setData(studentList);
-
 		logger.info("After listStudentDetails :  Successfully retrived the student details");
-
 		return response;
 	}
 
@@ -190,8 +190,8 @@ public class StudentServiceImpl implements StudentService {
 	@Transactional
 	public MessageResponse activeOrDeactiveByStudentId(String status, Long studentId, Long teacherId) {
 
-		// Logger
-		if (status == WebServiceUtil.ACTIVE)
+		// Logger - change
+		if (status.equalsIgnoreCase(WebServiceUtil.ACTIVE))
 			logger.info("Before activeOrDeactiveByStudentId : Activate the StudentId : '{}' for TeacherId :{} ",
 					studentId, teacherId);
 		else
@@ -206,9 +206,9 @@ public class StudentServiceImpl implements StudentService {
 			return response;
 		}
 
-		LocalDateTime today = LocalDateTime.now();
+		LocalDateTime currentDateTime = LocalDateTime.now();
 		// Verify if the student ID exists
-		StudentModel student = studentRepository.findStudentByStudentId(studentId);
+		StudentModel student = studentRepository.findByStudentId(studentId);
 		if (student == null) {
 			response.setStatus(WebServiceUtil.WARNING);
 			response.setData(WebServiceUtil.STUDENT_NOT_FOUND + studentId);
@@ -216,7 +216,7 @@ public class StudentServiceImpl implements StudentService {
 		}
 
 		// Verify if the teacher ID exists
-		TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+		TeacherModel teacher = teacherRepository.findByTeacherId(teacherId);
 		if (teacher == null) {
 			response.setStatus(WebServiceUtil.WARNING);
 			response.setData(WebServiceUtil.TEACHER_ID_ERROR);
@@ -224,48 +224,40 @@ public class StudentServiceImpl implements StudentService {
 		}
 		// Deactivate student
 
-		if (status.equals(WebServiceUtil.DEACTIVE)) {
+		if (status.equalsIgnoreCase(WebServiceUtil.DEACTIVE)) {
 
 			if (!status.equals(student.getStatus().getCode())) {
 
-				StudentCodeModel activeStatus = studentCodeRespository.findStudentCodeByCode(status);
+				StudentCodeModel activeStatus = studentCodeRespository.findByCode(status);
 
 				student.setStatus(activeStatus);
-				student.setLastEffectiveDate(today);
+				student.setLastEffectiveDate(currentDateTime);
 				student.setUpdateTeacher(teacher);
-				student.setUpdateDate(today);
-				response.setData(WebServiceUtil.DEACTIVETED_MESSAGE);
-				logger.info(
-						"After activeOrDeactiveByStudentId : Successfully deactivated  StudentId : '{}' for TeacherId :{} ",
-						studentId, teacherId);
-			} else {
-				response.setData(WebServiceUtil.DEACTIVETED_MESSAGE);
-				logger.info(
-						"After activeOrDeactiveByStudentId : Successfully deactivated  StudentId : '{}' for TeacherId :{} ",
-						studentId, teacherId);
+				student.setUpdateDate(currentDateTime);
+
 			}
+			response.setData(WebServiceUtil.DEACTIVETED_MESSAGE);
+			logger.info(
+					"After activeOrDeactiveByStudentId : Successfully deactivated  StudentId : '{}' for TeacherId :{} ",
+					studentId, teacherId);
 
 			// Active student
-		} else if (status.equals(WebServiceUtil.ACTIVE)) {
+		} else if (status.equalsIgnoreCase(WebServiceUtil.ACTIVE)) {
 
 			if (!status.equals(student.getStatus().getCode())) {
 
-				StudentCodeModel activeStatus = studentCodeRespository.findStudentCodeByCode(status);
+				StudentCodeModel activeStatus = studentCodeRespository.findByCode(status);
 				student.setStatus(activeStatus);
 				student.setLastEffectiveDate(null);
 				student.setUpdateTeacher(teacher);
-				student.setUpdateDate(today);
-				response.setData(WebServiceUtil.ACTIVETED_MESSAGE);
-				logger.info(
-						"After activeOrDeactiveByStudentId : Successfully activated  StudentId : '{}' for TeacherId :{} ",
-						studentId, teacherId);
-			} else {
-				response.setData(WebServiceUtil.ACTIVETED_MESSAGE);
-				logger.info(
-						"After activeOrDeactiveByStudentId : Successfully activated  StudentId : '{}' for TeacherId :{} ",
-						studentId, teacherId);
-
+				student.setUpdateDate(currentDateTime);
 			}
+
+			response.setData(WebServiceUtil.ACTIVETED_MESSAGE);
+			logger.info(
+					"After activeOrDeactiveByStudentId : Successfully activated  StudentId : '{}' for TeacherId :{} ",
+					studentId, teacherId);
+
 		}
 
 		studentRepository.save(student);

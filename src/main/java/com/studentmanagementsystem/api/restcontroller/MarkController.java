@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
+import com.studentmanagementsystem.api.model.custom.studentmarks.MarkFilterDto;
 import com.studentmanagementsystem.api.model.custom.studentmarks.markDto;
 import com.studentmanagementsystem.api.service.MarkService;
 
@@ -42,7 +43,7 @@ public class MarkController {
 	 * @author Vijiyakumar
 	 */	
 	@GetMapping("/list")
-	ResponseEntity<?> listStudentMarks(@RequestBody CommonFilterDto filterDto){
+	ResponseEntity<?> listStudentMarks(@RequestBody MarkFilterDto filterDto){
 		return new ResponseEntity<>(studentMarksService.listStudentMarks(filterDto),HttpStatus.OK);
 	}
 	
@@ -54,12 +55,8 @@ public class MarkController {
 	 * @author Vijiyakumar
 	 */	
 	@GetMapping("/summary-report")
-	ResponseEntity<?> resultSummaryReport(@RequestBody CommonFilterDto filterDto){
+	ResponseEntity<?> resultSummaryReport(@RequestBody MarkFilterDto filterDto){
 		return new ResponseEntity<>(studentMarksService.resultSummaryReport(filterDto),HttpStatus.OK);
 	}
-	
-	
-	
-	
 
 }

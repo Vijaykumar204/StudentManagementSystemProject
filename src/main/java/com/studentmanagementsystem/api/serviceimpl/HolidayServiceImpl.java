@@ -15,6 +15,7 @@ import com.studentmanagementsystem.api.dao.HolidayDao;
 import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
+import com.studentmanagementsystem.api.model.custom.schoolholidays.HolidayFilterDto;
 import com.studentmanagementsystem.api.model.custom.schoolholidays.SchoolHolidaysDto;
 import com.studentmanagementsystem.api.model.entity.HolidayModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
@@ -48,7 +49,7 @@ public class HolidayServiceImpl implements HolidayService {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public Response declaredHolidaysList(CommonFilterDto filterDto) {
+	public Response declaredHolidaysList(HolidayFilterDto filterDto) {
 
 		logger.info("Before getHolidays - Attempting to retrieve the holiday list");
 
@@ -63,12 +64,12 @@ public class HolidayServiceImpl implements HolidayService {
 
 			if (WebServiceUtil.S_NO.equals(filterDto.getOrderColumn())
 					&& WebServiceUtil.DESCENDING_ORDER.equals(filterDto.getOrderType())) {
-				int sno = holidayList.size();
+				int sno = (int) ((filterDto.getLength() <= totalCount) ? filterDto.getLength() : totalCount);
 				for (SchoolHolidaysDto holiday : holidayList) {
 					holiday.setSno(sno--);
 				}
 			} else {
-				int sno = 1;
+				int sno = (filterDto.getStart() > 0) ? filterDto.getStart() : 1;
 				for (SchoolHolidaysDto holiday : holidayList) {
 					holiday.setSno(sno++);
 				}
@@ -92,15 +93,15 @@ public class HolidayServiceImpl implements HolidayService {
 	 */
 	@Override
 	@Transactional
-	public MessageResponse declareHolidays(List<SchoolHolidaysDto> schoolHolidaysDto) {
+	public MessageResponse declareHolidays(List<SchoolHolidaysDto> schoolHolidaysDtoList) {
 		
 		logger.info("Before declareHolidays -Attempting declare the holidays");
 		
 		MessageResponse response = new MessageResponse();
 		List<HolidayModel> holidaysList = new ArrayList<>();
-		LocalDateTime today = LocalDateTime.now();
+		LocalDateTime currentDateTime = LocalDateTime.now();
 		
-		for (SchoolHolidaysDto holidaydeclare : schoolHolidaysDto) {
+		for (SchoolHolidaysDto holidaydeclare : schoolHolidaysDtoList) {
 			
 		//Field validation
           List<String> requestFieldList = fieldValidation.holidayValidation(holidaydeclare);
@@ -114,32 +115,32 @@ public class HolidayServiceImpl implements HolidayService {
 			LocalDate date = holidaydeclare.getHolidayDate();
 			if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
 				response.setStatus(WebServiceUtil.WARNING);	
-	  			response.setData(date + WebServiceUtil.SUNDAY);
+	  			response.setData(date + WebServiceUtil.SUNDAY_ERROR); // name change
 				return response;
 			}
 			
 			// Verify whether the teacher ID exists
-			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(holidaydeclare.getTeacherId());	
+			TeacherModel teacher = teacherRepository.findByTeacherId(holidaydeclare.getTeacherId());	
 			if(teacher==null) {
 				response.setStatus(WebServiceUtil.WARNING);	
 				response.setData(WebServiceUtil.TEACHER_ID_ERROR);
 				return response;
 			}
 			//Verify whether holidayDate is already declared
-			HolidayModel holiday = holidayRepository.getHolidayByHolidayDate(holidaydeclare.getHolidayDate()) ;
+			HolidayModel holiday = holidayRepository.getByHolidayDate(holidaydeclare.getHolidayDate()) ;
 			//Declare holidays
 			if (holiday == null) {		
 				holiday = new HolidayModel();
 				holiday.setHolidayDate(holidaydeclare.getHolidayDate());
 				holiday.setCreateTeacher(teacher);
-				holiday.setCreateDate(today);
+				holiday.setCreateDate(currentDateTime);
 				response.setData(WebServiceUtil.SUCCESS_HOLIDAY_DECLARE);
 				logger.info("After declareHolidays - Declared holiday successfully");
 			}
 			//Update holidays
 			else {
 				holiday.setUpdateTeacher(teacher);
-				holiday.setUpdateDate(today);
+				holiday.setUpdateDate(currentDateTime);
 				response.setData(WebServiceUtil.SUCCESS_HOLIDAY_UPDATE);
 				logger.info("After declareHolidays - Declared holiday successfully");
 				
@@ -160,13 +161,13 @@ public class HolidayServiceImpl implements HolidayService {
 	 */
 	@Override
 	@Transactional
-	public MessageResponse cancelHolidays(List<SchoolHolidaysDto> schoolHolidaysDto) {
+	public MessageResponse cancelHolidays(List<SchoolHolidaysDto> cancelHolidaysDtoList) {
 		logger.info("Before cancelHolidays - Attempting to cancel the holiday");
 		MessageResponse response = new MessageResponse();
 		List<HolidayModel> holidaysList = new ArrayList<>();
 		LocalDateTime today = LocalDateTime.now();
 		
-		for (SchoolHolidaysDto holidayDeclare : schoolHolidaysDto) {
+		for (SchoolHolidaysDto holidayDeclare : cancelHolidaysDtoList) {
 			
 			//Field validation
 			List<String> requestFieldList = fieldValidation.cancelHolidayValidation(holidayDeclare);
@@ -177,10 +178,10 @@ public class HolidayServiceImpl implements HolidayService {
 			}
 			
 			// Retrieve holiday date to cancel
-			HolidayModel holiday = holidayRepository.getHolidayByHolidayDate(holidayDeclare.getHolidayDate());
-			
+			HolidayModel existsHoliday = holidayRepository.getByHolidayDate(holidayDeclare.getHolidayDate());
 			// Verify if holidayDate is already cancelled
-			if (Boolean.TRUE.equals(holiday.getIsHolidayCancelled())) {
+			
+			if (Boolean.TRUE.equals(existsHoliday.getIsHolidayCancelled())) {
 				response.setStatus(WebServiceUtil.SUCCESS);	
 				response.setData(WebServiceUtil.SUCCESS_CANCEL_HOLIDAY);
 				return response;
@@ -194,11 +195,11 @@ public class HolidayServiceImpl implements HolidayService {
 				return response;
 			}	
 
-			holiday.setIsHolidayCancelled(true);
-			holiday.setHolidayCancelledReason(holidayDeclare.getHolidayCancelledReason());
-			holiday.setUpdateTeacher(teacher);
-			holiday.setUpdateDate(today);	
-			holidaysList.add(holiday);
+			existsHoliday.setIsHolidayCancelled(true);
+			existsHoliday.setHolidayCancelledReason(holidayDeclare.getHolidayCancelledReason());
+			existsHoliday.setUpdateTeacher(teacher);
+			existsHoliday.setUpdateDate(today);	
+			holidaysList.add(existsHoliday);
 		}		
 		holidayRepository.saveAll(holidaysList);
 		response.setStatus(WebServiceUtil.SUCCESS);	

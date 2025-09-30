@@ -9,14 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.studentmanagementsystem.api.dao.QuarterlyAttendanceDao;
 import com.studentmanagementsystem.api.model.custom.MessageResponse;
-import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.quarterlyreport.QuarterlyAttendanceDto;
 import com.studentmanagementsystem.api.model.entity.DailyAttendanceModel;
-import com.studentmanagementsystem.api.model.entity.EmailSentHistory;
+import com.studentmanagementsystem.api.model.entity.EmailSentHistoryModel;
 import com.studentmanagementsystem.api.model.entity.MarkModel;
 import com.studentmanagementsystem.api.model.entity.StudentModel;
 import com.studentmanagementsystem.api.model.entity.TeacherModel;
@@ -77,7 +75,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 		
 		 for(QuarterlyAttendanceDto quarter : quarterAttendanceList) {
 				
-			StudentModel student = studentModelRepository.findStudentByStudentId(quarter.getStudentId());
+			StudentModel student = studentModelRepository.findByStudentId(quarter.getStudentId());
 			String name;
 			
 			if (student.getMiddleName() != null) {
@@ -114,11 +112,11 @@ public class EmailSentServiceImpl implements EmailSentService {
 	        
 			LocalDateTime today = LocalDateTime.now();
       
-			TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+			TeacherModel teacher = teacherRepository.findByTeacherId(teacherId);
  
        String plainTextBody = Jsoup.parse(body).text();
 	        
-	        EmailSentHistory email = new EmailSentHistory();        
+	        EmailSentHistoryModel email = new EmailSentHistoryModel();        
 	        email.setStudentId(student);
 	        email.setStudentEmail(student.getEmail());
 	        email.setEmailSubject(subject);
@@ -144,7 +142,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 		MessageResponse response =new  MessageResponse();
 		List<MarkModel> studentMarklist = studentMarksRepository.findMarkByQuarterAndYear(quarterAndResult,classOfStudy);
 		for(MarkModel mark : studentMarklist) {
-			StudentModel student = studentModelRepository.findStudentByStudentId(mark.getStudentModel().getStudentId());
+			StudentModel student = studentModelRepository.findByStudentId(mark.getStudentModel().getStudentId());
 			String name;
 			if (student.getMiddleName() != null) {
 				name = student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName();
@@ -179,10 +177,10 @@ public class EmailSentServiceImpl implements EmailSentService {
 			        
 			        
 					LocalDateTime today = LocalDateTime.now();
-					TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
+					TeacherModel teacher = teacherRepository.findByTeacherId(teacherId);
 		       String plainTextBody = Jsoup.parse(body).text();
 			        
-				EmailSentHistory email = new EmailSentHistory();
+				EmailSentHistoryModel email = new EmailSentHistoryModel();
 				email.setStudentId(student);
 				email.setStudentEmail(student.getParentsEmail());
 				email.setEmailSubject(subject);
@@ -248,7 +246,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 //		        
 //		        LocalDateTime today = LocalDateTime.now();	
 //		        TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
-//		  	        EmailSentHistory email = new EmailSentHistory();
+//		  	        EmailSentHistoryModel email = new EmailSentHistoryModel();
 //		  	        
 //		  	        email.setStudentId(student);
 //		  	        email.setStudentEmail(student.getParentsEmail()  );
@@ -265,7 +263,9 @@ public class EmailSentServiceImpl implements EmailSentService {
 //		
 //	}
     
-    /**
+
+
+	/**
 	 * Send Absent Alert message.
 	 * This method is executed automatically by a Cron job 
 	 * every day at 12:00 AM.
@@ -273,16 +273,19 @@ public class EmailSentServiceImpl implements EmailSentService {
 	 * Author: Vijayakumar
 	 */	
 	@Override
-	public void absentAlertEmail(List<Long> absentIdList,Long teacherId) throws MessagingException {
+	public void attendanceStatusAlertEmail(List<Long> absentIdList,Long teacherId) throws MessagingException {
 		logger.info("Before absentAlertEmail - Attempting sent absence alert mail");
 		LocalDate attendanceDate = LocalDate.now();
 		for (Long studentId : absentIdList) {
 			DailyAttendanceModel attendance = dailyAttendanceRepository.findAttendnaceStatus(attendanceDate, studentId);
-
-			StudentModel student = studentModelRepository.findStudentByStudentId(studentId);
-	        String name = student.getMiddleName() != null
-	                ? student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName()
-	                : student.getFirstName() + " " + student.getLastName();
+			// change student
+			
+//			StudentModel student = studentModelRepository.findByStudentId(studentId);
+//	        String name = student.getMiddleName() != null
+//	                ? student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName()
+//	                : student.getFirstName() + " " + student.getLastName();
+	        
+	        String name =attendance.getStudentModel().getFullName();
 			
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -293,7 +296,7 @@ public class EmailSentServiceImpl implements EmailSentService {
 					&& WebServiceUtil.NO.equals(attendance.getApprovedExtraCurricularActivitiesFlag())) {
 
 				subject = String.format(WebServiceUtil.ABSENT_ALERT_SUBJECT, name, attendanceDate);
-				body = String.format(WebServiceUtil.ABSENT_ALERT_BODY, name, attendanceDate, student.getFirstName());
+				body = String.format(WebServiceUtil.ABSENT_ALERT_BODY, name, attendanceDate, name);
 
 			} else if (WebServiceUtil.YES.equals(attendance.getLongApprovedSickLeaveFlag())) {
 				subject = String.format(WebServiceUtil.SICK_LEAVE_ALERT_SUBJECT, name);
@@ -304,23 +307,21 @@ public class EmailSentServiceImpl implements EmailSentService {
 				body = String.format(WebServiceUtil.EXTRA_CUR_ACTIVITY_ALERT_BODY, name, attendanceDate, name,
 						attendanceDate);
 			}
-			helper.setTo(student.getParentsEmail());
+			helper.setTo(attendance.getStudentModel().getParentsEmail());
 			helper.setSubject(subject);
 			helper.setText(body, true);
 			mailSender.send(message);
-
-				LocalDateTime today = LocalDateTime.now();
-				TeacherModel teacher = teacherRepository.findTeacherByTeacherId(teacherId);
-				EmailSentHistory email = new EmailSentHistory();
-		  	        
-					email.setStudentId(student);
-					email.setStudentEmail(student.getParentsEmail());
-					email.setEmailSubject(subject);
-					email.setEmailMessage(body);
-					email.setMailSentDate(today);
-					email.setTeacherId(teacher);
-					emailSentHistoryRepository.save(email);
-				}
+			LocalDateTime today = LocalDateTime.now();
+			TeacherModel teacher = teacherRepository.findByTeacherId(teacherId);
+			EmailSentHistoryModel email = new EmailSentHistoryModel();	  	        
+			email.setStudentId(attendance.getStudentModel());
+			email.setStudentEmail(attendance.getStudentModel().getParentsEmail());
+			email.setEmailSubject(subject);
+			email.setEmailMessage(body);
+			email.setMailSentDate(today);
+			email.setTeacherId(teacher);
+			emailSentHistoryRepository.save(email);
+		}
 		
 		logger.info("After absentAlertEmail - Successfully sent absence alert mail");
 	}

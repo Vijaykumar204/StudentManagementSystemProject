@@ -35,7 +35,7 @@ public class StudentCodeServiceImpl implements StudentCodeService {
 		
 		for(StudentCodeDto code : studentCodeDto ) {
 			
-			StudentCodeModel studentCode = studentCodeRespository.findStudentCodeByCode(code.getCode());
+			StudentCodeModel studentCode = studentCodeRespository.findByCode(code.getCode());
 //			TeacherModel teacher = teacherRepository.findTeacherIdByTeacherId(code.getTeacherId());
 //			if(teacher == null) {
 //				response.setStatus(WebServiceUtil.WARNING);

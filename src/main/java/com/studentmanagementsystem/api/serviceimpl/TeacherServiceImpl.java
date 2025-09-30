@@ -90,14 +90,14 @@ public class TeacherServiceImpl implements TeacherService {
 				response.setData(uniqueField);
 				return response;
 			}
-			teacher = teacherRepository.findTeacherByTeacherId(teacherDto.getId());
+			teacher = teacherRepository.findByTeacherId(teacherDto.getId());
 			teacher.setUpdateUser(teacherId.getTeacherId());
 			teacher.setUpdateDate(today);
 			response.setData(String.format(WebServiceUtil.UPDATE, "Teacher"));
 			logger.info("After saveTeacher : Successfully updated");
 		}
 		teacher.setTeacherName(teacherDto.getName());
-		teacher.setTeacherRole(studentCodeRespository.findStudentCodeByCode(teacherDto.getRole()));
+		teacher.setTeacherRole(studentCodeRespository.findByCode(teacherDto.getRole()));
 		teacher.setTeacherEmail(teacherDto.getEmail());
 		teacher.setTeacherDepartment(teacherDto.getDepartment());
 		teacher.setTeacherPhoneNumber(teacherDto.getPhoneNumber());
@@ -178,6 +178,7 @@ public class TeacherServiceImpl implements TeacherService {
 
 
 	@Override
+	@Transactional
 	public MessageResponse passwordChange(PasswordChangeDto passwordChangeDto) {
 		
 		logger.info("Before passwordChange : Attempting to change password teacherEmail : {}",passwordChangeDto.getEmail());

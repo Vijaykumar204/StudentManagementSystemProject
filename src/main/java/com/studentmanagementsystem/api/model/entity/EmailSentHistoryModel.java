@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "email_sent_history")
-public class EmailSentHistory {
+public class EmailSentHistoryModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

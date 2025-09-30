@@ -6,13 +6,14 @@ import com.studentmanagementsystem.api.model.custom.CommonFilterDto;
 import com.studentmanagementsystem.api.model.custom.MessageResponse;
 import com.studentmanagementsystem.api.model.custom.Response;
 import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceDto;
+import com.studentmanagementsystem.api.model.custom.dailyattendance.DailyAttendanceFilterDto;
 
 public interface DailyAttendanceService {
 
-	Response attendanceList(CommonFilterDto filterDto);
+	Response dailyAttendanceList(DailyAttendanceFilterDto filterDto);
 
-	Response monthlyAttendanceList(CommonFilterDto filterDto);
+	Response monthlyDailyAttendanceList(DailyAttendanceFilterDto filterDto);
 
-	MessageResponse saveAttendance(List<DailyAttendanceDto> dailyAttendanceDto);
+	MessageResponse saveDailyAttendance(List<DailyAttendanceDto> dailyAttendanceDto);
 
 }

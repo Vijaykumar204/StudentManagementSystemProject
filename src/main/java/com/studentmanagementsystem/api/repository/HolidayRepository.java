@@ -11,9 +11,11 @@ import com.studentmanagementsystem.api.model.entity.HolidayModel;
 @Repository
 public interface HolidayRepository extends JpaRepository<HolidayModel, Long> {
 
-	HolidayModel getHolidayByHolidayDate(LocalDate holidayDate);
+	
 	
 	@Query("SELECT COUNT(h.holidayId) FROM HolidayModel h")
 	Long findTotalCount();
+
+	HolidayModel getByHolidayDate(LocalDate holidayDate);
 
 }
